@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import Link from "next/link";
+import { FloatingChips } from "./FloatingChips";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -38,6 +39,7 @@ export function Hero() {
       <div ref={blobA} className="pointer-events-none absolute -left-24 -top-32 h-[420px] w-[420px] rounded-full bg-[#E28B2F]/30 blur-[110px]" />
       <div ref={blobB} className="pointer-events-none absolute -right-32 top-1/3 h-[460px] w-[460px] rounded-full bg-[#22C55E]/20 blur-[120px]" />
       <div ref={blobC} className="pointer-events-none absolute bottom-[-160px] left-1/3 h-[380px] w-[380px] rounded-full bg-[#F4C95D]/20 blur-[110px]" />
+      <FloatingChips />
 
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-16 text-center">
         <motion.div

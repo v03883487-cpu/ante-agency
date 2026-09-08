@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
 import { ContactForm } from "@/components/ContactForm";
+import { BreadcrumbsJsonLd } from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Связаться с нами",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
+      <BreadcrumbsJsonLd path="/contact" label="Контакты" />
       <PageHeader
         eyebrow="Начнём работу"
         title="Готовы поднять ставки?"

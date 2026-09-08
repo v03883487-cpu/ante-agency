@@ -27,7 +27,8 @@ function iconForName(name: string) {
 
 export function BrandLogo({ name, logo, className = "" }: { name: string; logo?: string; className?: string }) {
   return (
-    <span className={`inline-flex items-center gap-2.5 ${className}`}>
+    <span className={`relative inline-flex items-center gap-2.5 overflow-hidden ${className}`}>
+      <span className="shimmer-layer pointer-events-none absolute inset-0 z-10" aria-hidden />
       {logo ? (
         <img src={logo} alt={`${name} logo`} width="22" height="22" className="h-[22px] w-[22px] shrink-0 rounded-md" />
       ) : (

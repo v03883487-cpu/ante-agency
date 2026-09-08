@@ -24,6 +24,15 @@ const knownDomains: Record<string, string> = {
   MelBet: "melbet.com",
   Shuffle: "shuffle.com",
   Betwinner: "betwinner.com",
+  RioBet: "riobet.com",
+  "1xCasino": "1xcasino.com",
+  Yeet: "yeet.com",
+  Thrill: "thrill.com",
+  "500casino": "500casino.com",
+  RainBet: "rainbet.com",
+  Bitfortune: "bitfortune.com",
+  FairPari: "fairpari.com",
+  Leon: "leon.bet",
 };
 
 const names = [

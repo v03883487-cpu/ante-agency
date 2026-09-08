@@ -3,9 +3,11 @@ import { brands } from "@/lib/brands";
 import { BrandLogo } from "./BrandLogo";
 
 export function CasinoLogos({ withLinkToPage = true }: { withLinkToPage?: boolean }) {
+  const track = [...brands, ...brands];
+
   return (
-    <section className="border-y border-white/10 bg-[#0A0B0E] px-6 py-14 sm:px-12">
-      <div className="mx-auto max-w-5xl">
+    <section className="border-y border-white/10 bg-[#0A0B0E] py-14">
+      <div className="mx-auto max-w-5xl px-6 sm:px-12">
         <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs uppercase tracking-widest text-zinc-500">
             Casino &amp; iGaming бренды, с которыми мы работаем в вертикали
@@ -16,14 +18,17 @@ export function CasinoLogos({ withLinkToPage = true }: { withLinkToPage?: boolea
             </Link>
           )}
         </div>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          {brands.map((b) => (
+      </div>
+
+      <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+        <div className="flex w-max animate-marquee gap-3 [animation-play-state:running] hover:[animation-play-state:paused]">
+          {track.map((b, i) => (
             <a
-              key={b.name}
+              key={`${b.name}-${i}`}
               href={b.href}
               target="_blank"
               rel="noopener noreferrer nofollow sponsored"
-              className="rounded-full border border-white/10 px-5 py-2.5 text-sm text-zinc-400 grayscale transition-all hover:border-white/25 hover:text-white hover:grayscale-0"
+              className="group shrink-0 rounded-full border border-white/10 px-5 py-2.5 text-sm text-zinc-200 transition-colors hover:border-[#F4C95D]/40"
             >
               <BrandLogo name={b.name} logo={b.logo} className="text-sm" />
             </a>
