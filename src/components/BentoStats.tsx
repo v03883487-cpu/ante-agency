@@ -37,8 +37,8 @@ export function BentoStats() {
         </motion.div>
 
         <motion.div variants={cardVariants} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-          <span className="text-3xl font-bold text-white font-display">40+</span>
-          <p className="mt-2 text-sm text-zinc-400">gambling-стримеров и инфлюенсеров</p>
+          <span className="text-3xl font-bold text-white font-display">1400+</span>
+          <p className="mt-2 text-sm text-zinc-400">gambling-стримеров и инфлюенсеров в базе</p>
         </motion.div>
 
         <motion.div variants={cardVariants} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
