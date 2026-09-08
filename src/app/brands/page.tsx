@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaBand } from "@/components/CtaBand";
+import { BrandLogo } from "@/components/BrandLogo";
 import { brands } from "@/lib/brands";
 
 export const metadata: Metadata = {
@@ -27,11 +28,12 @@ export default function BrandsPage() {
               href={b.href}
               target="_blank"
               rel="noopener noreferrer nofollow sponsored"
-              className="group flex flex-col items-center justify-center gap-2 rounded-3xl border border-white/10 bg-white/[0.03] px-4 py-8 text-center transition-colors hover:border-[#F4C95D]/30"
+              className="group flex flex-col items-center justify-center gap-3 rounded-3xl border border-white/10 bg-white/[0.03] px-4 py-8 text-center transition-colors hover:border-[#F4C95D]/30"
             >
-              <span className="font-display text-lg font-bold text-zinc-300 transition-colors group-hover:text-white">
-                {b.name}
-              </span>
+              <BrandLogo
+                name={b.name}
+                className="flex-col gap-2 text-base text-zinc-300 transition-colors group-hover:text-white [&_svg]:h-8 [&_svg]:w-8 [&_svg]:text-[#F4C95D]"
+              />
               <span className="text-xs uppercase tracking-widest text-zinc-600">{b.vertical}</span>
             </a>
           ))}

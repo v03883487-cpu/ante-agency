@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { brands } from "@/lib/brands";
+import { BrandLogo } from "./BrandLogo";
 
 export function CasinoLogos({ withLinkToPage = true }: { withLinkToPage?: boolean }) {
   return (
@@ -22,9 +23,9 @@ export function CasinoLogos({ withLinkToPage = true }: { withLinkToPage?: boolea
               href={b.href}
               target="_blank"
               rel="noopener noreferrer nofollow sponsored"
-              className="rounded-full border border-white/10 px-5 py-2.5 font-display text-sm font-bold uppercase tracking-wide text-zinc-400 grayscale transition-all hover:border-white/25 hover:text-white hover:grayscale-0"
+              className="rounded-full border border-white/10 px-5 py-2.5 text-sm text-zinc-400 grayscale transition-all hover:border-white/25 hover:text-white hover:grayscale-0"
             >
-              {b.name}
+              <BrandLogo name={b.name} className="text-sm" />
             </a>
           ))}
         </div>

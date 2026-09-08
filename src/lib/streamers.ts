@@ -34,7 +34,7 @@ const entries: Array<[string, string, string]> = [
 export const streamers: Streamer[] = entries.map(([handle, seed, followers], i) => ({
   handle,
   seed,
-  avatar: `${basePath}/avatars/${seed}.svg`,
+  avatar: `${basePath}/avatars/${seed}.jpg`,
   platform: platforms[i % platforms.length],
   niche: niches[i % niches.length],
   followers,

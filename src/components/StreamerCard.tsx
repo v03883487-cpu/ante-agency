@@ -15,7 +15,7 @@ export function StreamerCard({ streamer }: { streamer: Streamer }) {
           alt={`Аватар стримера ${streamer.handle}`}
           width={56}
           height={56}
-          className="h-14 w-14 shrink-0 rounded-2xl bg-black/20"
+          className="h-14 w-14 shrink-0 rounded-2xl object-cover bg-black/20"
           loading="lazy"
         />
         <div className="min-w-0">
