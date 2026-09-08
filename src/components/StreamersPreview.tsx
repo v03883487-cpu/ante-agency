@@ -14,12 +14,12 @@ export function StreamersPreview() {
             </h2>
           </div>
           <Link href="/streamers" className="flex items-center gap-1 text-sm font-medium text-[#F4C95D] hover:text-[#F6D57F]">
-            Весь каталог (1400+) <span aria-hidden>→</span>
+            Весь ростер <span aria-hidden>→</span>
           </Link>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {streamers.slice(0, 8).map((s) => (
+          {streamers.map((s) => (
             <StreamerCard key={s.handle} streamer={s} />
           ))}
         </div>

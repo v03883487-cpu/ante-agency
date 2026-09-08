@@ -5,9 +5,9 @@ import { CtaBand } from "@/components/CtaBand";
 import { streamers } from "@/lib/streamers";
 
 export const metadata: Metadata = {
-  title: "Каталог gambling-стримеров и инфлюенсеров",
+  title: "Наши стримеры и инфлюенсеры",
   description:
-    "1400+ проверенных gambling-стримеров и инфлюенсеров на Twitch, Kick и YouTube — подбор креаторов под гео, аудиторию и бюджет кампании.",
+    "Официальные стримеры-партнёры Ante на Twitch, Kick и YouTube — с реальными каналами и охватом gambling-аудитории.",
   alternates: { canonical: "/streamers" },
 };
 
@@ -15,9 +15,9 @@ export default function StreamersPage() {
   return (
     <>
       <PageHeader
-        eyebrow="1400+ креаторов"
-        title="Каталог стримеров и инфлюенсеров"
-        subtitle="Проверенные gambling-креаторы на Twitch, Kick и YouTube — с реальной статистикой, а не накрученными цифрами."
+        eyebrow="Наш ростер"
+        title="Стримеры и инфлюенсеры"
+        subtitle="Официальные партнёры Ante на Twitch, Kick и YouTube — ссылки ведут на их настоящие каналы."
       />
       <section className="bg-[#0A0B0E] px-6 pb-28 sm:px-12">
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -26,8 +26,7 @@ export default function StreamersPage() {
           ))}
         </div>
         <p className="mx-auto mt-10 max-w-5xl text-center text-sm text-zinc-500">
-          Ники и фото на этой странице — иллюстративные примеры (фото сгенерированы нейросетью, это не реальные
-          люди). Полный список 1400+ реальных креаторов доступен под NDA после брифинга.
+          Показана часть ростера — полный список креаторов под конкретное гео и нишу предоставляем по брифу.
         </p>
       </section>
       <CtaBand />
