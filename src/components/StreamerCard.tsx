@@ -9,12 +9,9 @@ const platformStyle: Record<Streamer["links"][number]["platform"], { color: stri
   facebook: { color: "#1877F2", label: "Facebook" },
 };
 
-const avatarPalette = ["#F4C95D", "#E28B2F", "#22C55E", "#6366F1", "#EC4899", "#38BDF8"];
-
-function avatarColor(handle: string) {
-  let hash = 0;
-  for (let i = 0; i < handle.length; i++) hash = (hash * 31 + handle.charCodeAt(i)) >>> 0;
-  return avatarPalette[hash % avatarPalette.length];
+function formatFollowers(n: number) {
+  if (n >= 1000) return `${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}K`;
+  return String(n);
 }
 
 export function StreamerCard({ streamer }: { streamer: Streamer }) {
@@ -28,14 +25,18 @@ export function StreamerCard({ streamer }: { streamer: Streamer }) {
       className="group flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-[#F4C95D]/30"
     >
       <div className="flex items-center gap-4">
-        <div
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl font-display text-lg font-bold text-[#0A0B0E]"
-          style={{ backgroundColor: avatarColor(streamer.handle) }}
-          aria-hidden
-        >
-          {streamer.handle.slice(0, 2).toUpperCase()}
+        <img
+          src={streamer.avatar}
+          alt={`Аватар ${streamer.handle}`}
+          width={56}
+          height={56}
+          className="h-14 w-14 shrink-0 rounded-2xl object-cover bg-black/20"
+          loading="lazy"
+        />
+        <div className="min-w-0">
+          <p className="truncate font-display text-base font-bold text-white">{streamer.handle}</p>
+          <p className="text-xs text-zinc-500">{formatFollowers(streamer.followers)} на Kick</p>
         </div>
-        <p className="min-w-0 truncate font-display text-base font-bold text-white">{streamer.handle}</p>
       </div>
       <div className="flex flex-wrap items-center gap-2 border-t border-white/10 pt-4">
         {streamer.links.map((l) => (

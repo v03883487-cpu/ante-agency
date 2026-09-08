@@ -32,7 +32,8 @@ export default function BrandsPage() {
             >
               <BrandLogo
                 name={b.name}
-                className="flex-col gap-2 text-sm text-zinc-300 transition-colors group-hover:text-white [&_svg]:h-7 [&_svg]:w-7 [&_svg]:text-[#F4C95D]"
+                logo={b.logo}
+                className="flex-col gap-2 text-sm text-zinc-300 transition-colors group-hover:text-white [&_svg]:h-7 [&_svg]:w-7 [&_svg]:text-[#F4C95D] [&_img]:h-8 [&_img]:w-8"
               />
             </a>
           ))}

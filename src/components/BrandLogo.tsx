@@ -25,22 +25,26 @@ function iconForName(name: string) {
   return genericIcons[hash % genericIcons.length];
 }
 
-export function BrandLogo({ name, className = "" }: { name: string; className?: string }) {
+export function BrandLogo({ name, logo, className = "" }: { name: string; logo?: string; className?: string }) {
   return (
     <span className={`inline-flex items-center gap-2.5 ${className}`}>
-      <svg
-        viewBox="0 0 24 24"
-        width="22"
-        height="22"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="shrink-0"
-      >
-        {iconForName(name)}
-      </svg>
+      {logo ? (
+        <img src={logo} alt={`${name} logo`} width="22" height="22" className="h-[22px] w-[22px] shrink-0 rounded-md" />
+      ) : (
+        <svg
+          viewBox="0 0 24 24"
+          width="22"
+          height="22"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="shrink-0"
+        >
+          {iconForName(name)}
+        </svg>
+      )}
       <span className="font-display font-bold uppercase tracking-wide">{name}</span>
     </span>
   );

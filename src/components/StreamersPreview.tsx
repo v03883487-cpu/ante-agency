@@ -10,7 +10,7 @@ export function StreamersPreview() {
           <div>
             <span className="text-xs font-semibold uppercase tracking-widest text-[#F4C95D]">Наши креаторы</span>
             <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Стримеры и инфлюенсеры Ante
+              Топ стримеров Ante
             </h2>
           </div>
           <Link href="/streamers" className="flex items-center gap-1 text-sm font-medium text-[#F4C95D] hover:text-[#F6D57F]">
@@ -19,7 +19,7 @@ export function StreamersPreview() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {streamers.map((s) => (
+          {streamers.slice(0, 8).map((s) => (
             <StreamerCard key={s.handle} streamer={s} />
           ))}
         </div>

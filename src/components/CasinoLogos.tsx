@@ -25,7 +25,7 @@ export function CasinoLogos({ withLinkToPage = true }: { withLinkToPage?: boolea
               rel="noopener noreferrer nofollow sponsored"
               className="rounded-full border border-white/10 px-5 py-2.5 text-sm text-zinc-400 grayscale transition-all hover:border-white/25 hover:text-white hover:grayscale-0"
             >
-              <BrandLogo name={b.name} className="text-sm" />
+              <BrandLogo name={b.name} logo={b.logo} className="text-sm" />
             </a>
           ))}
         </div>
