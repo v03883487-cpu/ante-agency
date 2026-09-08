@@ -4,15 +4,19 @@ export type Brand = {
   href: string;
 };
 
-// Плейсхолдер-бренды. Замените на логотипы и ссылки реальных партнёров,
-// когда появятся подписанные соглашения.
-export const brands: Brand[] = [
-  { name: "Golden Reel", vertical: "Casino", href: "#" },
-  { name: "Neon Vegas", vertical: "Casino", href: "#" },
-  { name: "Fortuna Bay", vertical: "Betting", href: "#" },
-  { name: "SpinHaven", vertical: "Casino", href: "#" },
-  { name: "Lucky Circuit", vertical: "Live Casino", href: "#" },
-  { name: "Vegas Pulse", vertical: "Casino", href: "#" },
-  { name: "Jackpot Nova", vertical: "Slots", href: "#" },
-  { name: "Royal Drift", vertical: "Betting", href: "#" },
+// Реальные бренды-партнёры. href оставлен плейсхолдером "#" — подставьте
+// свои настоящие (партнёрские/трекинговые) ссылки на каждый бренд.
+const names = [
+  "1Win", "Stake", "Mostbet", "RioBet", "1xBet", "1xCasino", "Roobet", "Disi",
+  "Vavada", "Fortune Galaxy", "MegaPari", "Yeet", "Thrill", "500casino", "BCGame",
+  "OPCases", "RoyalPartners", "MelBet", "NovaPartners", "Motor", "RainBet", "Fixa",
+  "Shuffle", "Bitfortune", "Betwinner", "ToSpin", "WinWin", "CatAff", "MaxBet",
+  "FairPari", "Leon", "Jetton", "Champion", "Atom", "LootRun", "ComboPartners",
+  "Trix", "VODKA", "7K", "Spark", "N1", "NV", "CatCasino",
 ];
+
+export const brands: Brand[] = names.map((name) => ({
+  name,
+  vertical: "Casino & Betting",
+  href: "#",
+}));

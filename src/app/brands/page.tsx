@@ -21,27 +21,22 @@ export default function BrandsPage() {
       />
 
       <section className="bg-[#0A0B0E] px-6 pb-16 sm:px-12">
-        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
           {brands.map((b) => (
             <a
               key={b.name}
               href={b.href}
               target="_blank"
               rel="noopener noreferrer nofollow sponsored"
-              className="group flex flex-col items-center justify-center gap-3 rounded-3xl border border-white/10 bg-white/[0.03] px-4 py-8 text-center transition-colors hover:border-[#F4C95D]/30"
+              className="group flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-6 text-center transition-colors hover:border-[#F4C95D]/30"
             >
               <BrandLogo
                 name={b.name}
-                className="flex-col gap-2 text-base text-zinc-300 transition-colors group-hover:text-white [&_svg]:h-8 [&_svg]:w-8 [&_svg]:text-[#F4C95D]"
+                className="flex-col gap-2 text-sm text-zinc-300 transition-colors group-hover:text-white [&_svg]:h-7 [&_svg]:w-7 [&_svg]:text-[#F4C95D]"
               />
-              <span className="text-xs uppercase tracking-widest text-zinc-600">{b.vertical}</span>
             </a>
           ))}
         </div>
-        <p className="mx-auto mt-8 max-w-5xl text-center text-xs text-zinc-600">
-          Названия брендов приведены как пример формата презентации партнёров — логотипы и ссылки обновляются
-          на реальные после подписания соглашения.
-        </p>
       </section>
 
       <section className="bg-[#0A0B0E] px-6 pb-28 sm:px-12">

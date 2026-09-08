@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaBand } from "@/components/CtaBand";
-import { brands } from "@/lib/brands";
 
 export const metadata: Metadata = {
   title: "Кейсы инфлюенс-кампаний",
@@ -10,10 +9,10 @@ export const metadata: Metadata = {
 };
 
 const cases = [
-  { brand: brands[0].name, metric: "3.2M", label: "просмотров интеграций", format: "Twitch-стримы + клипы" },
-  { brand: brands[2].name, metric: "+68%", label: "рост регистраций за месяц", format: "Betting-амбассадорство" },
-  { brand: brands[4].name, metric: "140+", label: "интеграций у 40 креаторов", format: "Live Casino посевы" },
-  { brand: brands[6].name, metric: "5.4M", label: "суммарный охват", format: "Slots-кампания на YouTube" },
+  { brand: "Casino-бренд A", metric: "3.2M", label: "просмотров интеграций", format: "Twitch-стримы + клипы" },
+  { brand: "Betting-бренд B", metric: "+68%", label: "рост регистраций за месяц", format: "Betting-амбассадорство" },
+  { brand: "Live Casino-бренд C", metric: "140+", label: "интеграций у 40 креаторов", format: "Live Casino посевы" },
+  { brand: "Slots-бренд D", metric: "5.4M", label: "суммарный охват", format: "Slots-кампания на YouTube" },
 ];
 
 export default function CasesPage() {
@@ -35,7 +34,8 @@ export default function CasesPage() {
           ))}
         </div>
         <p className="mx-auto mt-8 max-w-5xl text-center text-xs text-zinc-600">
-          Кейсы демонстрируют формат подачи результатов. Реальные цифры и брендинг публикуются после согласования с партнёром.
+          Кейсы демонстрируют формат подачи результатов. Названия брендов и цифры — иллюстративные, реальные
+          кейсы публикуются после согласования с партнёром.
         </p>
       </section>
       <CtaBand />
