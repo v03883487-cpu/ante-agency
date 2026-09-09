@@ -43,6 +43,8 @@ const steps = [
 
 const payouts = ["USDT / крипта", "Банковская карта", "Электронные кошельки", "По запросу — под гео"];
 
+const PARTNERS_APP_URL = "https://ante-partners-app.vercel.app";
+
 const partnerFaqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -73,7 +75,9 @@ export default function PartnersPage() {
           </p>
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
             <a
-              href="#signup"
+              href={`${PARTNERS_APP_URL}/register`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-full bg-[#D7FF3F] px-7 py-3 text-sm font-semibold text-[#0A0B0E] transition-transform hover:scale-105"
             >
               Стать партнёром
@@ -183,15 +187,23 @@ export default function PartnersPage() {
           <div>
             <h2 className="font-display text-2xl font-bold text-white">Стать партнёром</h2>
             <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-              Оставьте заявку — подберём оффер под ваш трафик и гео. Ответим в Telegram или на почту в течение
-              рабочего дня.
+              Зарегистрируйтесь в личном кабинете — получите свою реферальную ссылку сразу после регистрации
+              и следите за статистикой.
             </p>
+            <a
+              href={`${PARTNERS_APP_URL}/register`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex rounded-full bg-[#D7FF3F] px-6 py-3 text-sm font-semibold text-[#0A0B0E] transition-transform hover:scale-105"
+            >
+              Открыть личный кабинет →
+            </a>
             <p className="mt-6 text-sm text-zinc-500">
-              Или сразу напишите: <a href="mailto:partners@ante.agency" className="text-white hover:text-[#D7FF3F]">partners@ante.agency</a>
+              Или напишите напрямую: <a href="mailto:partners@ante.agency" className="text-white hover:text-[#D7FF3F]">partners@ante.agency</a>
             </p>
             <p className="mt-6 text-xs text-zinc-600">
-              Эта страница временно живёт на домене агентства Ante и позже переедет на собственный домен
-              партнёрской программы.
+              Кабинет партнёра уже живёт на собственном домене ({PARTNERS_APP_URL.replace("https://", "")}),
+              отдельно от сайта агентства.
             </p>
           </div>
           <PartnerSignupForm />
