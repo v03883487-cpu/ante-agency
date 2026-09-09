@@ -31,12 +31,21 @@ export function Navbar() {
           </Link>
         ))}
       </div>
-      <Link
-        href="/contact"
-        className="rounded-full border border-white/15 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
-      >
-        Связаться
-      </Link>
+      <div className="flex items-center gap-3">
+        <Link
+          href="/partners"
+          className="hidden items-center gap-1.5 rounded-full bg-[#D7FF3F] px-5 py-2 text-sm font-semibold text-[#0A0B0E] transition-transform hover:scale-105 sm:flex"
+        >
+          Партнёрка
+          <span aria-hidden>↗</span>
+        </Link>
+        <Link
+          href="/contact"
+          className="rounded-full border border-white/15 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
+        >
+          Связаться
+        </Link>
+      </div>
     </nav>
   );
 }

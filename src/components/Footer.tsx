@@ -17,6 +17,10 @@ const columns = [
       { href: "/brands", label: "Casino-бренды" },
     ],
   },
+  {
+    title: "Партнёрам",
+    links: [{ href: "/partners", label: "Партнёрская программа" }],
+  },
 ];
 
 export function Footer() {
