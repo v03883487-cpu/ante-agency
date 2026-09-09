@@ -25,8 +25,8 @@ export default function CasesPage() {
         title="Кейсы"
         subtitle="Формат презентации результатов кампаний — цифры приведены как пример структуры отчётности."
       />
-      <section className="bg-[#0A0B0E] px-6 pb-10 sm:px-12">
-        <div className="mx-auto max-w-3xl text-center text-sm leading-relaxed text-zinc-400">
+      <section className="bg-white px-6 pb-10 sm:px-12">
+        <div className="mx-auto max-w-3xl text-center text-sm leading-relaxed text-zinc-500">
           <p>
             Каждая кампания Ante закрывается отчётом: охваты, переходы по трекинговым ссылкам и, где это
             технически доступно, конверсии в депозиты. Ниже — иллюстрация того, как выглядит такой отчёт
@@ -34,17 +34,17 @@ export default function CasesPage() {
           </p>
         </div>
       </section>
-      <section className="bg-[#0A0B0E] px-6 pb-28 sm:px-12">
+      <section className="bg-white px-6 pb-28 sm:px-12">
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2">
           {cases.map((c) => (
-            <div key={c.brand} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+            <div key={c.brand} className="rounded-3xl border border-black/10 bg-white p-6">
               <span className="text-xs uppercase tracking-widest text-zinc-500">{c.brand} · {c.format}</span>
-              <p className="mt-3 font-display text-4xl font-bold text-white">{c.metric}</p>
-              <p className="mt-1 text-sm text-zinc-400">{c.label}</p>
+              <p className="mt-3 font-display text-4xl font-black text-[#0A0A0A]">{c.metric}</p>
+              <p className="mt-1 text-sm text-zinc-500">{c.label}</p>
             </div>
           ))}
         </div>
-        <p className="mx-auto mt-8 max-w-5xl text-center text-xs text-zinc-600">
+        <p className="mx-auto mt-8 max-w-5xl text-center text-xs text-zinc-500">
           Кейсы демонстрируют формат подачи результатов. Названия брендов и цифры — иллюстративные, реальные
           кейсы публикуются после согласования с партнёром.
         </p>

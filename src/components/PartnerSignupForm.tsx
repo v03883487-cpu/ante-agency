@@ -21,48 +21,30 @@ export function PartnerSignupForm() {
     setSent(true);
   }
 
+  const inputCls =
+    "w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-[#0A0A0A] outline-none focus:border-[#0A0A0A]";
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div>
         <label htmlFor="telegram" className="mb-1 block text-xs text-zinc-500">Telegram</label>
-        <input
-          id="telegram"
-          name="telegram"
-          required
-          placeholder="@username"
-          className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white outline-none focus:border-[#D7FF3F]/50"
-        />
+        <input id="telegram" name="telegram" required placeholder="@username" className={inputCls} />
       </div>
       <div>
         <label htmlFor="source" className="mb-1 block text-xs text-zinc-500">Источник трафика</label>
-        <input
-          id="source"
-          name="source"
-          placeholder="Twitch / Kick / YouTube / Telegram / медиабаинг…"
-          className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white outline-none focus:border-[#D7FF3F]/50"
-        />
+        <input id="source" name="source" placeholder="Twitch / Kick / YouTube / Telegram / медиабаинг…" className={inputCls} />
       </div>
       <div>
         <label htmlFor="volume" className="mb-1 block text-xs text-zinc-500">Ожидаемый объём трафика / гео</label>
-        <input
-          id="volume"
-          name="volume"
-          placeholder="напр. 500 кликов/день, СНГ"
-          className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white outline-none focus:border-[#D7FF3F]/50"
-        />
+        <input id="volume" name="volume" placeholder="напр. 500 кликов/день, СНГ" className={inputCls} />
       </div>
       <div>
         <label htmlFor="message" className="mb-1 block text-xs text-zinc-500">Комментарий</label>
-        <textarea
-          id="message"
-          name="message"
-          rows={3}
-          className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white outline-none focus:border-[#D7FF3F]/50"
-        />
+        <textarea id="message" name="message" rows={3} className={inputCls} />
       </div>
       <button
         type="submit"
-        className="rounded-full bg-[#D7FF3F] px-6 py-3 text-sm font-semibold text-[#0A0B0E] transition-transform hover:scale-105"
+        className="rounded-full bg-[#0A0A0A] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80"
       >
         {sent ? "Открываем почтовый клиент…" : "Подать заявку"}
       </button>

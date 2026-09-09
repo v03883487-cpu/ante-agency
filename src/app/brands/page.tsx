@@ -22,8 +22,8 @@ export default function BrandsPage() {
         subtitle="Работаем с операторами casino, betting и live-casino — от разового посева до долгосрочного амбассадорства."
       />
 
-      <section className="bg-[#0A0B0E] px-6 pb-10 sm:px-12">
-        <div className="mx-auto max-w-3xl text-center text-sm leading-relaxed text-zinc-400">
+      <section className="bg-white px-6 pb-10 sm:px-12">
+        <div className="mx-auto max-w-3xl text-center text-sm leading-relaxed text-zinc-500">
           <p>
             Ante выстраивает инфлюенс-маркетинг для gambling и iGaming операторов на стыке трёх вертикалей —
             casino, sports betting и live casino. Для каждого бренда мы подбираем стримеров, чья аудитория
@@ -33,7 +33,7 @@ export default function BrandsPage() {
         </div>
       </section>
 
-      <section className="bg-[#0A0B0E] px-6 pb-16 sm:px-12">
+      <section className="bg-white px-6 pb-16 sm:px-12">
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
           {brands.map((b) => (
             <a
@@ -41,7 +41,7 @@ export default function BrandsPage() {
               href={b.href}
               target="_blank"
               rel="noopener noreferrer nofollow sponsored"
-              className="group relative overflow-hidden flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-6 text-center transition-colors hover:border-[#F4C95D]/30"
+              className="group relative overflow-hidden flex flex-col items-center justify-center gap-2 rounded-2xl border border-black/10 bg-white px-3 py-6 text-center transition-colors hover:border-black/30"
             >
               <span className="corner-bracket corner-bracket--tl" aria-hidden />
               <span className="corner-bracket corner-bracket--tr" aria-hidden />
@@ -50,14 +50,14 @@ export default function BrandsPage() {
               <BrandLogo
                 name={b.name}
                 logo={b.logo}
-                className="flex-col gap-2 text-sm text-zinc-300 transition-colors group-hover:text-white [&_svg]:h-7 [&_svg]:w-7 [&_svg]:text-[#F4C95D] [&_img]:h-8 [&_img]:w-8"
+                className="flex-col gap-2 text-sm text-zinc-600 transition-colors group-hover:text-[#0A0A0A] [&_svg]:h-7 [&_svg]:w-7 [&_svg]:text-[#0A0A0A] [&_img]:h-8 [&_img]:w-8"
               />
             </a>
           ))}
         </div>
       </section>
 
-      <section className="bg-[#0A0B0E] px-6 pb-28 sm:px-12">
+      <section className="bg-white px-6 pb-28 sm:px-12">
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-3">
           {[
             {
@@ -73,9 +73,9 @@ export default function BrandsPage() {
               body: "Живые дилеры и шоу-форматы — выстраиваем амбассадорство и регулярные интеграции на канале, а не разовые упоминания, которые забываются на следующий день.",
             },
           ].map((v) => (
-            <div key={v.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-              <h3 className="font-display text-lg font-bold text-white">{v.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-zinc-400">{v.body}</p>
+            <div key={v.title} className="rounded-3xl border border-black/10 bg-white p-6">
+              <h3 className="font-display text-lg font-bold text-[#0A0A0A]">{v.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-zinc-500">{v.body}</p>
             </div>
           ))}
         </div>

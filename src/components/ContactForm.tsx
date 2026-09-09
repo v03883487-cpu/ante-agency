@@ -18,38 +18,26 @@ export function ContactForm() {
     setSent(true);
   }
 
+  const inputCls =
+    "w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-[#0A0A0A] outline-none focus:border-[#0A0A0A]";
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div>
         <label htmlFor="name" className="mb-1 block text-xs text-zinc-500">Имя</label>
-        <input
-          id="name"
-          name="name"
-          required
-          className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white outline-none focus:border-[#F4C95D]/50"
-        />
+        <input id="name" name="name" required className={inputCls} />
       </div>
       <div>
         <label htmlFor="brand" className="mb-1 block text-xs text-zinc-500">Бренд</label>
-        <input
-          id="brand"
-          name="brand"
-          className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white outline-none focus:border-[#F4C95D]/50"
-        />
+        <input id="brand" name="brand" className={inputCls} />
       </div>
       <div>
         <label htmlFor="message" className="mb-1 block text-xs text-zinc-500">Сообщение</label>
-        <textarea
-          id="message"
-          name="message"
-          rows={4}
-          required
-          className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white outline-none focus:border-[#F4C95D]/50"
-        />
+        <textarea id="message" name="message" rows={4} required className={inputCls} />
       </div>
       <button
         type="submit"
-        className="rounded-full bg-gradient-to-r from-[#F4C95D] to-[#E28B2F] px-6 py-3 text-sm font-semibold text-[#0A0B0E] transition-transform hover:scale-105"
+        className="rounded-full bg-[#0A0A0A] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80"
       >
         {sent ? "Открываем почтовый клиент…" : "Отправить"}
       </button>

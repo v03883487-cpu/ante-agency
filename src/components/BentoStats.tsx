@@ -11,20 +11,21 @@ const cardVariants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
 };
 
-function Corners() {
+function Corners({ light = false }: { light?: boolean }) {
+  const color = light ? "#FFFFFF" : "#0A0A0A";
   return (
     <>
-      <span className="corner-bracket corner-bracket--tl" aria-hidden />
-      <span className="corner-bracket corner-bracket--tr" aria-hidden />
-      <span className="corner-bracket corner-bracket--bl" aria-hidden />
-      <span className="corner-bracket corner-bracket--br" aria-hidden />
+      <span className="corner-bracket corner-bracket--tl" style={{ borderColor: color }} aria-hidden />
+      <span className="corner-bracket corner-bracket--tr" style={{ borderColor: color }} aria-hidden />
+      <span className="corner-bracket corner-bracket--bl" style={{ borderColor: color }} aria-hidden />
+      <span className="corner-bracket corner-bracket--br" style={{ borderColor: color }} aria-hidden />
     </>
   );
 }
 
 export function BentoStats() {
   return (
-    <section className="relative bg-[#0A0B0E] px-6 pb-28 sm:px-12">
+    <section className="relative bg-white px-6 pb-28 sm:px-12">
       <motion.div
         initial="hidden"
         whileInView="show"
@@ -34,14 +35,14 @@ export function BentoStats() {
       >
         <motion.div
           variants={cardVariants}
-          className="group relative col-span-1 rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:col-span-2 sm:row-span-2"
+          className="group relative col-span-1 rounded-3xl border border-black/10 bg-white p-6 sm:col-span-2 sm:row-span-2"
         >
           <Corners />
-          <span className="text-4xl font-bold text-white sm:text-5xl font-display">
+          <span className="text-4xl font-black text-[#0A0A0A] sm:text-5xl font-display">
             <CountUp to={120} suffix="M+" />
           </span>
-          <p className="mt-2 text-sm text-zinc-400">суммарный охват аудитории стримеров-партнёров</p>
-          <svg viewBox="0 0 200 60" className="mt-6 w-full text-[#F4C95D]">
+          <p className="mt-2 text-sm text-zinc-500">суммарный охват аудитории стримеров-партнёров</p>
+          <svg viewBox="0 0 200 60" className="mt-6 w-full text-[#0A0A0A]">
             <path
               d="M2 48 C 30 40, 40 52, 60 38 S 90 20, 110 26 S 150 8, 170 14 S 190 6, 198 4"
               fill="none"
@@ -52,28 +53,28 @@ export function BentoStats() {
           </svg>
         </motion.div>
 
-        <motion.div variants={cardVariants} className="group relative rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+        <motion.div variants={cardVariants} className="group relative rounded-3xl border border-black/10 bg-white p-6">
           <Corners />
-          <span className="text-3xl font-bold text-white font-display">
+          <span className="text-3xl font-black text-[#0A0A0A] font-display">
             <CountUp to={1400} suffix="+" />
           </span>
-          <p className="mt-2 text-sm text-zinc-400">gambling-стримеров и инфлюенсеров в базе</p>
+          <p className="mt-2 text-sm text-zinc-500">gambling-стримеров и инфлюенсеров в базе</p>
         </motion.div>
 
-        <motion.div variants={cardVariants} className="group relative rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+        <motion.div variants={cardVariants} className="group relative rounded-3xl border border-black/10 bg-white p-6">
           <Corners />
-          <span className="text-3xl font-bold text-white font-display">
+          <span className="text-3xl font-black text-[#0A0A0A] font-display">
             <CountUp to={brands.length} />
           </span>
-          <p className="mt-2 text-sm text-zinc-400">casino / iGaming брендов-партнёров</p>
+          <p className="mt-2 text-sm text-zinc-500">casino / iGaming брендов-партнёров</p>
         </motion.div>
 
         <motion.div
           variants={cardVariants}
-          className="group relative col-span-1 flex flex-col justify-between rounded-3xl border border-[#F4C95D]/20 bg-gradient-to-br from-[#F4C95D]/10 to-transparent p-6 sm:col-span-2"
+          className="group relative col-span-1 flex flex-col justify-between rounded-3xl border border-black/10 bg-[#0A0A0A] p-6 text-white sm:col-span-2"
         >
-          <Corners />
-          <span className="text-3xl font-bold text-white font-display">24/7</span>
+          <Corners light />
+          <span className="text-3xl font-black font-display">24/7</span>
           <p className="mt-2 text-sm text-zinc-400">
             сопровождение кампаний — от брифа и подбора креаторов до модерации и отчётности
           </p>

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SuitMarks } from "./SuitMarks";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -29,22 +28,21 @@ export function Services() {
   const [open, setOpen] = useState(0);
 
   return (
-    <section id="services" className="relative overflow-hidden bg-[#0A0B0E] px-6 pb-28 sm:px-12">
-      <SuitMarks />
-      <div className="relative mx-auto max-w-5xl">
+    <section id="services" className="relative bg-white px-6 pb-28 sm:px-12">
+      <div className="mx-auto max-w-5xl">
         <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-widest text-[#F4C95D]">Что мы делаем</span>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
+            <span className="text-xs font-semibold uppercase tracking-widest text-zinc-500">Что мы делаем</span>
+            <h2 className="mt-3 font-display text-3xl font-black tracking-tight text-[#0A0A0A] sm:text-4xl">
               Полный цикл инфлюенс-маркетинга для gambling-брендов
             </h2>
           </div>
-          <a href="#contact" className="flex items-center gap-1 text-sm font-medium text-[#F4C95D] hover:text-[#F6D57F]">
+          <a href="#contact" className="flex items-center gap-1 text-sm font-medium text-[#0A0A0A] hover:opacity-60">
             Обсудить кампанию <span aria-hidden>→</span>
           </a>
         </div>
 
-        <div className="divide-y divide-white/10 border-y border-white/10">
+        <div className="divide-y divide-black/10 border-y border-black/10">
           {services.map((s, i) => {
             const isOpen = open === i;
             return (
@@ -53,13 +51,13 @@ export function Services() {
                   onClick={() => setOpen(isOpen ? -1 : i)}
                   className="flex w-full items-center gap-6 py-6 text-left"
                 >
-                  <span className="font-display text-sm font-bold text-white/15">{String(i + 1).padStart(2, "0")}</span>
-                  <span className={`flex-1 font-display text-lg font-semibold sm:text-xl ${isOpen ? "text-white" : "text-zinc-400"}`}>
+                  <span className="font-display text-sm font-bold text-black/20">{String(i + 1).padStart(2, "0")}</span>
+                  <span className={`flex-1 font-display text-lg font-semibold sm:text-xl ${isOpen ? "text-[#0A0A0A]" : "text-zinc-400"}`}>
                     {s.title}
                   </span>
                   <motion.span
                     animate={{ rotate: isOpen ? 45 : 0 }}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/15 text-lg text-white"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-black/15 text-lg text-[#0A0A0A]"
                   >
                     +
                   </motion.span>
@@ -73,7 +71,7 @@ export function Services() {
                       transition={{ duration: 0.35, ease: EASE }}
                       className="overflow-hidden"
                     >
-                      <p className="max-w-xl pb-6 pl-11 text-sm leading-relaxed text-zinc-400">{s.body}</p>
+                      <p className="max-w-xl pb-6 pl-11 text-sm leading-relaxed text-zinc-500">{s.body}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
