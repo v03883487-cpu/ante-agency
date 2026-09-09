@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -42,6 +42,11 @@ export const metadata: Metadata = {
     description: "1400+ проверенных gambling-стримеров и инфлюенсеров под ключ.",
   },
   alternates: { canonical: "/" },
+};
+
+export const viewport: Viewport = {
+  colorScheme: "light",
+  themeColor: "#ffffff",
 };
 
 const jsonLd = {
