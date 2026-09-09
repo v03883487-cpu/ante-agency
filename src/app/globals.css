@@ -18,6 +18,19 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
 }
 
+/* Fill flat section backgrounds with a subtle dot-grid + diagonal card-suit
+   watermark texture instead of leaving them a flat, empty black. Targets
+   Tailwind's generated bg-[#0A0B0E] utility directly so every section that
+   already uses it picks up the texture with no per-component changes. */
+.bg-\[\#0A0B0E\] {
+  background-image:
+    radial-gradient(rgba(244, 201, 93, 0.09) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 26px 26px, 130px 130px, 130px 130px;
+  background-position: 0 0, 0 0, 0 0;
+}
+
 ::selection {
   background: #F4C95D;
   color: #0A0B0E;

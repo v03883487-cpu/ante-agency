@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SuitMarks } from "./SuitMarks";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -28,8 +29,9 @@ export function Services() {
   const [open, setOpen] = useState(0);
 
   return (
-    <section id="services" className="relative bg-[#0A0B0E] px-6 pb-28 sm:px-12">
-      <div className="mx-auto max-w-5xl">
+    <section id="services" className="relative overflow-hidden bg-[#0A0B0E] px-6 pb-28 sm:px-12">
+      <SuitMarks />
+      <div className="relative mx-auto max-w-5xl">
         <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <span className="text-xs font-semibold uppercase tracking-widest text-[#F4C95D]">Что мы делаем</span>
@@ -49,9 +51,10 @@ export function Services() {
               <div key={s.title}>
                 <button
                   onClick={() => setOpen(isOpen ? -1 : i)}
-                  className="flex w-full items-center justify-between gap-6 py-6 text-left"
+                  className="flex w-full items-center gap-6 py-6 text-left"
                 >
-                  <span className={`font-display text-lg font-semibold sm:text-xl ${isOpen ? "text-white" : "text-zinc-400"}`}>
+                  <span className="font-display text-sm font-bold text-white/15">{String(i + 1).padStart(2, "0")}</span>
+                  <span className={`flex-1 font-display text-lg font-semibold sm:text-xl ${isOpen ? "text-white" : "text-zinc-400"}`}>
                     {s.title}
                   </span>
                   <motion.span
@@ -70,7 +73,7 @@ export function Services() {
                       transition={{ duration: 0.35, ease: EASE }}
                       className="overflow-hidden"
                     >
-                      <p className="max-w-xl pb-6 text-sm leading-relaxed text-zinc-400">{s.body}</p>
+                      <p className="max-w-xl pb-6 pl-11 text-sm leading-relaxed text-zinc-400">{s.body}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
