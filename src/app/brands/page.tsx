@@ -43,6 +43,10 @@ export default function BrandsPage() {
               rel="noopener noreferrer nofollow sponsored"
               className="group relative overflow-hidden flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-6 text-center transition-colors hover:border-[#F4C95D]/30"
             >
+              <span className="corner-bracket corner-bracket--tl" aria-hidden />
+              <span className="corner-bracket corner-bracket--tr" aria-hidden />
+              <span className="corner-bracket corner-bracket--bl" aria-hidden />
+              <span className="corner-bracket corner-bracket--br" aria-hidden />
               <BrandLogo
                 name={b.name}
                 logo={b.logo}

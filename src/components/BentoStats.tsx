@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { CountUp } from "./CountUp";
+import { brands } from "@/lib/brands";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -8,6 +10,17 @@ const cardVariants = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
 };
+
+function Corners() {
+  return (
+    <>
+      <span className="corner-bracket corner-bracket--tl" aria-hidden />
+      <span className="corner-bracket corner-bracket--tr" aria-hidden />
+      <span className="corner-bracket corner-bracket--bl" aria-hidden />
+      <span className="corner-bracket corner-bracket--br" aria-hidden />
+    </>
+  );
+}
 
 export function BentoStats() {
   return (
@@ -21,9 +34,12 @@ export function BentoStats() {
       >
         <motion.div
           variants={cardVariants}
-          className="col-span-1 rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:col-span-2 sm:row-span-2"
+          className="group relative col-span-1 rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:col-span-2 sm:row-span-2"
         >
-          <span className="text-4xl font-bold text-white sm:text-5xl font-display">120M+</span>
+          <Corners />
+          <span className="text-4xl font-bold text-white sm:text-5xl font-display">
+            <CountUp to={120} suffix="M+" />
+          </span>
           <p className="mt-2 text-sm text-zinc-400">суммарный охват аудитории стримеров-партнёров</p>
           <svg viewBox="0 0 200 60" className="mt-6 w-full text-[#F4C95D]">
             <path
@@ -36,20 +52,27 @@ export function BentoStats() {
           </svg>
         </motion.div>
 
-        <motion.div variants={cardVariants} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-          <span className="text-3xl font-bold text-white font-display">1400+</span>
+        <motion.div variants={cardVariants} className="group relative rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+          <Corners />
+          <span className="text-3xl font-bold text-white font-display">
+            <CountUp to={1400} suffix="+" />
+          </span>
           <p className="mt-2 text-sm text-zinc-400">gambling-стримеров и инфлюенсеров в базе</p>
         </motion.div>
 
-        <motion.div variants={cardVariants} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-          <span className="text-3xl font-bold text-white font-display">18</span>
+        <motion.div variants={cardVariants} className="group relative rounded-3xl border border-white/10 bg-white/[0.03] p-6">
+          <Corners />
+          <span className="text-3xl font-bold text-white font-display">
+            <CountUp to={brands.length} />
+          </span>
           <p className="mt-2 text-sm text-zinc-400">casino / iGaming брендов-партнёров</p>
         </motion.div>
 
         <motion.div
           variants={cardVariants}
-          className="col-span-1 flex flex-col justify-between rounded-3xl border border-[#F4C95D]/20 bg-gradient-to-br from-[#F4C95D]/10 to-transparent p-6 sm:col-span-2"
+          className="group relative col-span-1 flex flex-col justify-between rounded-3xl border border-[#F4C95D]/20 bg-gradient-to-br from-[#F4C95D]/10 to-transparent p-6 sm:col-span-2"
         >
+          <Corners />
           <span className="text-3xl font-bold text-white font-display">24/7</span>
           <p className="mt-2 text-sm text-zinc-400">
             сопровождение кампаний — от брифа и подбора креаторов до модерации и отчётности

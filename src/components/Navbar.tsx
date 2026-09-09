@@ -24,7 +24,8 @@ export function Navbar() {
           <Link
             key={l.href}
             href={l.href}
-            className={`transition-colors hover:text-white ${pathname === l.href ? "text-white" : ""}`}
+            data-active={pathname === l.href}
+            className={`nav-link transition-colors hover:text-white ${pathname === l.href ? "text-white" : ""}`}
           >
             {l.label}
           </Link>

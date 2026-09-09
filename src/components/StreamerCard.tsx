@@ -22,8 +22,12 @@ export function StreamerCard({ streamer }: { streamer: Streamer }) {
       href={primary.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-[#F4C95D]/30"
+      className="group relative flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-[#F4C95D]/30"
     >
+      <span className="corner-bracket corner-bracket--tl" aria-hidden />
+      <span className="corner-bracket corner-bracket--tr" aria-hidden />
+      <span className="corner-bracket corner-bracket--bl" aria-hidden />
+      <span className="corner-bracket corner-bracket--br" aria-hidden />
       <div className="flex items-center gap-4">
         <img
           src={streamer.avatar}
