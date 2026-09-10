@@ -32,8 +32,8 @@ export function Services() {
       <div className="mx-auto max-w-5xl">
         <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">Что мы делаем</span>
-            <h2 className="mt-3 font-display text-3xl font-black tracking-tight text-white sm:text-4xl">
+            <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Что мы делаем</span>
+            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
               Полный цикл инфлюенс-маркетинга для gambling-брендов
             </h2>
           </div>

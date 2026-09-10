@@ -22,7 +22,7 @@ export function PartnerSignupForm() {
   }
 
   const inputCls =
-    "w-full rounded-xl border border-white/15 bg-white px-4 py-2.5 text-sm text-white outline-none focus:border-white";
+    "w-full rounded-xl border border-white/15 bg-white px-4 py-2.5 text-sm text-white outline-none focus:border-[var(--accent)]";
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -44,7 +44,7 @@ export function PartnerSignupForm() {
       </div>
       <button
         type="submit"
-        className="rounded-full bg-[#ffffff] px-6 py-3 text-sm font-semibold text-[#0A0A0A] transition-opacity hover:opacity-80"
+        className="rounded-full bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-85"
       >
         {sent ? "Открываем почтовый клиент…" : "Подать заявку"}
       </button>

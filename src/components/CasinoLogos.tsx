@@ -9,7 +9,7 @@ export function CasinoLogos({ withLinkToPage = true }: { withLinkToPage?: boolea
     <section className="border-y border-white/10 bg-white py-14">
       <div className="mx-auto max-w-5xl px-6 sm:px-12">
         <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-xs uppercase tracking-widest text-zinc-400">
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">
             Casino &amp; iGaming бренды, с которыми мы работаем в вертикали
           </p>
           {withLinkToPage && (

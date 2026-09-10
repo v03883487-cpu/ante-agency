@@ -39,7 +39,7 @@ export default function CasesPage() {
           {cases.map((c) => (
             <div key={c.brand} className="rounded-3xl border border-white/10 bg-white p-6">
               <span className="text-xs uppercase tracking-widest text-zinc-400">{c.brand} · {c.format}</span>
-              <p className="mt-3 font-display text-4xl font-black text-white">{c.metric}</p>
+              <p className="mt-3 font-display text-4xl font-bold text-white">{c.metric}</p>
               <p className="mt-1 text-sm text-zinc-400">{c.label}</p>
             </div>
           ))}

@@ -62,8 +62,8 @@ export default function PartnersPage() {
 
       <section className="relative bg-white px-6 pb-16 pt-16 text-center text-white sm:px-12 sm:pt-24">
         <div className="relative mx-auto max-w-2xl">
-          <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">Ante Partners</span>
-          <h1 className="mt-3 font-display text-4xl font-black tracking-tight sm:text-5xl">
+          <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Ante Partners</span>
+          <h1 className="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl">
             Заливай трафик — получай процент
           </h1>
           <p className="mt-4 text-lg text-zinc-400">
@@ -75,7 +75,7 @@ export default function PartnersPage() {
               href={`${PARTNERS_APP_URL}/register`}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-[#ffffff] px-7 py-3 text-sm font-semibold text-[#0A0A0A] transition-opacity hover:opacity-80"
+              className="rounded-full bg-[var(--accent)] px-7 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-85"
             >
               Стать партнёром
             </a>
@@ -98,7 +98,7 @@ export default function PartnersPage() {
             { value: "0", label: "порог входа" },
           ].map((s, i) => (
             <div key={i} className="rounded-2xl border border-white/10 bg-white p-5 text-center">
-              <div className="font-display text-2xl font-black text-white">{s.value}</div>
+              <div className="font-display text-2xl font-bold text-white">{s.value}</div>
               <p className="mt-1 text-xs text-zinc-400">{s.label}</p>
             </div>
           ))}
@@ -110,8 +110,8 @@ export default function PartnersPage() {
       <section id="plans" className="relative bg-white px-6 py-20 sm:px-12">
         <div className="mx-auto max-w-5xl">
           <div className="mb-10 text-center">
-            <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">Модели оплаты</span>
-            <h2 className="mt-3 font-display text-3xl font-black tracking-tight text-white sm:text-4xl">
+            <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Модели оплаты</span>
+            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
               Выбирайте, как получать доход
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-zinc-400">
@@ -125,7 +125,7 @@ export default function PartnersPage() {
                 <span className="corner-bracket corner-bracket--tl" aria-hidden />
                 <span className="corner-bracket corner-bracket--br" aria-hidden />
                 <span className="text-xs uppercase tracking-widest text-zinc-400">{p.tag}</span>
-                <h3 className="mt-2 font-display text-2xl font-black text-white">{p.title}</h3>
+                <h3 className="mt-2 font-display text-2xl font-bold text-white">{p.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-zinc-400">{p.body}</p>
               </div>
             ))}
@@ -136,15 +136,15 @@ export default function PartnersPage() {
       <section className="bg-white px-6 py-20 sm:px-12">
         <div className="mx-auto max-w-5xl">
           <div className="mb-10 text-center">
-            <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">Как это работает</span>
-            <h2 className="mt-3 font-display text-3xl font-black tracking-tight text-white sm:text-4xl">
+            <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Как это работает</span>
+            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
               От заявки до первой выплаты
             </h2>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
             {steps.map((s) => (
               <div key={s.n} className="rounded-3xl border border-white/10 bg-white p-6">
-                <span className="font-display text-3xl font-black text-white/15">{s.n}</span>
+                <span className="font-display text-3xl font-bold text-white/15">{s.n}</span>
                 <h3 className="mt-3 font-display text-base font-bold text-white">{s.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-zinc-400">{s.body}</p>
               </div>
@@ -155,8 +155,8 @@ export default function PartnersPage() {
 
       <section className="bg-white px-6 py-20 sm:px-12">
         <div className="mx-auto max-w-3xl rounded-3xl border border-white/10 bg-white p-8 text-center">
-          <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">Выплаты</span>
-          <h2 className="mt-3 font-display text-2xl font-black text-white">Как получаете деньги</h2>
+          <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Выплаты</span>
+          <h2 className="mt-3 font-display text-2xl font-bold text-white">Как получаете деньги</h2>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             {payouts.map((p) => (
               <span key={p} className="rounded-full border border-white/10 px-4 py-2 text-sm text-zinc-300">
@@ -170,8 +170,8 @@ export default function PartnersPage() {
       <section className="relative bg-white px-6 py-20 sm:px-12">
         <div className="mx-auto max-w-3xl">
           <div className="mb-10 text-center">
-            <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">Вопросы партнёров</span>
-            <h2 className="mt-3 font-display text-3xl font-black tracking-tight text-white sm:text-4xl">
+            <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Вопросы партнёров</span>
+            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
               Прежде чем начать лить
             </h2>
           </div>
@@ -182,7 +182,7 @@ export default function PartnersPage() {
       <section id="signup" className="bg-white px-6 pb-28 sm:px-12">
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-10 sm:grid-cols-2">
           <div>
-            <h2 className="font-display text-2xl font-black text-white">Стать партнёром</h2>
+            <h2 className="font-display text-2xl font-bold text-white">Стать партнёром</h2>
             <p className="mt-3 text-sm leading-relaxed text-zinc-400">
               Зарегистрируйтесь в личном кабинете — получите свою реферальную ссылку сразу после регистрации
               и следите за статистикой.
@@ -191,7 +191,7 @@ export default function PartnersPage() {
               href={`${PARTNERS_APP_URL}/register`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-6 inline-flex rounded-full bg-[#ffffff] px-6 py-3 text-sm font-semibold text-[#0A0A0A] transition-opacity hover:opacity-80"
+              className="mt-6 inline-flex rounded-full bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-85"
             >
               Открыть личный кабинет →
             </a>

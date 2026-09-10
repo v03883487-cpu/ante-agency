@@ -31,15 +31,25 @@ export default function OpengraphImage() {
               color: "#ffffff",
             }}
           >
-            ANTE.
+            ANTE
+          </span>
+          <span
+            style={{
+              fontSize: 148,
+              fontWeight: 900,
+              letterSpacing: -4,
+              color: "#d71c3d",
+            }}
+          >
+            .
           </span>
         </div>
         <div
           style={{
             marginTop: 22,
             fontSize: 30,
-            fontWeight: 600,
-            color: "#ffffff",
+            fontWeight: 700,
+            color: "#d71c3d",
             textTransform: "uppercase",
             letterSpacing: 6,
           }}

@@ -36,7 +36,7 @@ export default function BrandPage() {
             <a
               href={`${basePath}/brand/ante-wordmark.png`}
               download
-              className="rounded-full bg-[#ffffff] px-7 py-3 text-center text-sm font-semibold text-[#0A0A0A] transition-opacity hover:opacity-80"
+              className="rounded-full bg-[var(--accent)] px-7 py-3 text-center text-sm font-semibold text-white transition-opacity hover:opacity-85"
             >
               Скачать PNG
             </a>

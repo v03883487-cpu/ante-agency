@@ -31,8 +31,8 @@ export function Footer() {
     <footer className="relative border-t border-white/10 bg-white px-6 pb-10 pt-10 sm:px-12">
       <div className="mx-auto flex max-w-5xl flex-col gap-10 sm:flex-row sm:justify-between">
         <div className="max-w-xs">
-          <Link href="/" aria-label="Ante — на главную" className="font-display text-xl font-black tracking-tight text-white">
-            ANTE<span aria-hidden>.</span>
+          <Link href="/" aria-label="Ante — на главную" className="font-display text-xl font-bold uppercase tracking-tight text-white">
+            ANTE<span aria-hidden className="text-[var(--accent)]">.</span>
           </Link>
           <p className="mt-4 text-sm text-zinc-400">
             Influence-агентство полного цикла для gambling и iGaming брендов: подбор стримеров, медиабаинг, отчётность.

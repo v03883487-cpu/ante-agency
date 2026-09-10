@@ -15,8 +15,8 @@ export function Navbar() {
 
   return (
     <nav className="relative z-20 flex items-center justify-between border-b border-white/10 bg-white px-6 py-5 sm:px-12">
-      <Link href="/" aria-label="Ante — на главную" className="font-display text-xl font-black tracking-tight text-white">
-        ANTE<span aria-hidden>.</span>
+      <Link href="/" aria-label="Ante — на главную" className="font-display text-xl font-bold uppercase tracking-tight text-white">
+        ANTE<span aria-hidden className="text-[var(--accent)]">.</span>
       </Link>
       <div className="hidden items-center gap-8 text-sm text-zinc-400 sm:flex">
         {links.map((l) => (
@@ -33,14 +33,14 @@ export function Navbar() {
       <div className="flex items-center gap-3">
         <Link
           href="/partners"
-          className="hidden items-center gap-1.5 rounded-full border border-white px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-[#0A0A0A] sm:flex"
+          className="hidden items-center gap-1.5 rounded-full border border-[var(--accent)] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent)] sm:flex"
         >
           Партнёрка
           <span aria-hidden>↗</span>
         </Link>
         <Link
           href="/contact"
-          className="rounded-full bg-[#ffffff] px-5 py-2 text-sm font-medium text-[#0A0A0A] transition-opacity hover:opacity-80"
+          className="rounded-full bg-[var(--accent)] px-5 py-2 text-sm font-medium text-white transition-opacity hover:opacity-85"
         >
           Связаться
         </Link>
