@@ -15,9 +15,9 @@ export default function OpengraphImage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "#ffffff",
+          background: "#0a0a0a",
           backgroundImage:
-            "radial-gradient(rgba(10,10,10,0.08) 2px, transparent 2px)",
+            "radial-gradient(rgba(255,255,255,0.1) 2px, transparent 2px)",
           backgroundSize: "36px 36px",
           position: "relative",
         }}
@@ -28,7 +28,7 @@ export default function OpengraphImage() {
               fontSize: 148,
               fontWeight: 900,
               letterSpacing: -4,
-              color: "#0A0A0A",
+              color: "#ffffff",
             }}
           >
             ANTE.
@@ -39,14 +39,14 @@ export default function OpengraphImage() {
             marginTop: 22,
             fontSize: 30,
             fontWeight: 600,
-            color: "#0A0A0A",
+            color: "#ffffff",
             textTransform: "uppercase",
             letterSpacing: 6,
           }}
         >
           Influencers · Gambling
         </div>
-        <div style={{ marginTop: 22, fontSize: 24, color: "#71717A" }}>
+        <div style={{ marginTop: 22, fontSize: 24, color: "#A1A1AA" }}>
           1400+ стримеров · 43 casino-бренда · медиабаинг под ключ
         </div>
       </div>

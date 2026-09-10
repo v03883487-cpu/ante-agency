@@ -22,7 +22,7 @@ export default function StreamersPage() {
         subtitle="Официальные партнёры Ante на Twitch, Kick и YouTube — ссылки ведут на их настоящие каналы."
       />
       <section className="bg-white px-6 pb-10 sm:px-12">
-        <div className="mx-auto max-w-3xl text-center text-sm leading-relaxed text-zinc-500">
+        <div className="mx-auto max-w-3xl text-center text-sm leading-relaxed text-zinc-400">
           <p>
             База Ante — 1400+ gambling-стримеров и инфлюенсеров на Kick, Twitch и YouTube: от нишевых
             slots-каналов с горячей вовлечённой аудиторией до крупных casino-стримеров с сотнями тысяч
@@ -37,7 +37,7 @@ export default function StreamersPage() {
             <StreamerCard key={s.handle} streamer={s} />
           ))}
         </div>
-        <p className="mx-auto mt-10 max-w-5xl text-center text-sm text-zinc-500">
+        <p className="mx-auto mt-10 max-w-5xl text-center text-sm text-zinc-400">
           Показана часть ростера — полный список креаторов под конкретное гео и нишу предоставляем по брифу.
         </p>
       </section>

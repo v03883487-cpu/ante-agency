@@ -21,20 +21,20 @@ export default function ContactPage() {
       <section className="bg-white px-6 pb-28 sm:px-12">
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-10 sm:grid-cols-2">
           <div>
-            <h2 className="font-display text-lg font-bold text-[#0A0A0A]">Контакты</h2>
-            <dl className="mt-4 space-y-3 text-sm text-zinc-500">
+            <h2 className="font-display text-lg font-bold text-white">Контакты</h2>
+            <dl className="mt-4 space-y-3 text-sm text-zinc-400">
               <div>
-                <dt className="text-zinc-400">Email</dt>
+                <dt className="text-zinc-500">Email</dt>
                 <dd>
-                  <a href="mailto:hello@ante.agency" className="text-[#0A0A0A] hover:opacity-60">
+                  <a href="mailto:hello@ante.agency" className="text-white hover:opacity-60">
                     hello@ante.agency
                   </a>
                 </dd>
               </div>
               <div>
-                <dt className="text-zinc-400">Telegram</dt>
+                <dt className="text-zinc-500">Telegram</dt>
                 <dd>
-                  <a href="https://t.me/ante_agency" className="text-[#0A0A0A] hover:opacity-60">
+                  <a href="https://t.me/ante_agency" className="text-white hover:opacity-60">
                     @ante_agency
                   </a>
                 </dd>

@@ -19,25 +19,25 @@ export function ContactForm() {
   }
 
   const inputCls =
-    "w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-[#0A0A0A] outline-none focus:border-[#0A0A0A]";
+    "w-full rounded-xl border border-white/15 bg-white px-4 py-2.5 text-sm text-white outline-none focus:border-white";
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div>
-        <label htmlFor="name" className="mb-1 block text-xs text-zinc-500">Имя</label>
+        <label htmlFor="name" className="mb-1 block text-xs text-zinc-400">Имя</label>
         <input id="name" name="name" required className={inputCls} />
       </div>
       <div>
-        <label htmlFor="brand" className="mb-1 block text-xs text-zinc-500">Бренд</label>
+        <label htmlFor="brand" className="mb-1 block text-xs text-zinc-400">Бренд</label>
         <input id="brand" name="brand" className={inputCls} />
       </div>
       <div>
-        <label htmlFor="message" className="mb-1 block text-xs text-zinc-500">Сообщение</label>
+        <label htmlFor="message" className="mb-1 block text-xs text-zinc-400">Сообщение</label>
         <textarea id="message" name="message" rows={4} required className={inputCls} />
       </div>
       <button
         type="submit"
-        className="rounded-full bg-[#0A0A0A] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80"
+        className="rounded-full bg-[#ffffff] px-6 py-3 text-sm font-semibold text-[#0A0A0A] transition-opacity hover:opacity-80"
       >
         {sent ? "Открываем почтовый клиент…" : "Отправить"}
       </button>

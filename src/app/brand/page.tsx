@@ -22,7 +22,7 @@ export default function BrandPage() {
 
       <section className="bg-white px-6 pb-28 sm:px-12">
         <div className="mx-auto flex max-w-md flex-col items-center gap-8">
-          <div className="w-full rounded-3xl border border-black/10 bg-white p-8">
+          <div className="w-full rounded-3xl bg-[#ffffff] p-8">
             <Image
               src={`${basePath}/brand/ante-wordmark.webp`}
               alt="Ante — influence agency for gambling"
@@ -36,21 +36,21 @@ export default function BrandPage() {
             <a
               href={`${basePath}/brand/ante-wordmark.png`}
               download
-              className="rounded-full bg-[#0A0A0A] px-7 py-3 text-center text-sm font-semibold text-white transition-opacity hover:opacity-80"
+              className="rounded-full bg-[#ffffff] px-7 py-3 text-center text-sm font-semibold text-[#0A0A0A] transition-opacity hover:opacity-80"
             >
               Скачать PNG
             </a>
             <a
               href={`${basePath}/brand/ante-wordmark.webp`}
               download
-              className="rounded-full border border-black/20 px-7 py-3 text-center text-sm font-semibold text-[#0A0A0A] transition-colors hover:bg-black/5"
+              className="rounded-full border border-white/20 px-7 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-white/10"
             >
               Скачать WebP
             </a>
           </div>
 
-          <div className="w-full rounded-2xl border border-black/10 bg-white p-5 text-sm text-zinc-500">
-            <p className="font-semibold text-[#0A0A0A]">Как использовать в Telegram</p>
+          <div className="w-full rounded-2xl border border-white/10 bg-white p-5 text-sm text-zinc-400">
+            <p className="font-semibold text-white">Как использовать в Telegram</p>
             <ul className="mt-2 list-disc space-y-1 pl-4">
               <li>Фото профиля / канала: загрузите PNG в настройках профиля.</li>
               <li>В переписке или посте: отправьте PNG или WebP как обычное медиа.</li>

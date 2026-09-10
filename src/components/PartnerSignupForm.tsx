@@ -22,29 +22,29 @@ export function PartnerSignupForm() {
   }
 
   const inputCls =
-    "w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-[#0A0A0A] outline-none focus:border-[#0A0A0A]";
+    "w-full rounded-xl border border-white/15 bg-white px-4 py-2.5 text-sm text-white outline-none focus:border-white";
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div>
-        <label htmlFor="telegram" className="mb-1 block text-xs text-zinc-500">Telegram</label>
+        <label htmlFor="telegram" className="mb-1 block text-xs text-zinc-400">Telegram</label>
         <input id="telegram" name="telegram" required placeholder="@username" className={inputCls} />
       </div>
       <div>
-        <label htmlFor="source" className="mb-1 block text-xs text-zinc-500">Источник трафика</label>
+        <label htmlFor="source" className="mb-1 block text-xs text-zinc-400">Источник трафика</label>
         <input id="source" name="source" placeholder="Twitch / Kick / YouTube / Telegram / медиабаинг…" className={inputCls} />
       </div>
       <div>
-        <label htmlFor="volume" className="mb-1 block text-xs text-zinc-500">Ожидаемый объём трафика / гео</label>
+        <label htmlFor="volume" className="mb-1 block text-xs text-zinc-400">Ожидаемый объём трафика / гео</label>
         <input id="volume" name="volume" placeholder="напр. 500 кликов/день, СНГ" className={inputCls} />
       </div>
       <div>
-        <label htmlFor="message" className="mb-1 block text-xs text-zinc-500">Комментарий</label>
+        <label htmlFor="message" className="mb-1 block text-xs text-zinc-400">Комментарий</label>
         <textarea id="message" name="message" rows={3} className={inputCls} />
       </div>
       <button
         type="submit"
-        className="rounded-full bg-[#0A0A0A] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-80"
+        className="rounded-full bg-[#ffffff] px-6 py-3 text-sm font-semibold text-[#0A0A0A] transition-opacity hover:opacity-80"
       >
         {sent ? "Открываем почтовый клиент…" : "Подать заявку"}
       </button>

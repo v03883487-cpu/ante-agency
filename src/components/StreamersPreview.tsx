@@ -8,12 +8,12 @@ export function StreamersPreview() {
       <div className="mx-auto max-w-5xl">
         <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-widest text-zinc-500">Наши креаторы</span>
-            <h2 className="mt-3 font-display text-3xl font-black tracking-tight text-[#0A0A0A] sm:text-4xl">
+            <span className="text-xs font-semibold uppercase tracking-widest text-zinc-400">Наши креаторы</span>
+            <h2 className="mt-3 font-display text-3xl font-black tracking-tight text-white sm:text-4xl">
               Топ стримеров Ante
             </h2>
           </div>
-          <Link href="/streamers" className="flex items-center gap-1 text-sm font-medium text-[#0A0A0A] hover:opacity-60">
+          <Link href="/streamers" className="flex items-center gap-1 text-sm font-medium text-white hover:opacity-60">
             Весь ростер <span aria-hidden>→</span>
           </Link>
         </div>

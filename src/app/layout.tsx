@@ -45,8 +45,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  colorScheme: "light",
-  themeColor: "#ffffff",
+  colorScheme: "dark",
+  themeColor: "#0a0a0a",
 };
 
 const jsonLd = {
@@ -62,7 +62,7 @@ const jsonLd = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ru" className={`${inter.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col bg-white font-sans text-[#0A0A0A]">
+      <body className="flex min-h-full flex-col bg-white font-sans text-white">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
