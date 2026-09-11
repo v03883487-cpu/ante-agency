@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BreadcrumbsJsonLd } from "@/components/Breadcrumbs";
 import { BarbedWire } from "@/components/BarbedWire";
+import { AmbientBg } from "@/components/AmbientBg";
 import { basePath } from "@/lib/site";
 import { PartnerSignupForm } from "@/components/PartnerSignupForm";
 import { CountUp } from "@/components/CountUp";
@@ -81,8 +82,9 @@ export default function PartnersPage() {
         </div>
       </section>
 
-      <section className="bg-white px-6 pb-20 sm:px-12">
-        <div className="mx-auto grid max-w-4xl grid-cols-2 gap-4 sm:grid-cols-4">
+      <section className="relative overflow-hidden bg-white px-6 pb-20 sm:px-12">
+        <AmbientBg />
+        <div className="relative mx-auto grid max-w-4xl grid-cols-2 gap-4 sm:grid-cols-4">
           {[
             { value: <CountUp to={brands.length} />, label: "офферов" },
             { value: <CountUp to={30} suffix="д" />, label: "cookie" },
@@ -98,8 +100,9 @@ export default function PartnersPage() {
       </section>
 
 
-      <section id="plans" className="relative bg-white px-6 py-20 sm:px-12">
-        <div className="mx-auto max-w-5xl">
+      <section id="plans" className="relative overflow-hidden bg-white px-6 py-20 sm:px-12">
+        <AmbientBg position="bottom" />
+        <div className="relative mx-auto max-w-5xl">
           <div className="mb-10 text-center">
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Оплата</span>
             <h2 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-6xl">
@@ -120,8 +123,9 @@ export default function PartnersPage() {
         </div>
       </section>
 
-      <section className="bg-white px-6 py-20 sm:px-12">
-        <div className="mx-auto max-w-5xl">
+      <section className="relative overflow-hidden bg-white px-6 py-20 sm:px-12">
+        <AmbientBg />
+        <div className="relative mx-auto max-w-5xl">
           <div className="mb-10 text-center">
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Процесс</span>
             <h2 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-6xl">
@@ -140,8 +144,9 @@ export default function PartnersPage() {
         </div>
       </section>
 
-      <section className="bg-white px-6 py-20 sm:px-12">
-        <div className="mx-auto max-w-3xl rounded-3xl border border-white/10 bg-white p-10 text-center">
+      <section className="relative overflow-hidden bg-white px-6 py-20 sm:px-12">
+        <AmbientBg position="bottom" />
+        <div className="relative mx-auto max-w-3xl rounded-3xl border border-white/10 bg-white p-10 text-center">
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Выплаты</span>
           <h2 className="mt-3 font-display text-3xl font-bold text-white">Как получаете деньги</h2>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
@@ -154,8 +159,9 @@ export default function PartnersPage() {
         </div>
       </section>
 
-      <section className="relative bg-white px-6 py-20 sm:px-12">
-        <div className="mx-auto max-w-3xl">
+      <section className="relative overflow-hidden bg-white px-6 py-20 sm:px-12">
+        <AmbientBg />
+        <div className="relative mx-auto max-w-3xl">
           <div className="mb-10 text-center">
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Вопросы</span>
             <h2 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-6xl">
@@ -166,8 +172,9 @@ export default function PartnersPage() {
         </div>
       </section>
 
-      <section id="signup" className="bg-white px-6 pb-28 sm:px-12">
-        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-10 sm:grid-cols-2">
+      <section id="signup" className="relative overflow-hidden bg-white px-6 pb-28 sm:px-12">
+        <AmbientBg position="bottom" />
+        <div className="relative mx-auto grid max-w-4xl grid-cols-1 gap-10 sm:grid-cols-2">
           <div>
             <h2 className="font-display text-3xl font-bold text-white">Стать партнёром</h2>
             <p className="mt-3 text-lg text-zinc-400">Ссылка сразу после регистрации.</p>

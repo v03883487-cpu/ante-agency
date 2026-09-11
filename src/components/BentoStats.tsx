@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { CountUp } from "./CountUp";
 import { brands } from "@/lib/brands";
+import { AmbientBg } from "./AmbientBg";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -25,13 +26,14 @@ function Corners({ light = false }: { light?: boolean }) {
 
 export function BentoStats() {
   return (
-    <section className="relative bg-white px-6 pb-28 sm:px-12">
+    <section className="relative overflow-hidden bg-white px-6 pb-28 sm:px-12">
+      <AmbientBg />
       <motion.div
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: "-80px" }}
         transition={{ staggerChildren: 0.1 }}
-        className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-4"
+        className="relative mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-4"
       >
         <motion.div
           variants={cardVariants}

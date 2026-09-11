@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { CtaBand } from "@/components/CtaBand";
 import { CasinoLogos } from "@/components/CasinoLogos";
 import { BreadcrumbsJsonLd } from "@/components/Breadcrumbs";
+import { AmbientBg } from "@/components/AmbientBg";
 
 export const metadata: Metadata = {
   title: "Casino и iGaming бренды-партнёры",
@@ -23,8 +24,9 @@ export default function BrandsPage() {
 
       <CasinoLogos showHeading={false} withLinkToPage={false} />
 
-      <section className="bg-white px-6 pb-28 sm:px-12 pt-16">
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-3">
+      <section className="relative overflow-hidden bg-white px-6 pb-28 sm:px-12 pt-16">
+        <AmbientBg />
+        <div className="relative mx-auto grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-3">
           {[
             { title: "Casino", body: "Слоты и live-игры вживую на стриме." },
             { title: "Betting", body: "Промо-код точно к матчу." },

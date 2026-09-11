@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaBand } from "@/components/CtaBand";
 import { BreadcrumbsJsonLd } from "@/components/Breadcrumbs";
+import { AmbientBg } from "@/components/AmbientBg";
 
 export const metadata: Metadata = {
   title: "Кейсы инфлюенс-кампаний",
@@ -25,8 +26,9 @@ export default function CasesPage() {
         title="Кейсы"
         subtitle="Пример структуры отчётности по кампаниям."
       />
-      <section className="bg-white px-6 pb-28 sm:px-12">
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2">
+      <section className="relative overflow-hidden bg-white px-6 pb-28 sm:px-12">
+        <AmbientBg position="bottom" />
+        <div className="relative mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2">
           {cases.map((c) => (
             <div key={c.brand} className="card-hover rounded-3xl border border-white/10 bg-white p-8 hover:border-white/30">
               <span className="text-xs uppercase tracking-widest text-zinc-400">{c.brand} · {c.format}</span>
@@ -35,7 +37,7 @@ export default function CasesPage() {
             </div>
           ))}
         </div>
-        <p className="mx-auto mt-8 max-w-5xl text-center text-xs text-zinc-500">
+        <p className="relative mx-auto mt-8 max-w-5xl text-center text-xs text-zinc-500">
           Иллюстративные цифры — реальные кейсы по согласованию с партнёром.
         </p>
       </section>

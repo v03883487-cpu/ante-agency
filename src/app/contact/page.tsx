@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
 import { ContactForm } from "@/components/ContactForm";
 import { BreadcrumbsJsonLd } from "@/components/Breadcrumbs";
+import { AmbientBg } from "@/components/AmbientBg";
 
 export const metadata: Metadata = {
   title: "Связаться с нами",
@@ -18,8 +19,9 @@ export default function ContactPage() {
         title="Контакты"
         subtitle="Ответим в течение рабочего дня."
       />
-      <section className="bg-white px-6 pb-28 sm:px-12">
-        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-10 sm:grid-cols-2">
+      <section className="relative overflow-hidden bg-white px-6 pb-28 sm:px-12">
+        <AmbientBg />
+        <div className="relative mx-auto grid max-w-4xl grid-cols-1 gap-10 sm:grid-cols-2">
           <div>
             <h2 className="font-display text-2xl font-bold text-white">Написать</h2>
             <dl className="mt-4 space-y-3 text-base text-zinc-400">

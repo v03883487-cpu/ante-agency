@@ -2,6 +2,7 @@ import Link from "next/link";
 import { brands } from "@/lib/brands";
 import { BrandLogo } from "./BrandLogo";
 import { basePath } from "@/lib/site";
+import { AmbientBg } from "./AmbientBg";
 
 export function CasinoLogos({
   withLinkToPage = true,
@@ -15,8 +16,9 @@ export function CasinoLogos({
   const list = limit ? brands.slice(0, limit) : brands;
 
   return (
-    <section className="border-y border-white/10 bg-white px-6 py-20 sm:px-12">
-      <div className="mx-auto max-w-5xl">
+    <section className="relative overflow-hidden border-y border-white/10 bg-white px-6 py-20 sm:px-12">
+      <AmbientBg position="bottom" />
+      <div className="relative mx-auto max-w-5xl">
         {showHeading && (
           <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
             <div>

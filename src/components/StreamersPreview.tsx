@@ -2,11 +2,13 @@ import Link from "next/link";
 import { streamers } from "@/lib/streamers";
 import { StreamerCard } from "./StreamerCard";
 import { basePath } from "@/lib/site";
+import { AmbientBg } from "./AmbientBg";
 
 export function StreamersPreview() {
   return (
-    <section id="streamers" className="relative bg-white px-6 pb-28 sm:px-12">
-      <div className="mx-auto max-w-5xl">
+    <section id="streamers" className="relative overflow-hidden bg-white px-6 pb-28 sm:px-12">
+      <AmbientBg position="bottom" />
+      <div className="relative mx-auto max-w-5xl">
         <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Наши креаторы</span>
