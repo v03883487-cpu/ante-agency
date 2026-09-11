@@ -25,13 +25,12 @@ export function Hero() {
         loop
         playsInline
         poster={`${basePath}/hero/ante-hero-poster.jpg`}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover brightness-125 saturate-125"
       >
         <source src={`${basePath}/hero/ante-hero.mp4`} type="video/mp4" />
         <source src={`${basePath}/hero/ante-hero.webm`} type="video/webm" />
       </video>
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/50 to-[#0a0a0a]/40" />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/70 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/10 to-transparent" />
 
       <motion.div
         variants={container}
