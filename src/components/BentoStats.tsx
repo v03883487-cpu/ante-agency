@@ -35,7 +35,7 @@ export function BentoStats() {
       >
         <motion.div
           variants={cardVariants}
-          className="group relative col-span-1 rounded-3xl border border-white/10 bg-white p-8 sm:col-span-2 sm:row-span-2 sm:p-10"
+          className="card-hover group relative col-span-1 rounded-3xl border border-white/10 bg-white p-8 sm:col-span-2 sm:row-span-2 sm:p-10"
         >
           <Corners />
           <span className="text-6xl font-bold text-white sm:text-7xl font-display">
@@ -53,7 +53,7 @@ export function BentoStats() {
           </svg>
         </motion.div>
 
-        <motion.div variants={cardVariants} className="group relative rounded-3xl border border-white/10 bg-white p-8">
+        <motion.div variants={cardVariants} className="card-hover group relative rounded-3xl border border-white/10 bg-white p-8">
           <Corners />
           <span className="text-5xl font-bold text-white font-display">
             <CountUp to={1400} suffix="+" />
@@ -61,7 +61,7 @@ export function BentoStats() {
           <p className="mt-3 text-base text-zinc-400">стримеров</p>
         </motion.div>
 
-        <motion.div variants={cardVariants} className="group relative rounded-3xl border border-white/10 bg-white p-8">
+        <motion.div variants={cardVariants} className="card-hover group relative rounded-3xl border border-white/10 bg-white p-8">
           <Corners />
           <span className="text-5xl font-bold text-white font-display">
             <CountUp to={brands.length} />
@@ -71,7 +71,7 @@ export function BentoStats() {
 
         <motion.div
           variants={cardVariants}
-          className="group relative col-span-1 flex flex-col justify-between rounded-3xl border border-white/10 bg-[var(--accent)] p-8 text-white sm:col-span-2"
+          className="pulse-glow card-hover group relative col-span-1 flex flex-col justify-between rounded-3xl border border-white/10 bg-[var(--accent)] p-8 text-white sm:col-span-2"
         >
           <Corners light />
           <span className="text-5xl font-bold font-display">24/7</span>

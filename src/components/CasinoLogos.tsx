@@ -39,7 +39,7 @@ export function CasinoLogos({
               href={b.href}
               target="_blank"
               rel="noopener noreferrer nofollow sponsored"
-              className="group relative overflow-hidden flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white px-3 py-8 text-center transition-colors hover:border-white/30"
+              className="card-hover group relative overflow-hidden flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white px-3 py-8 text-center transition-colors hover:border-white/30"
             >
               <span className="corner-bracket corner-bracket--tl" aria-hidden />
               <span className="corner-bracket corner-bracket--tr" aria-hidden />

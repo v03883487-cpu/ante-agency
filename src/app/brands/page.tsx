@@ -30,7 +30,7 @@ export default function BrandsPage() {
             { title: "Betting", body: "Промо-код точно к матчу." },
             { title: "Live Casino", body: "Постоянное амбассадорство." },
           ].map((v) => (
-            <div key={v.title} className="rounded-3xl border border-white/10 bg-white p-8">
+            <div key={v.title} className="card-hover rounded-3xl border border-white/10 bg-white p-8 hover:border-white/30">
               <h3 className="font-display text-2xl font-bold text-white">{v.title}</h3>
               <p className="mt-3 text-lg text-zinc-400">{v.body}</p>
             </div>

@@ -46,13 +46,13 @@ export function Hero() {
         </motion.span>
 
         <motion.p variants={item} className="mt-6 max-w-xl text-xl text-zinc-300 sm:text-2xl">
-          Casino, betting и проверенные gambling-стримеры.
+          Инфлюенс-агентство полного цикла.
         </motion.p>
 
         <motion.div variants={item} className="mt-8 flex flex-col gap-4 sm:flex-row">
           <Link
             href="/contact"
-            className="group flex items-center justify-center gap-2 rounded-full bg-[var(--accent)] px-7 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+            className="pulse-glow group flex items-center justify-center gap-2 rounded-full bg-[var(--accent)] px-7 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-85"
           >
             Запустить кампанию
             <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BreadcrumbsJsonLd } from "@/components/Breadcrumbs";
+import { BarbedWire } from "@/components/BarbedWire";
 import { CasinoLogos } from "@/components/CasinoLogos";
 import { PartnerSignupForm } from "@/components/PartnerSignupForm";
 import { CountUp } from "@/components/CountUp";
@@ -48,7 +49,13 @@ export default function PartnersPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(partnerFaqJsonLd) }} />
       <BreadcrumbsJsonLd path="/partners" label="Партнёрка" />
 
-      <section className="relative bg-white px-6 pb-16 pt-16 text-center text-white sm:px-12 sm:pt-24">
+      <section className="relative overflow-hidden bg-white px-6 pb-16 pt-16 text-center text-white sm:px-12 sm:pt-24">
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-64"
+          style={{ background: "radial-gradient(ellipse 60% 100% at 50% 0%, rgba(215,28,61,0.22), transparent 70%)" }}
+          aria-hidden
+        />
+        <BarbedWire className="text-white/10" />
         <div className="relative mx-auto max-w-2xl">
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Ante Partners</span>
           <h1 className="mt-3 font-display text-5xl font-bold tracking-tight sm:text-7xl">
@@ -60,7 +67,7 @@ export default function PartnersPage() {
               href={`${PARTNERS_APP_URL}/register`}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-[var(--accent)] px-7 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+              className="pulse-glow rounded-full bg-[var(--accent)] px-7 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-85"
             >
               Стать партнёром
             </a>
@@ -82,7 +89,7 @@ export default function PartnersPage() {
             { value: "неделя", label: "выплаты" },
             { value: "0", label: "порог" },
           ].map((s, i) => (
-            <div key={i} className="rounded-2xl border border-white/10 bg-white p-6 text-center">
+            <div key={i} className="card-hover rounded-2xl border border-white/10 bg-white p-6 text-center hover:border-white/30">
               <div className="font-display text-4xl font-bold text-white">{s.value}</div>
               <p className="mt-2 text-sm text-zinc-400">{s.label}</p>
             </div>
@@ -102,7 +109,7 @@ export default function PartnersPage() {
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {plans.map((p) => (
-              <div key={p.title} className="group relative rounded-3xl border border-white/10 bg-white p-8">
+              <div key={p.title} className="card-hover group relative rounded-3xl border border-white/10 bg-white p-8 hover:border-white/30">
                 <span className="corner-bracket corner-bracket--tl" aria-hidden />
                 <span className="corner-bracket corner-bracket--br" aria-hidden />
                 <span className="text-xs uppercase tracking-widest text-zinc-400">{p.tag}</span>
@@ -124,7 +131,7 @@ export default function PartnersPage() {
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
             {steps.map((s) => (
-              <div key={s.n} className="rounded-3xl border border-white/10 bg-white p-8">
+              <div key={s.n} className="card-hover rounded-3xl border border-white/10 bg-white p-8 hover:border-white/30">
                 <span className="font-display text-4xl font-bold text-white/15">{s.n}</span>
                 <h3 className="mt-3 font-display text-xl font-bold text-white">{s.title}</h3>
                 <p className="mt-2 text-base text-zinc-400">{s.body}</p>

@@ -28,7 +28,7 @@ export default function CasesPage() {
       <section className="bg-white px-6 pb-28 sm:px-12">
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2">
           {cases.map((c) => (
-            <div key={c.brand} className="rounded-3xl border border-white/10 bg-white p-8">
+            <div key={c.brand} className="card-hover rounded-3xl border border-white/10 bg-white p-8 hover:border-white/30">
               <span className="text-xs uppercase tracking-widest text-zinc-400">{c.brand} · {c.format}</span>
               <p className="mt-3 font-display text-6xl font-bold text-white">{c.metric}</p>
               <p className="mt-2 text-lg text-zinc-400">{c.label}</p>

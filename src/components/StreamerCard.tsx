@@ -22,7 +22,7 @@ export function StreamerCard({ streamer }: { streamer: Streamer }) {
       href={primary.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white transition-colors hover:border-white/30"
+      className="card-hover group relative flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white transition-colors hover:border-white/30"
     >
       <span className="corner-bracket corner-bracket--tl" aria-hidden />
       <span className="corner-bracket corner-bracket--tr" aria-hidden />

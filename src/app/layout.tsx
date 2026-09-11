@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Oswald } from "next/font/google";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { CursorGlow } from "@/components/CursorGlow";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -73,6 +74,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <CursorGlow />
+        <div className="film-grain" aria-hidden />
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
