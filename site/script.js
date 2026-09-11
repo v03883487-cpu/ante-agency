@@ -4,13 +4,47 @@ const FORM_ENDPOINT = '';
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
+/* ---------- i18n ---------- */
+const DICT = window.I18N || { en: {} };
+const SUPPORTED = Object.keys(DICT);
+const LANG_KEY = 'antefluence-lang';
+let current = 'en';
+const t = key => (DICT[current] && DICT[current][key]) || DICT.en[key] || '';
+
+function detectLang() {
+  const param = new URLSearchParams(location.search).get('lang');
+  if (param && SUPPORTED.includes(param)) return param;
+  try {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved && SUPPORTED.includes(saved)) return saved;
+  } catch {}
+  for (const l of navigator.languages || [navigator.language]) {
+    const code = String(l || '').slice(0, 2).toLowerCase();
+    if (SUPPORTED.includes(code)) return code;
+  }
+  return 'en';
+}
+
+function translatePage() {
+  $$('[data-i18n]').forEach(el => { const v = t(el.dataset.i18n); if (v) el.textContent = v; });
+  $$('[data-i18n-html]').forEach(el => { const v = t(el.dataset.i18nHtml); if (v) el.innerHTML = v; });
+  $$('[data-i18n-ph]').forEach(el => { const v = t(el.dataset.i18nPh); if (v) el.placeholder = v; });
+  $$('[data-i18n-aria]').forEach(el => { const v = t(el.dataset.i18nAria); if (v) el.setAttribute('aria-label', v); });
+  $$('.service-card').forEach(card => $('.card-arrow', card).setAttribute('aria-label', `${t('a11y.discuss')}: ${$('h3', card).textContent}`));
+  $$('.creator-card').forEach(card => $('.card-arrow', card).setAttribute('aria-label', `${t('a11y.book')} ${$('h3', card).textContent}`));
+  document.title = t('meta.title');
+  const desc = $('meta[name="description"]');
+  if (desc) desc.setAttribute('content', t('meta.desc'));
+  document.documentElement.lang = current;
+}
+
 /* ---------- Mobile menu ---------- */
 const menuButton = $('.menu-button');
 const mobileMenu = $('#mobile-menu');
 function setMenu(open) {
   if (!menuButton || !mobileMenu) return;
   menuButton.setAttribute('aria-expanded', String(open));
-  menuButton.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  menuButton.setAttribute('aria-label', t(open ? 'a11y.menuClose' : 'a11y.menuOpen'));
   mobileMenu.hidden = !open;
 }
 if (menuButton && mobileMenu) {
@@ -75,27 +109,37 @@ if (track && prevBtn && nextBtn) {
   }));
   track.addEventListener('scroll', updateCarousel, { passive: true });
   window.addEventListener('resize', updateCarousel);
-  updateCarousel();
 }
 
 /* ---------- Language menu ---------- */
-const LANG_KEY = 'antefluence-lang';
 const langs = $$('[data-lang]');
-function applyLang(code) {
+const form = $('#lead-form');
+const status = form ? $('.form-status', form) : null;
+
+function applyLang(code, { save = false } = {}) {
+  if (!SUPPORTED.includes(code)) code = 'en';
+  current = code;
   langs.forEach(root => {
     const option = $(`[data-code="${code}"]`, root);
-    if (!option) return;
     $$('[role="option"]', root).forEach(o => o.setAttribute('aria-selected', String(o === option)));
     $('[data-lang-label]', root).textContent = code.toUpperCase();
-    $('.lang-pill', root).setAttribute('aria-label', `Language: ${option.textContent}`);
+    $('.lang-pill', root).setAttribute('aria-label', `${t('a11y.lang')}: ${option ? option.textContent : code}`);
   });
+  translatePage();
+  if (menuButton) menuButton.setAttribute('aria-label', t(menuButton.getAttribute('aria-expanded') === 'true' ? 'a11y.menuClose' : 'a11y.menuOpen'));
+  if (form) form.elements.language.value = code;
+  if (status && status.dataset.key) status.textContent = t(status.dataset.key);
+  if (save) { try { localStorage.setItem(LANG_KEY, code); } catch {} }
+  updateCarousel();
 }
+
 function closeLang(root, focusButton) {
   const btn = $('.lang-pill', root);
   $('.lang-menu', root).hidden = true;
   btn.setAttribute('aria-expanded', 'false');
   if (focusButton) btn.focus();
 }
+
 langs.forEach(root => {
   const btn = $('.lang-pill', root);
   const menu = $('.lang-menu', root);
@@ -106,9 +150,7 @@ langs.forEach(root => {
     options.forEach((o, n) => o.classList.toggle('is-focus', n === focusIndex));
   };
   const choose = option => {
-    const code = option.dataset.code;
-    applyLang(code);
-    try { localStorage.setItem(LANG_KEY, code); } catch {}
+    applyLang(option.dataset.code, { save: true });
     closeLang(root, true);
   };
   btn.addEventListener('click', () => {
@@ -124,7 +166,7 @@ langs.forEach(root => {
     if (e.key === 'ArrowDown') { e.preventDefault(); setFocus(focusIndex + 1); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setFocus(focusIndex - 1); }
     else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(options[focusIndex]); }
-    else if (e.key === 'Escape') { closeLang(root, true); }
+    else if (e.key === 'Escape') { e.stopPropagation(); closeLang(root, true); }
     else if (e.key === 'Tab') { closeLang(root); }
   });
   options.forEach((o, n) => {
@@ -137,10 +179,8 @@ document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   if (mobileMenu && !mobileMenu.hidden) { setMenu(false); menuButton.focus(); }
 });
-try {
-  const saved = localStorage.getItem(LANG_KEY);
-  if (saved) applyLang(saved);
-} catch {}
+
+applyLang(detectLang());
 
 /* ---------- Placeholder links ---------- */
 $$('a[href="#"]').forEach(a => a.addEventListener('click', e => e.preventDefault()));
@@ -150,30 +190,31 @@ const year = $('[data-year]');
 if (year) year.textContent = new Date().getFullYear();
 
 /* ---------- Lead form ---------- */
-const form = $('#lead-form');
 if (form) {
-  const status = $('.form-status', form);
   const button = $('button[type="submit"]', form);
-  const fields = $$('input, textarea', form);
+  const fields = $$('input:not([type="hidden"]), textarea', form);
+  const setStatus = (key, isError = false) => {
+    status.dataset.key = key;
+    status.textContent = t(key);
+    status.classList.toggle('is-error', isError);
+  };
   fields.forEach(f => f.addEventListener('input', () => {
     if (f.checkValidity()) f.removeAttribute('aria-invalid');
   }));
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
-    status.classList.remove('is-error');
     fields.forEach(f => f.toggleAttribute('aria-invalid', !f.checkValidity()));
     const firstInvalid = fields.find(f => !f.checkValidity());
     if (firstInvalid) {
-      status.textContent = 'Please fill in all fields with a valid business email.';
-      status.classList.add('is-error');
+      setStatus('form.invalid', true);
       firstInvalid.focus();
       return;
     }
 
     const original = button.innerHTML;
     button.disabled = true;
-    button.textContent = 'Sending…';
+    button.textContent = t('form.sending');
     try {
       if (FORM_ENDPOINT) {
         const res = await fetch(FORM_ENDPOINT, {
@@ -184,14 +225,18 @@ if (form) {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
       }
       form.reset();
-      button.textContent = 'Sent ✓';
-      status.textContent = 'Thanks! Our team will get back to you shortly.';
-      setTimeout(() => { button.disabled = false; button.innerHTML = original; }, 2600);
+      form.elements.language.value = current;
+      button.textContent = t('form.sent');
+      setStatus('form.thanks');
+      setTimeout(() => {
+        button.disabled = false;
+        button.innerHTML = original;
+        $('[data-i18n]', button).textContent = t('ct.send');
+      }, 2600);
     } catch {
       button.disabled = false;
       button.innerHTML = original;
-      status.textContent = 'Something went wrong. Please try again in a moment.';
-      status.classList.add('is-error');
+      setStatus('form.error', true);
     }
   });
 }
