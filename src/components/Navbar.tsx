@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { basePath } from "@/lib/site";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { ArrowIcon } from "@/components/Icon";
 
 const links = [
   { href: "/#services", label: "Услуги" },
@@ -17,7 +17,7 @@ export function Navbar() {
 
   return (
     <nav className="relative z-20 flex items-center justify-between border-b border-white/10 bg-white px-6 py-5 sm:px-12">
-      <Link href="/" aria-label="Ante — на главную" className="font-display text-xl font-bold uppercase tracking-tight text-white">
+      <Link href="/" aria-label="Ante — на главную" className="font-display text-2xl uppercase tracking-tight text-white">
         ANTE<span aria-hidden className="text-[var(--accent)]">.</span>
       </Link>
       <div className="hidden items-center gap-8 text-sm text-zinc-400 sm:flex">
@@ -38,14 +38,14 @@ export function Navbar() {
         </div>
         <Link
           href="/partners"
-          className="hidden items-center gap-1.5 rounded-full border border-[var(--accent)] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent)] sm:flex"
+          className="hidden items-center gap-1.5 rounded-full border border-[var(--accent)] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent)] hover:text-[#0b0c10] sm:flex"
         >
           Партнёрка
-          <img src={`${basePath}/icons/arrow-diagonal.webp`} alt="" aria-hidden className="h-3.5 w-3.5" />
+          <ArrowIcon direction="diagonal" />
         </Link>
         <Link
           href="/#contact"
-          className="rounded-full bg-[var(--accent)] px-5 py-2 text-sm font-medium text-white transition-opacity hover:opacity-85"
+          className="rounded-full bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-[#0b0c10] transition-opacity hover:opacity-85"
         >
           Связаться
         </Link>

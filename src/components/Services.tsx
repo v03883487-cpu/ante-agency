@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { basePath } from "@/lib/site";
+import { ArrowIcon } from "@/components/Icon";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -24,7 +24,7 @@ export function Services() {
           </div>
           <a href="#contact" className="group flex items-center gap-1.5 text-sm font-medium text-white hover:opacity-60">
             Обсудить
-            <img src={`${basePath}/icons/arrow-right.webp`} alt="" aria-hidden className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+            <ArrowIcon className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
           </a>
         </motion.div>
 

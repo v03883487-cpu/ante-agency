@@ -7,8 +7,8 @@ import { tierIdMap, tier1Countries, tier2Countries } from "@/lib/geoTiers";
 
 const TIER_COLOR: Record<1 | 2 | 3, string> = {
   1: "var(--accent)",
-  2: "#f5f5f5",
-  3: "#3f3f46",
+  2: "var(--accent-2)",
+  3: "#2a2d33",
 };
 
 export function WorldTierMap() {

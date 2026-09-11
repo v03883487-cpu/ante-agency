@@ -12,7 +12,7 @@ const cardVariants = {
 };
 
 function Corners({ light = false }: { light?: boolean }) {
-  const color = light ? "#FFFFFF" : "var(--accent)";
+  const color = light ? "#0b0c10" : "var(--accent)";
   return (
     <>
       <span className="corner-bracket corner-bracket--tl" style={{ borderColor: color }} aria-hidden />
@@ -63,7 +63,7 @@ export function BentoStats() {
 
         <motion.div variants={cardVariants} className="card-hover group relative rounded-3xl border border-white/10 bg-white p-8">
           <Corners />
-          <span className="text-5xl font-bold text-white font-display">
+          <span className="text-5xl font-bold font-display" style={{ color: "var(--accent-2)" }}>
             <CountUp to={tier1Countries.length + tier2Countries.length} />
           </span>
           <p className="mt-3 text-base text-zinc-400">гео tier 1-2</p>
@@ -71,11 +71,11 @@ export function BentoStats() {
 
         <motion.div
           variants={cardVariants}
-          className="pulse-glow card-hover group relative col-span-1 flex flex-col justify-between rounded-3xl border border-white/10 bg-[var(--accent)] p-8 text-white sm:col-span-2"
+          className="pulse-glow card-hover group relative col-span-1 flex flex-col justify-between rounded-3xl border border-white/10 bg-[var(--accent)] p-8 text-[#0b0c10] sm:col-span-2"
         >
           <Corners light />
           <span className="text-5xl font-bold font-display">24/7</span>
-          <p className="mt-3 text-base text-white/80">сопровождение кампаний</p>
+          <p className="mt-3 text-base text-[#0b0c10]/70">сопровождение кампаний</p>
         </motion.div>
       </motion.div>
     </section>

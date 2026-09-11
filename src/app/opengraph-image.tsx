@@ -15,7 +15,7 @@ export default function OpengraphImage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "#0a0a0a",
+          background: "#0b0c10",
           backgroundImage:
             "radial-gradient(rgba(255,255,255,0.1) 2px, transparent 2px)",
           backgroundSize: "36px 36px",
@@ -38,7 +38,7 @@ export default function OpengraphImage() {
               fontSize: 148,
               fontWeight: 900,
               letterSpacing: -4,
-              color: "#d71c3d",
+              color: "#d4af37",
             }}
           >
             .
@@ -49,7 +49,7 @@ export default function OpengraphImage() {
             marginTop: 22,
             fontSize: 30,
             fontWeight: 700,
-            color: "#d71c3d",
+            color: "#d4af37",
             textTransform: "uppercase",
             letterSpacing: 6,
           }}

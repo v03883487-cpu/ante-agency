@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #f5f5f5;
-  --accent: #d71c3d;
-  --accent-dim: #7a1024;
+  --background: #0b0c10;
+  --foreground: #f4f1ea;
+  --accent: #d4af37;
+  --accent-dim: #8a6f1f;
+  --accent-2: #1f9d6e;
   color-scheme: dark;
 }
 
@@ -12,8 +13,9 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
   --font-sans: var(--font-inter);
-  --font-display: var(--font-oswald);
+  --font-display: var(--font-bebas);
 }
 
 body {
@@ -29,7 +31,7 @@ body {
   inset: 0;
   z-index: 30;
   pointer-events: none;
-  opacity: 0.05;
+  opacity: 0.04;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -40,12 +42,37 @@ body {
   box-shadow: inset 0 0 220px rgba(0, 0, 0, 0.85);
 }
 
+/* Faint casino-table grid — a stand-in "background image" made of pure CSS. */
+.pit-grid {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(212, 175, 55, 0.10), transparent 40%),
+    radial-gradient(circle at 82% 70%, rgba(31, 157, 110, 0.10), transparent 42%),
+    linear-gradient(rgba(244, 241, 234, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 241, 234, 0.035) 1px, transparent 1px);
+  background-size: auto, auto, 56px 56px, 56px 56px;
+}
+
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(215, 28, 61, 0.45); }
-  50% { box-shadow: 0 0 0 10px rgba(215, 28, 61, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.45); }
+  50% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
 }
 .pulse-glow {
   animation: pulse-glow 2.4s ease-out infinite;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(3%, -4%) scale(1.08); }
+}
+.drift-slow {
+  animation: drift 18s ease-in-out infinite;
+}
+.drift-slow-reverse {
+  animation: drift 22s ease-in-out infinite reverse;
 }
 
 .card-hover {
@@ -55,16 +82,16 @@ body {
   transform: translateY(-4px);
 }
 
-/* Flat black section background (Tailwind's bg-white utility is repurposed
+/* Flat section background (Tailwind's bg-white utility is repurposed
    site-wide as "the flat section background", so every section using it
-   stays black without per-component changes). */
+   stays on-theme without per-component changes). */
 .bg-white {
-  background-color: rgba(10, 10, 10, 0.55);
+  background-color: rgba(11, 12, 16, 0.6);
 }
 
 ::selection {
   background: var(--accent);
-  color: #ffffff;
+  color: #0b0c10;
 }
 
 ::-webkit-scrollbar {
@@ -72,18 +99,18 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: #0b0c10;
 }
 ::-webkit-scrollbar-thumb {
   background: #3f3f46;
   border-radius: 999px;
-  border: 2px solid #0a0a0a;
+  border: 2px solid #0b0c10;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent);
 }
 html {
-  scrollbar-color: #3f3f46 #0a0a0a;
+  scrollbar-color: #3f3f46 #0b0c10;
 }
 
 .nav-link {

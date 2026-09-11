@@ -14,8 +14,16 @@ function formatFollowers(n: number) {
   return String(n);
 }
 
+function hashHue(s: string) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 360;
+  return h;
+}
+
 export function StreamerCard({ streamer }: { streamer: Streamer }) {
   const primary = streamer.links[0];
+  const initials = streamer.handle.slice(0, 2).toUpperCase();
+  const hue = hashHue(streamer.handle);
 
   return (
     <a
@@ -29,17 +37,15 @@ export function StreamerCard({ streamer }: { streamer: Streamer }) {
       <span className="corner-bracket corner-bracket--bl" aria-hidden />
       <span className="corner-bracket corner-bracket--br" aria-hidden />
 
-      <div className="aspect-square w-full overflow-hidden bg-white/10">
-        <img
-          src={streamer.avatar}
-          alt={`Аватар ${streamer.handle}`}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-        />
+      <div
+        className="flex aspect-square w-full items-center justify-center overflow-hidden"
+        style={{ background: `linear-gradient(150deg, hsl(${hue} 55% 22%), hsl(${(hue + 40) % 360} 45% 12%))` }}
+      >
+        <span className="font-display text-5xl uppercase tracking-tight text-white/85">{initials}</span>
       </div>
 
       <div className="flex flex-col gap-2 p-3.5">
-        <span className="truncate font-display text-base font-bold uppercase tracking-tight text-white">
+        <span className="truncate font-display text-lg uppercase tracking-tight text-white">
           {streamer.handle}
         </span>
         <dl className="flex flex-col gap-1 border-t border-white/10 pt-2.5 text-[11px]">

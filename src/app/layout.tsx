@@ -1,9 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Oswald } from "next/font/google";
+import { Inter, Bebas_Neue } from "next/font/google";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CursorGlow } from "@/components/CursorGlow";
-import { AmbientBg } from "@/components/AmbientBg";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
@@ -14,10 +13,10 @@ const inter = Inter({
   weight: ["400", "500", "600", "700", "800", "900"],
 });
 
-const oswald = Oswald({
-  variable: "--font-oswald",
-  subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600", "700"],
+const bebas = Bebas_Neue({
+  variable: "--font-bebas",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -55,7 +54,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: "dark",
-  themeColor: "#0a0a0a",
+  themeColor: "#0b0c10",
 };
 
 const jsonLd = {
@@ -70,13 +69,13 @@ const jsonLd = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ru" className={`${inter.variable} ${oswald.variable} h-full antialiased`}>
+    <html lang="ru" className={`${inter.variable} ${bebas.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-white font-sans text-white">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <AmbientBg />
+        <div className="pit-grid" aria-hidden />
         <SmoothScroll />
         <CursorGlow />
         <div className="film-grain" aria-hidden />

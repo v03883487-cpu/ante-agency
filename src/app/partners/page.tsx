@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BreadcrumbsJsonLd } from "@/components/Breadcrumbs";
-import { BarbedWire } from "@/components/BarbedWire";
-import { basePath } from "@/lib/site";
 import { PartnerSignupForm } from "@/components/PartnerSignupForm";
 import { CountUp } from "@/components/CountUp";
 import { partnerFaqItems } from "@/lib/partnerFaq";
 import { brands } from "@/lib/brands";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { FadeIn, StaggerGroup, StaggerItem } from "@/components/FadeIn";
+import { ArrowIcon } from "@/components/Icon";
 
 export const metadata: Metadata = {
   title: "Партнёрская программа Ante Partners",
@@ -53,13 +52,12 @@ export default function PartnersPage() {
       <section className="relative overflow-hidden bg-white px-6 pb-16 pt-16 text-center text-white sm:px-12 sm:pt-24">
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-64"
-          style={{ background: "radial-gradient(ellipse 60% 100% at 50% 0%, rgba(215,28,61,0.22), transparent 70%)" }}
+          style={{ background: "radial-gradient(ellipse 60% 100% at 50% 0%, rgba(212,175,55,0.22), transparent 70%)" }}
           aria-hidden
         />
-        <BarbedWire className="opacity-45" />
         <FadeIn className="relative mx-auto max-w-2xl">
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Ante Partners</span>
-          <h1 className="mt-3 font-display text-5xl font-bold tracking-tight sm:text-7xl">
+          <h1 className="mt-3 font-display text-6xl uppercase tracking-tight sm:text-8xl">
             Лей трафик
           </h1>
           <p className="mt-4 text-lg text-zinc-400">CPA, RevShare, гибрид — выплаты каждую неделю.</p>
@@ -68,7 +66,7 @@ export default function PartnersPage() {
               href={`${PARTNERS_APP_URL}/register`}
               target="_blank"
               rel="noopener noreferrer"
-              className="pulse-glow rounded-full bg-[var(--accent)] px-7 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+              className="pulse-glow rounded-full bg-[var(--accent)] px-7 py-3 text-sm font-semibold text-[#0b0c10] transition-opacity hover:opacity-85"
             >
               Стать партнёром
             </a>
@@ -175,10 +173,10 @@ export default function PartnersPage() {
               href={`${PARTNERS_APP_URL}/register`}
               target="_blank"
               rel="noopener noreferrer"
-              className="group mt-6 inline-flex items-center gap-1.5 rounded-full bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+              className="group mt-6 inline-flex items-center gap-1.5 rounded-full bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-[#0b0c10] transition-opacity hover:opacity-85"
             >
               Открыть личный кабинет
-              <img src={`${basePath}/icons/arrow-right.webp`} alt="" aria-hidden className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+              <ArrowIcon className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </a>
             <p className="mt-6 text-sm text-zinc-400">
               Или: <a href="mailto:partners@ante.agency" className="text-white hover:opacity-60">partners@ante.agency</a>
