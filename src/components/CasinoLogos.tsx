@@ -2,35 +2,54 @@ import Link from "next/link";
 import { brands } from "@/lib/brands";
 import { BrandLogo } from "./BrandLogo";
 
-export function CasinoLogos({ withLinkToPage = true }: { withLinkToPage?: boolean }) {
-  const track = [...brands, ...brands];
+export function CasinoLogos({
+  withLinkToPage = true,
+  showHeading = true,
+  limit,
+}: {
+  withLinkToPage?: boolean;
+  showHeading?: boolean;
+  limit?: number;
+}) {
+  const list = limit ? brands.slice(0, limit) : brands;
 
   return (
-    <section className="border-y border-white/10 bg-white py-14">
-      <div className="mx-auto max-w-5xl px-6 sm:px-12">
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">
-            Наши бренды
-          </p>
-          {withLinkToPage && (
-            <Link href="/brands" className="text-xs font-medium text-white hover:opacity-60">
-              Все бренды →
-            </Link>
-          )}
-        </div>
-      </div>
+    <section className="border-y border-white/10 bg-white px-6 py-20 sm:px-12">
+      <div className="mx-auto max-w-5xl">
+        {showHeading && (
+          <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Кому доверяют</span>
+              <h2 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-6xl">
+                Портфолио
+              </h2>
+            </div>
+            {withLinkToPage && (
+              <Link href="/brands" className="text-sm font-medium text-white hover:opacity-60">
+                Все бренды →
+              </Link>
+            )}
+          </div>
+        )}
 
-      <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-        <div className="flex w-max animate-marquee gap-3 [animation-play-state:running] hover:[animation-play-state:paused]">
-          {track.map((b, i) => (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+          {list.map((b) => (
             <a
-              key={`${b.name}-${i}`}
+              key={b.name}
               href={b.href}
               target="_blank"
               rel="noopener noreferrer nofollow sponsored"
-              className="group shrink-0 rounded-full border border-white/10 px-5 py-2.5 text-sm text-zinc-300 transition-colors hover:border-white/40"
+              className="group relative overflow-hidden flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white px-3 py-8 text-center transition-colors hover:border-white/30"
             >
-              <BrandLogo name={b.name} logo={b.logo} className="text-sm" />
+              <span className="corner-bracket corner-bracket--tl" aria-hidden />
+              <span className="corner-bracket corner-bracket--tr" aria-hidden />
+              <span className="corner-bracket corner-bracket--bl" aria-hidden />
+              <span className="corner-bracket corner-bracket--br" aria-hidden />
+              <BrandLogo
+                name={b.name}
+                logo={b.logo}
+                className="flex-col gap-3 text-sm text-zinc-400 transition-colors group-hover:text-white [&_svg]:h-9 [&_svg]:w-9 [&_svg]:text-white [&_img]:h-10 [&_img]:w-10"
+              />
             </a>
           ))}
         </div>

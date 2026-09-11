@@ -24,7 +24,7 @@ export default function Home() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <Hero />
       <TrustBand />
-      <CasinoLogos />
+      <CasinoLogos limit={12} />
       <BentoStats />
       <Services />
       <StreamersPreview />

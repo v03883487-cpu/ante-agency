@@ -42,7 +42,7 @@ export function Hero() {
           variants={item}
           className="rounded-full border border-[var(--accent)]/60 bg-black/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-zinc-100 shadow-[0_2px_20px_rgba(0,0,0,0.6)] backdrop-blur-md"
         >
-          1400+ стримеров в базе
+          1400+ стримеров для твоего бренда
         </motion.span>
 
         <motion.p variants={item} className="mt-6 max-w-xl text-xl text-zinc-300 sm:text-2xl">

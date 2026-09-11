@@ -90,7 +90,7 @@ export default function PartnersPage() {
         </div>
       </section>
 
-      <CasinoLogos withLinkToPage={false} />
+      <CasinoLogos withLinkToPage={false} limit={12} />
 
       <section id="plans" className="relative bg-white px-6 py-20 sm:px-12">
         <div className="mx-auto max-w-5xl">
