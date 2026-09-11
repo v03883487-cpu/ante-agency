@@ -18,8 +18,8 @@ export function StreamersPreview() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {streamers.slice(0, 8).map((s) => (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {streamers.slice(0, 6).map((s) => (
             <StreamerCard key={s.handle} streamer={s} />
           ))}
         </div>

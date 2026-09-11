@@ -22,7 +22,7 @@ export default function StreamersPage() {
         subtitle="Twitch, Kick, YouTube — ссылки на настоящие каналы."
       />
       <section className="bg-white px-6 pb-28 sm:px-12">
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {streamers.map((s) => (
             <StreamerCard key={s.handle} streamer={s} />
           ))}
