@@ -6,22 +6,10 @@ import { motion, AnimatePresence } from "framer-motion";
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 const services = [
-  {
-    title: "Подбор стримеров",
-    body: "Находим и проверяем gambling-стримеров и инфлюенсеров под гео, аудиторию и бюджет кампании — с реальной статистикой, а не накрученными цифрами.",
-  },
-  {
-    title: "Медиабаинг и интеграции",
-    body: "Ведём переговоры, готовим брифы, согласовываем форматы интеграций и запускаем размещения под ключ.",
-  },
-  {
-    title: "Комплаенс и ограничения",
-    body: "Знаем рекламные ограничения по гео для gambling/betting и следим, чтобы креативы и посевы им соответствовали.",
-  },
-  {
-    title: "Отчётность и аналитика",
-    body: "Трекаем охваты, переходы и конверсии по каждой интеграции, даём прозрачный отчёт по кампании.",
-  },
+  { title: "Подбор стримеров", body: "Гео, аудитория, бюджет — реальная статистика." },
+  { title: "Медиабаинг", body: "Брифы, форматы, размещение под ключ." },
+  { title: "Комплаенс", body: "Рекламные ограничения по гео закрыты." },
+  { title: "Отчётность", body: "Охваты, переходы, конверсии — прозрачно." },
 ];
 
 export function Services() {
@@ -33,12 +21,12 @@ export function Services() {
         <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Что мы делаем</span>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Полный цикл инфлюенс-маркетинга для gambling-брендов
+            <h2 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-6xl">
+              Полный цикл
             </h2>
           </div>
           <a href="#contact" className="flex items-center gap-1 text-sm font-medium text-white hover:opacity-60">
-            Обсудить кампанию <span aria-hidden>→</span>
+            Обсудить <span aria-hidden>→</span>
           </a>
         </div>
 
@@ -49,15 +37,15 @@ export function Services() {
               <div key={s.title}>
                 <button
                   onClick={() => setOpen(isOpen ? -1 : i)}
-                  className="flex w-full items-center gap-6 py-6 text-left"
+                  className="flex w-full items-center gap-6 py-8 text-left"
                 >
-                  <span className="font-display text-sm font-bold text-white/20">{String(i + 1).padStart(2, "0")}</span>
-                  <span className={`flex-1 font-display text-lg font-semibold sm:text-xl ${isOpen ? "text-white" : "text-zinc-500"}`}>
+                  <span className="font-display text-lg font-bold text-white/20">{String(i + 1).padStart(2, "0")}</span>
+                  <span className={`flex-1 font-display text-2xl font-semibold sm:text-3xl ${isOpen ? "text-white" : "text-zinc-500"}`}>
                     {s.title}
                   </span>
                   <motion.span
                     animate={{ rotate: isOpen ? 45 : 0 }}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/15 text-lg text-white"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 text-xl text-white"
                   >
                     +
                   </motion.span>
@@ -71,7 +59,7 @@ export function Services() {
                       transition={{ duration: 0.35, ease: EASE }}
                       className="overflow-hidden"
                     >
-                      <p className="max-w-xl pb-6 pl-11 text-sm leading-relaxed text-zinc-400">{s.body}</p>
+                      <p className="max-w-xl pb-8 pl-14 text-lg text-zinc-400">{s.body}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>

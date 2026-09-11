@@ -35,14 +35,14 @@ export function BentoStats() {
       >
         <motion.div
           variants={cardVariants}
-          className="group relative col-span-1 rounded-3xl border border-white/10 bg-white p-6 sm:col-span-2 sm:row-span-2"
+          className="group relative col-span-1 rounded-3xl border border-white/10 bg-white p-8 sm:col-span-2 sm:row-span-2 sm:p-10"
         >
           <Corners />
-          <span className="text-4xl font-bold text-white sm:text-5xl font-display">
+          <span className="text-6xl font-bold text-white sm:text-7xl font-display">
             <CountUp to={120} suffix="M+" />
           </span>
-          <p className="mt-2 text-sm text-zinc-400">суммарный охват аудитории стримеров-партнёров</p>
-          <svg viewBox="0 0 200 60" className="mt-6 w-full text-[var(--accent)]">
+          <p className="mt-3 text-base text-zinc-400">охват аудитории</p>
+          <svg viewBox="0 0 200 60" className="mt-8 w-full text-[var(--accent)]">
             <path
               d="M2 48 C 30 40, 40 52, 60 38 S 90 20, 110 26 S 150 8, 170 14 S 190 6, 198 4"
               fill="none"
@@ -53,31 +53,29 @@ export function BentoStats() {
           </svg>
         </motion.div>
 
-        <motion.div variants={cardVariants} className="group relative rounded-3xl border border-white/10 bg-white p-6">
+        <motion.div variants={cardVariants} className="group relative rounded-3xl border border-white/10 bg-white p-8">
           <Corners />
-          <span className="text-3xl font-bold text-white font-display">
+          <span className="text-5xl font-bold text-white font-display">
             <CountUp to={1400} suffix="+" />
           </span>
-          <p className="mt-2 text-sm text-zinc-400">gambling-стримеров и инфлюенсеров в базе</p>
+          <p className="mt-3 text-base text-zinc-400">стримеров</p>
         </motion.div>
 
-        <motion.div variants={cardVariants} className="group relative rounded-3xl border border-white/10 bg-white p-6">
+        <motion.div variants={cardVariants} className="group relative rounded-3xl border border-white/10 bg-white p-8">
           <Corners />
-          <span className="text-3xl font-bold text-white font-display">
+          <span className="text-5xl font-bold text-white font-display">
             <CountUp to={brands.length} />
           </span>
-          <p className="mt-2 text-sm text-zinc-400">casino / iGaming брендов-партнёров</p>
+          <p className="mt-3 text-base text-zinc-400">брендов</p>
         </motion.div>
 
         <motion.div
           variants={cardVariants}
-          className="group relative col-span-1 flex flex-col justify-between rounded-3xl border border-white/10 bg-[var(--accent)] p-6 text-white sm:col-span-2"
+          className="group relative col-span-1 flex flex-col justify-between rounded-3xl border border-white/10 bg-[var(--accent)] p-8 text-white sm:col-span-2"
         >
           <Corners light />
-          <span className="text-3xl font-bold font-display">24/7</span>
-          <p className="mt-2 text-sm text-white/80">
-            сопровождение кампаний — от брифа и подбора креаторов до модерации и отчётности
-          </p>
+          <span className="text-5xl font-bold font-display">24/7</span>
+          <p className="mt-3 text-base text-white/80">сопровождение кампаний</p>
         </motion.div>
       </motion.div>
     </section>

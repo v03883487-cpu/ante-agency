@@ -35,7 +35,7 @@ export function Footer() {
             ANTE<span aria-hidden className="text-[var(--accent)]">.</span>
           </Link>
           <p className="mt-4 text-sm text-zinc-400">
-            Influence-агентство полного цикла для gambling и iGaming брендов: подбор стримеров, медиабаинг, отчётность.
+            Influence-агентство для gambling и iGaming.
           </p>
         </div>
 

@@ -16,8 +16,8 @@ export default function BrandPage() {
       <BreadcrumbsJsonLd path="/brand" label="Брендбук" />
       <PageHeader
         eyebrow="Брендбук"
-        title="Логотип Ante"
-        subtitle="Тот же вордмарк, что на главной странице — готовые файлы для Telegram, сторис и презентаций."
+        title="Логотип"
+        subtitle="Файлы для Telegram и презентаций."
       />
 
       <section className="bg-white px-6 pb-28 sm:px-12">

@@ -42,12 +42,11 @@ export function Hero() {
           variants={item}
           className="rounded-full border border-[var(--accent)]/60 bg-black/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-zinc-100 shadow-[0_2px_20px_rgba(0,0,0,0.6)] backdrop-blur-md"
         >
-          1400+ инфлюенсеров уже в базе Ante
+          1400+ стримеров в базе
         </motion.span>
 
-        <motion.p variants={item} className="mt-6 max-w-xl text-lg text-zinc-300">
-          Ante связывает casino и betting-бренды с проверенными gambling-стримерами и инфлюенсерами — от
-          подбора креаторов до запуска кампании и отчётности.
+        <motion.p variants={item} className="mt-6 max-w-xl text-xl text-zinc-300 sm:text-2xl">
+          Casino, betting и проверенные gambling-стримеры.
         </motion.p>
 
         <motion.div variants={item} className="mt-8 flex flex-col gap-4 sm:flex-row">

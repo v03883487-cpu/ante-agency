@@ -15,14 +15,14 @@ export default function ContactPage() {
       <BreadcrumbsJsonLd path="/contact" label="Контакты" />
       <PageHeader
         eyebrow="Начнём работу"
-        title="Готовы поднять ставки?"
-        subtitle="Заполните форму или напишите напрямую — ответим в течение рабочего дня."
+        title="Контакты"
+        subtitle="Ответим в течение рабочего дня."
       />
       <section className="bg-white px-6 pb-28 sm:px-12">
         <div className="mx-auto grid max-w-4xl grid-cols-1 gap-10 sm:grid-cols-2">
           <div>
-            <h2 className="font-display text-lg font-bold text-white">Контакты</h2>
-            <dl className="mt-4 space-y-3 text-sm text-zinc-400">
+            <h2 className="font-display text-2xl font-bold text-white">Написать</h2>
+            <dl className="mt-4 space-y-3 text-base text-zinc-400">
               <div>
                 <dt className="text-zinc-500">Email</dt>
                 <dd>

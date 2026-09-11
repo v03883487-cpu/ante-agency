@@ -22,7 +22,7 @@ export function StreamerCard({ streamer }: { streamer: Streamer }) {
       href={primary.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative flex flex-col gap-4 rounded-3xl border border-white/10 bg-white p-5 transition-colors hover:border-white/30"
+      className="group relative flex flex-col gap-5 rounded-3xl border border-white/10 bg-white p-6 transition-colors hover:border-white/30"
     >
       <span className="corner-bracket corner-bracket--tl" aria-hidden />
       <span className="corner-bracket corner-bracket--tr" aria-hidden />
@@ -32,17 +32,17 @@ export function StreamerCard({ streamer }: { streamer: Streamer }) {
         <img
           src={streamer.avatar}
           alt={`Аватар ${streamer.handle}`}
-          width={56}
-          height={56}
-          className="h-14 w-14 shrink-0 rounded-2xl object-cover bg-white/10"
+          width={64}
+          height={64}
+          className="h-16 w-16 shrink-0 rounded-2xl object-cover bg-white/10"
           loading="lazy"
         />
         <div className="min-w-0">
-          <p className="truncate font-display text-base font-bold text-white">{streamer.handle}</p>
-          <p className="text-xs text-zinc-400">{formatFollowers(streamer.followers)} на Kick</p>
+          <p className="truncate font-display text-xl font-bold text-white">{streamer.handle}</p>
+          <p className="text-sm text-zinc-400">{formatFollowers(streamer.followers)} на Kick</p>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-2 border-t border-white/10 pt-4">
+      <div className="flex flex-wrap items-center gap-2 border-t border-white/10 pt-5">
         {streamer.links.map((l) => (
           <span
             key={l.platform}

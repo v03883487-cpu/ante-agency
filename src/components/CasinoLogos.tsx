@@ -10,7 +10,7 @@ export function CasinoLogos({ withLinkToPage = true }: { withLinkToPage?: boolea
       <div className="mx-auto max-w-5xl px-6 sm:px-12">
         <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">
-            Casino &amp; iGaming бренды, с которыми мы работаем в вертикали
+            Наши бренды
           </p>
           {withLinkToPage && (
             <Link href="/brands" className="text-xs font-medium text-white hover:opacity-60">

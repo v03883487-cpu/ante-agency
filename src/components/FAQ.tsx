@@ -7,8 +7,8 @@ export function FAQ() {
       <div className="mx-auto max-w-3xl">
         <div className="mb-10 text-center">
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Частые вопросы</span>
-          <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Всё, что нужно знать перед запуском
+          <h2 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-6xl">
+            Вопросы
           </h2>
         </div>
         <FaqAccordion items={faqItems} />

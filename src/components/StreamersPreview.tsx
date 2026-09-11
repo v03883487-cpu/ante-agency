@@ -9,8 +9,8 @@ export function StreamersPreview() {
         <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Наши креаторы</span>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Топ стримеров Ante
+            <h2 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-6xl">
+              Стримеры
             </h2>
           </div>
           <Link href="/streamers" className="flex items-center gap-1 text-sm font-medium text-white hover:opacity-60">
