@@ -1,14 +1,17 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { streamers } from "@/lib/streamers";
 import { StreamerCard } from "./StreamerCard";
 import { basePath } from "@/lib/site";
-import { AmbientBg } from "./AmbientBg";
+
+const EASE = [0.16, 1, 0.3, 1] as const;
 
 export function StreamersPreview() {
   return (
-    <section id="streamers" className="relative overflow-hidden bg-white px-6 pb-28 sm:px-12">
-      <AmbientBg position="bottom" />
-      <div className="relative mx-auto max-w-5xl">
+    <section id="streamers" className="relative bg-white px-6 pb-28 sm:px-12">
+      <div className="mx-auto max-w-5xl">
         <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Наши креаторы</span>
@@ -22,11 +25,22 @@ export function StreamersPreview() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ staggerChildren: 0.08 }}
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {streamers.slice(0, 6).map((s) => (
-            <StreamerCard key={s.handle} streamer={s} />
+            <motion.div
+              key={s.handle}
+              variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } } }}
+            >
+              <StreamerCard streamer={s} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

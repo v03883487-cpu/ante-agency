@@ -59,7 +59,11 @@ body {
    site-wide as "the flat section background", so every section using it
    stays black without per-component changes). */
 .bg-white {
-  background-color: #0a0a0a;
+  background-color: rgba(10, 10, 10, 0.8);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 ::selection {

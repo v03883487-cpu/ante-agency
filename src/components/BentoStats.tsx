@@ -2,8 +2,7 @@
 
 import { motion } from "framer-motion";
 import { CountUp } from "./CountUp";
-import { brands } from "@/lib/brands";
-import { AmbientBg } from "./AmbientBg";
+import { tier1Countries, tier2Countries } from "@/lib/geoTiers";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -26,14 +25,13 @@ function Corners({ light = false }: { light?: boolean }) {
 
 export function BentoStats() {
   return (
-    <section className="relative overflow-hidden bg-white px-6 pb-28 sm:px-12">
-      <AmbientBg />
+    <section className="relative bg-white px-6 pb-28 sm:px-12">
       <motion.div
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, margin: "-80px" }}
         transition={{ staggerChildren: 0.1 }}
-        className="relative mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-4"
+        className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-4"
       >
         <motion.div
           variants={cardVariants}
@@ -66,9 +64,9 @@ export function BentoStats() {
         <motion.div variants={cardVariants} className="card-hover group relative rounded-3xl border border-white/10 bg-white p-8">
           <Corners />
           <span className="text-5xl font-bold text-white font-display">
-            <CountUp to={brands.length} />
+            <CountUp to={tier1Countries.length + tier2Countries.length} />
           </span>
-          <p className="mt-3 text-base text-zinc-400">брендов</p>
+          <p className="mt-3 text-base text-zinc-400">гео tier 1-2</p>
         </motion.div>
 
         <motion.div

@@ -7,7 +7,7 @@ import { basePath } from "@/lib/site";
 const links = [
   { href: "/#services", label: "Услуги" },
   { href: "/streamers", label: "Стримеры" },
-  { href: "/brands", label: "Бренды" },
+  { href: "/geo", label: "Гео" },
   { href: "/cases", label: "Кейсы" },
 ];
 

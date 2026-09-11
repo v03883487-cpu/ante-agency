@@ -3,7 +3,7 @@ import Image from "next/image";
 import { PageHeader } from "@/components/PageHeader";
 import { BreadcrumbsJsonLd } from "@/components/Breadcrumbs";
 import { basePath } from "@/lib/site";
-import { AmbientBg } from "@/components/AmbientBg";
+import { FadeIn } from "@/components/FadeIn";
 
 export const metadata: Metadata = {
   title: "Брендбук: логотип Ante",
@@ -21,9 +21,8 @@ export default function BrandPage() {
         subtitle="Файлы для Telegram и презентаций."
       />
 
-      <section className="relative overflow-hidden bg-white px-6 pb-28 sm:px-12">
-        <AmbientBg position="bottom" />
-        <div className="relative mx-auto flex max-w-md flex-col items-center gap-8">
+      <section className="bg-white px-6 pb-28 sm:px-12">
+        <FadeIn className="mx-auto flex max-w-md flex-col items-center gap-8">
           <div className="w-full rounded-3xl bg-[#ffffff] p-8">
             <Image
               src={`${basePath}/brand/ante-wordmark.webp`}
@@ -59,7 +58,7 @@ export default function BrandPage() {
               <li>Не искажайте пропорции и не меняйте цвет вордмарка.</li>
             </ul>
           </div>
-        </div>
+        </FadeIn>
       </section>
     </>
   );

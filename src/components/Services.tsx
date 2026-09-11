@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { basePath } from "@/lib/site";
-import { AmbientBg } from "./AmbientBg";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -18,10 +17,15 @@ export function Services() {
   const [open, setOpen] = useState(0);
 
   return (
-    <section id="services" className="relative overflow-hidden bg-white px-6 pb-28 sm:px-12">
-      <AmbientBg />
-      <div className="relative mx-auto max-w-5xl">
-        <div className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+    <section id="services" className="relative bg-white px-6 pb-28 sm:px-12">
+      <div className="mx-auto max-w-5xl">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6, ease: EASE }}
+          className="mb-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end"
+        >
           <div>
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Что мы делаем</span>
             <h2 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-6xl">
@@ -32,22 +36,33 @@ export function Services() {
             Обсудить
             <img src={`${basePath}/icons/arrow-right.webp`} alt="" aria-hidden className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
           </a>
-        </div>
+        </motion.div>
 
-        <div className="divide-y divide-white/10 border-y border-white/10">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ staggerChildren: 0.08 }}
+          className="divide-y divide-white/10 border-y border-white/10"
+        >
           {services.map((s, i) => {
             const isOpen = open === i;
             return (
-              <div key={s.title}>
+              <motion.div
+                key={s.title}
+                variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } } }}
+              >
                 <button
                   onClick={() => setOpen(isOpen ? -1 : i)}
                   className="flex w-full items-center gap-6 py-8 text-left"
                 >
                   <span className="font-display text-lg font-bold text-white/20">{String(i + 1).padStart(2, "0")}</span>
-                  <span className={`flex-1 font-display text-2xl font-semibold sm:text-3xl ${isOpen ? "text-white" : "text-zinc-500"}`}>
+                  <span className={`flex-1 font-display text-2xl font-semibold sm:text-3xl transition-colors ${isOpen ? "text-white" : "text-zinc-500"}`}>
                     {s.title}
                   </span>
-                  <img
+                  <motion.img
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: 0.3, ease: EASE }}
                     src={`${basePath}/icons/${isOpen ? "x-circle" : "plus-circle"}.webp`}
                     alt=""
                     aria-hidden
@@ -67,10 +82,10 @@ export function Services() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

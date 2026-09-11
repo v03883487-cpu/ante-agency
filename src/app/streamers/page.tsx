@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { StreamerCard } from "@/components/StreamerCard";
 import { CtaBand } from "@/components/CtaBand";
 import { BreadcrumbsJsonLd } from "@/components/Breadcrumbs";
-import { AmbientBg } from "@/components/AmbientBg";
+import { StaggerGroup, StaggerItem } from "@/components/FadeIn";
 import { streamers } from "@/lib/streamers";
 
 export const metadata: Metadata = {
@@ -22,14 +22,15 @@ export default function StreamersPage() {
         title="Стримеры"
         subtitle="Twitch, Kick, YouTube — ссылки на настоящие каналы."
       />
-      <section className="relative overflow-hidden bg-white px-6 pb-28 sm:px-12">
-        <AmbientBg position="bottom" />
-        <div className="relative mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="bg-white px-6 pb-28 sm:px-12">
+        <StaggerGroup className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {streamers.map((s) => (
-            <StreamerCard key={s.handle} streamer={s} />
+            <StaggerItem key={s.handle}>
+              <StreamerCard streamer={s} />
+            </StaggerItem>
           ))}
-        </div>
-        <p className="relative mx-auto mt-10 max-w-5xl text-center text-base text-zinc-400">
+        </StaggerGroup>
+        <p className="mx-auto mt-10 max-w-5xl text-center text-base text-zinc-400">
           Показана часть ростера — полный список по брифу.
         </p>
       </section>

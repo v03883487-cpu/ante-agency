@@ -3,6 +3,7 @@ import { Inter, Oswald } from "next/font/google";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CursorGlow } from "@/components/CursorGlow";
+import { AmbientBg } from "@/components/AmbientBg";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -74,6 +75,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <AmbientBg />
         <CursorGlow />
         <div className="film-grain" aria-hidden />
         <Navbar />

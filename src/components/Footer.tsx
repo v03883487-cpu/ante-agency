@@ -11,10 +11,10 @@ const columns = [
     ],
   },
   {
-    title: "Креаторы и бренды",
+    title: "Креаторы",
     links: [
       { href: "/streamers", label: "Каталог стримеров" },
-      { href: "/brands", label: "Casino-бренды" },
+      { href: "/geo", label: "Гео" },
     ],
   },
   {
