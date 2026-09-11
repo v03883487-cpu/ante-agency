@@ -3,7 +3,6 @@ import Link from "next/link";
 import { BreadcrumbsJsonLd } from "@/components/Breadcrumbs";
 import { BarbedWire } from "@/components/BarbedWire";
 import { basePath } from "@/lib/site";
-import { CasinoLogos } from "@/components/CasinoLogos";
 import { PartnerSignupForm } from "@/components/PartnerSignupForm";
 import { CountUp } from "@/components/CountUp";
 import { partnerFaqItems } from "@/lib/partnerFaq";
@@ -98,7 +97,6 @@ export default function PartnersPage() {
         </div>
       </section>
 
-      <CasinoLogos withLinkToPage={false} limit={12} />
 
       <section id="plans" className="relative bg-white px-6 py-20 sm:px-12">
         <div className="mx-auto max-w-5xl">
