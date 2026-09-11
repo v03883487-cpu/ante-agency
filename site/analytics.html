@@ -5,41 +5,32 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#f7f7fa" />
   <title>Ad Performance Analytics — Antefluence</title>
-  <meta name="description" content="Ad Performance Analytics by Antefluence: CTR, CPA, CAC, ROAS and conversions for every creator campaign in one dashboard." />
+  <meta name="description" content="Ad Performance Analytics by Antefluence: trackers, conversions, postbacks and pixels with CTR, CPA, CAC, ROAS and ROI for every creator campaign." />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&display=swap" />
-  <link rel="stylesheet" href="styles.css?v=1ed4fd0c" />
+  <link rel="stylesheet" href="styles.css?v=f9546581" />
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body data-page="analytics">
-  <script src="layout.js?v=f6d06c81" data-part="header"></script>
+  <script src="layout.js?v=62330cdc" data-part="header"></script>
 
   <main id="main">
-    <section class="page-hero">
+    <section class="page-hero apa-hero">
       <img class="page-hero-art is-soft" src="assets/web/lavender-orbits.webp" alt="" aria-hidden="true" />
-      <div class="container split">
-        <div class="reveal">
-          <div class="eyebrow" data-i18n="an.eyebrow">Our product</div>
-          <h1 data-i18n-html="an.title.html">Ad Performance <span>Analytics</span></h1>
-          <p class="page-lead" data-i18n="an.lead">Our in-house analytics product. It shows how every ad campaign performs — CTR, CPA, CAC, ROAS, conversions and more — in one dashboard.</p>
-          <div class="hero-ctas" style="margin-top:36px">
-            <a class="btn btn-dark" href="index.html#contact"><span data-i18n="an.cta1">Request a demo</span> <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-          </div>
-        </div>
-        <div class="dashboard reveal delay-1" aria-hidden="true">
-          <div class="dash-top"><span data-i18n="an.dash">Campaign overview</span><small data-i18n="an.demo">Demo data</small></div>
-          <div class="dash-kpis">
-            <div><span>CTR</span><b>4.8%</b> <em class="up">▲ 0.6</em></div>
-            <div><span>CPA</span><b>$38</b> <em class="up">▼ 12%</em></div>
-            <div><span>CAC</span><b>$52</b> <em class="up">▼ 9%</em></div>
-            <div><span>ROAS</span><b>3.8x</b> <em class="up">▲ 0.4</em></div>
-          </div>
-          <div class="dash-bars"><i style="height:38%"></i><i style="height:52%"></i><i style="height:46%"></i><i style="height:64%"></i><i style="height:58%"></i><i style="height:72%"></i><i style="height:69%"></i><i style="height:84%"></i><i style="height:78%"></i><i style="height:92%"></i></div>
-          <div class="dash-legend"><span>W1</span><span>W2</span><span>W3</span><span>W4</span><span>W5</span></div>
-        </div>
+      <div class="container reveal">
+        <div class="eyebrow" data-i18n="an.eyebrow">Our product</div>
+        <h1 data-i18n-html="an.title.html">Ad Performance <span>Analytics</span></h1>
+        <p class="page-lead" data-i18n="an.lead">Our in-house analytics platform: trackers, conversions and the return of every creator campaign in one dashboard — CTR, CPA, CAC, ROAS, ROI and more.</p>
+        <p class="apa-demo-note"><span class="dot"></span><span data-i18n="apa.demo">Demo mode: all data is stored only in this browser.</span></p>
+      </div>
+    </section>
+
+    <section class="apa-section" data-no-exit>
+      <div class="container">
+        <div class="apa" id="apa"></div>
       </div>
     </section>
 
@@ -50,29 +41,14 @@
           <h2 data-i18n-html="an.m.title.html">Every number that<br>matters for your budget</h2>
         </div>
         <div class="metric-grid">
-          <div class="metric reveal"><b>CTR</b><span data-i18n="an.ctr">Click-through rate — how many viewers click a creator's link or promo code.</span></div>
-          <div class="metric reveal delay-1"><b>CPA</b><span data-i18n="an.cpa">Cost per action — what one registration or first deposit costs you.</span></div>
-          <div class="metric reveal delay-2"><b>CAC</b><span data-i18n="an.cac">Customer acquisition cost — the full cost of bringing in a paying player.</span></div>
-          <div class="metric reveal delay-3"><b>ROAS</b><span data-i18n="an.roas">Return on ad spend — revenue earned for every dollar invested.</span></div>
-          <div class="metric reveal"><b data-i18n="an.conv.t">Conversions</b><span data-i18n="an.conv">Registrations, first deposits and repeat deposits by creator and GEO.</span></div>
-          <div class="metric reveal delay-1"><b>CPM</b><span data-i18n="an.cpm">Cost per thousand views — how efficiently a stream or video buys reach.</span></div>
-          <div class="metric reveal delay-2"><b>LTV</b><span data-i18n="an.ltv">Lifetime value — how much a player acquired through a creator brings over time.</span></div>
-          <div class="metric reveal delay-3"><b>ROI</b><span data-i18n="an.roi">Return on investment — the campaign's profit against its total cost.</span></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="page-section">
-      <div class="container">
-        <div class="section-intro reveal">
-          <div class="eyebrow" data-i18n="an.f.eyebrow">How it works</div>
-          <h2 data-i18n-html="an.f.title.html">From a click on stream<br>to a deposit in your report</h2>
-        </div>
-        <div class="card-grid cols-4">
-          <article class="info-card reveal"><img class="card-icon" src="assets/icons/stat-reach.webp" alt="" /><h3 data-i18n="an.f1.t">Real-time tracking</h3><p data-i18n="an.f1.d">Clicks, registrations and deposits from every creator link and promo code as they happen.</p></article>
-          <article class="info-card reveal delay-1"><img class="card-icon" src="assets/icons/stat-creators.webp" alt="" /><h3 data-i18n="an.f2.t">Creator-level breakdown</h3><p data-i18n="an.f2.d">See which streamer, stream and GEO brings players — and which doesn't.</p></article>
-          <article class="info-card reveal delay-2"><img class="card-icon" src="assets/icons/svc-analytics.webp" alt="" /><h3 data-i18n="an.f3.t">Transparent reports</h3><p data-i18n="an.f3.d">Regular reports and a shared dashboard for your marketing team.</p></article>
-          <article class="info-card reveal delay-3"><img class="card-icon" src="assets/icons/stat-roas.webp" alt="" /><h3 data-i18n="an.f4.t">Budget optimisation</h3><p data-i18n="an.f4.d">We shift budget to the creators and formats with the best ROAS.</p></article>
+          <div class="metric reveal"><img class="metric-icon" src="assets/icons3d/target.webp" alt="" /><b>CTR</b><span data-i18n="an.ctr">Click-through rate — how many viewers click a creator's link or promo code.</span></div>
+          <div class="metric reveal delay-1"><img class="metric-icon" src="assets/icons3d/wallet.webp" alt="" /><b>CPA</b><span data-i18n="an.cpa">Cost per action — what one registration or first deposit costs you.</span></div>
+          <div class="metric reveal delay-2"><img class="metric-icon" src="assets/icons3d/team.webp" alt="" /><b>CAC</b><span data-i18n="an.cac">Customer acquisition cost — the full cost of bringing in a paying player.</span></div>
+          <div class="metric reveal delay-3"><img class="metric-icon" src="assets/icons3d/growth.webp" alt="" /><b>ROAS</b><span data-i18n="an.roas">Return on ad spend — revenue earned for every dollar invested.</span></div>
+          <div class="metric reveal"><img class="metric-icon" src="assets/icons3d/magnet.webp" alt="" /><b data-i18n="an.conv.t">Conversions</b><span data-i18n="an.conv">Registrations, first deposits and repeat deposits by creator and GEO.</span></div>
+          <div class="metric reveal delay-1"><img class="metric-icon" src="assets/icons3d/eye.webp" alt="" /><b>CPM</b><span data-i18n="an.cpm">Cost per thousand views — how efficiently a stream or video buys reach.</span></div>
+          <div class="metric reveal delay-2"><img class="metric-icon" src="assets/icons3d/chip.webp" alt="" /><b>EPC</b><span data-i18n="an.epc">Earnings per click — deposits divided by clicks on creator links.</span></div>
+          <div class="metric reveal delay-3"><img class="metric-icon" src="assets/icons3d/trophy.webp" alt="" /><b>ROI</b><span data-i18n="an.roi">Return on investment — the campaign's profit against its total cost.</span></div>
         </div>
       </div>
     </section>
@@ -80,16 +56,17 @@
     <section class="page-cta">
       <div class="container">
         <div class="page-cta-card reveal">
-          <div><h2 data-i18n="an.cta.t">See your campaigns in numbers</h2><p data-i18n="an.cta.d">We'll show the dashboard on your own data during the first campaign.</p></div>
-          <a class="btn btn-dark" href="index.html#contact"><span data-i18n="an.cta1">Request a demo</span> <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <div><h2 data-i18n="an.cta.t">Connect your campaigns</h2><p data-i18n="an.cta.d">We'll set up trackers, postbacks and pixels for your brand and move your data from demo mode to your own account.</p></div>
+          <a class="btn btn-dark" href="index.html#contact"><span data-i18n="an.cta1">Request access</span> <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
         </div>
       </div>
     </section>
   </main>
 
-  <script src="layout.js?v=f6d06c81" data-part="footer"></script>
-  <script src="i18n.js?v=6e156344"></script>
-  <script src="i18n-pages.js?v=8cc5222c"></script>
-  <script src="script.js?v=55e1a6f1"></script>
+  <script src="layout.js?v=62330cdc" data-part="footer"></script>
+  <script src="i18n.js?v=0d488b28"></script>
+  <script src="i18n-pages.js?v=6efabbd2"></script>
+  <script src="script.js?v=ec1967d5"></script>
+  <script src="apa.js?v=6710821e"></script>
 </body>
 </html>

@@ -155,8 +155,7 @@ if (track && prevBtn && nextBtn) {
 
 /* ---------- Language menu ---------- */
 const langs = $$('[data-lang]');
-const form = $('#lead-form');
-const status = form ? $('.form-status', form) : null;
+const forms = $$('form.lead-form');
 
 function applyLang(code, { save = false } = {}) {
   if (!SUPPORTED.includes(code)) code = 'en';
@@ -169,11 +168,17 @@ function applyLang(code, { save = false } = {}) {
   });
   translatePage();
   if (menuButton) menuButton.setAttribute('aria-label', t(menuButton.getAttribute('aria-expanded') === 'true' ? 'a11y.menuClose' : 'a11y.menuOpen'));
-  if (form) form.elements.language.value = code;
-  if (status && status.dataset.key) status.textContent = t(status.dataset.key);
+  forms.forEach(f => {
+    if (f.elements.language) f.elements.language.value = code;
+    const st = $('.form-status', f);
+    if (st && st.dataset.key) st.textContent = t(st.dataset.key);
+  });
   if (save) { try { localStorage.setItem(LANG_KEY, code); } catch {} }
   updateCarousel();
+  document.dispatchEvent(new CustomEvent('af:lang', { detail: code }));
 }
+// shared helpers for page-specific scripts (partners.js, apa.js)
+window.AF = { t: key => t(key), lang: () => current };
 
 function closeLang(root, focusButton) {
   const btn = $('.lang-pill', root);
@@ -233,8 +238,9 @@ $$('a[href="#"]').forEach(a => a.addEventListener('click', e => e.preventDefault
 const year = $('[data-year]');
 if (year) year.textContent = new Date().getFullYear();
 
-/* ---------- Lead form ---------- */
-if (form) {
+/* ---------- Lead forms ---------- */
+forms.forEach(form => {
+  const status = $('.form-status', form);
   const button = $('button[type="submit"]', form);
   const fields = $$('input:not([type="hidden"]), textarea', form);
   const setStatus = (key, isError = false) => {
@@ -269,13 +275,15 @@ if (form) {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
       }
       form.reset();
-      form.elements.language.value = current;
+      if (form.elements.language) form.elements.language.value = current;
       button.textContent = t('form.sent');
       setStatus('form.thanks');
       setTimeout(() => {
         button.disabled = false;
         button.innerHTML = original;
-        $('[data-i18n]', button).textContent = t('ct.send');
+        const label = $('[data-i18n]', button);
+        const v = label && t(label.dataset.i18n);
+        if (v) label.textContent = v;
       }, 2600);
     } catch {
       button.disabled = false;
@@ -283,10 +291,10 @@ if (form) {
       setStatus('form.error', true);
     }
   });
-}
+});
 
 /* ---------- Section exit: the section leaving at the top drifts up-right and blurs ---------- */
-const exitSections = $$('main > section');
+const exitSections = $$('main > section:not([data-no-exit])');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 let exitTicking = false;
 function renderExit() {

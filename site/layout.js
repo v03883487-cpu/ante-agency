@@ -12,10 +12,11 @@
   var chev = '<svg class="i chev" aria-hidden="true"><use href="#i-chevron"/></svg>';
 
   var groups = [
-    { id: 'services', key: 'nav.services', label: 'Services', pages: ['analytics', 'content'], section: 'services', items: [
+    { id: 'services', key: 'nav.services', label: 'Services', pages: ['analytics', 'content', 'partners'], section: 'services', items: [
       { href: H + '#services', key: 'ft.s1', label: 'Influencer Campaigns' },
       { href: 'analytics.html', key: 'ft.s3', label: 'Performance Analytics' },
-      { href: 'content.html', key: 'ft.s6', label: 'Creative Strategy' }
+      { href: 'content.html', key: 'ft.s6', label: 'Creative Strategy' },
+      { href: 'partners.html', key: 'nav.partners', label: 'Partner program' }
     ] },
     { id: 'creators', key: 'nav.creators', label: 'Creators', pages: ['creators'], section: 'creators', items: [
       { href: H + '#creators', key: 'nav.top', label: 'Top creators' },
@@ -79,11 +80,11 @@
   var header =
     '<a class="skip-link" href="#main" data-i18n="skip">Skip to content</a>' +
     '<div class="page-noise" aria-hidden="true"></div>' + sprite +
-    '<header class="site-header" id="top"><div class="container nav-shell">' +
+    '<header class="site-header" id="top"><div class="nav-shell">' +
     '<a class="brand" href="' + TOP + '" aria-label="Antefluence — back to top" data-i18n-aria="a11y.top">' +
     '<img src="assets/web/logo-mark.webp" alt="" class="brand-mark" width="247" height="256" /><span>Antefluence</span></a>' +
-    '<nav class="desktop-nav" aria-label="Primary">' + desktopNav() + '</nav>' +
-    '<div class="nav-actions">' + langPicker() +
+    '<div class="nav-center"><nav class="desktop-nav" aria-label="Primary">' + desktopNav() + '</nav>' + langPicker() + '</div>' +
+    '<div class="nav-actions">' +
     '<a class="btn btn-dark btn-nav" href="' + H + '#contact"><span data-i18n="cta.work">Work With Us</span> ' + arrow + '</a>' +
     '<button class="menu-button" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu"><span></span><span></span></button>' +
     '</div></div>' +
@@ -111,7 +112,8 @@
     col('services', 'ft.services', 'Services', [
       [H + '#services', 'ft.s1', 'Influencer Campaigns'],
       ['analytics.html', 'ft.s3', 'Performance Analytics'],
-      ['content.html', 'ft.s6', 'Creative Strategy']
+      ['content.html', 'ft.s6', 'Creative Strategy'],
+      ['partners.html', 'nav.partners', 'Partner program']
     ]) +
     col('company', 'ft.company', 'Company', [
       ['about.html', 'ft.c1', 'About Us'],

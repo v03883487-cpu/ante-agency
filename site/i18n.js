@@ -68,7 +68,24 @@ window.I18N = {
     "cr.n1": "578K followers",
     "cr.n2": "261K followers",
     "cr.n3": "244K followers",
-    "cr.n4": "138K followers"
+    "cr.n4": "138K followers",
+    "nav.partners": "Partner program",
+    "cap.label": "What we cover",
+    "cap.1": "Strategy",
+    "cap.2": "Campaigns",
+    "cap.3": "Analytics",
+    "cap.4": "Global reach",
+    "cap.5": "Creators",
+    "cap.6": "Influence",
+    "cap.7": "Performance",
+    "cap.8": "Engagement",
+    "cap.9": "Content",
+    "cap.10": "Partnerships",
+    "cap.11": "Brand safety",
+    "cap.12": "Targeting",
+    "cap.13": "Multi-platform",
+    "cap.14": "Growth",
+    "cap.15": "Long-term"
   },
 
   es: {
@@ -138,7 +155,24 @@ window.I18N = {
     "cr.n1": "578 mil seguidores",
     "cr.n2": "261 mil seguidores",
     "cr.n3": "244 mil seguidores",
-    "cr.n4": "138 mil seguidores"
+    "cr.n4": "138 mil seguidores",
+    "nav.partners": "Programa de afiliados",
+    "cap.label": "Lo que cubrimos",
+    "cap.1": "Estrategia",
+    "cap.2": "Campañas",
+    "cap.3": "Analítica",
+    "cap.4": "Alcance global",
+    "cap.5": "Creadores",
+    "cap.6": "Influencia",
+    "cap.7": "Rendimiento",
+    "cap.8": "Engagement",
+    "cap.9": "Contenido",
+    "cap.10": "Alianzas",
+    "cap.11": "Seguridad de marca",
+    "cap.12": "Segmentación",
+    "cap.13": "Multiplataforma",
+    "cap.14": "Crecimiento",
+    "cap.15": "Largo plazo"
   },
 
   pt: {
@@ -208,7 +242,24 @@ window.I18N = {
     "cr.n1": "578 mil seguidores",
     "cr.n2": "261 mil seguidores",
     "cr.n3": "244 mil seguidores",
-    "cr.n4": "138 mil seguidores"
+    "cr.n4": "138 mil seguidores",
+    "nav.partners": "Programa de afiliados",
+    "cap.label": "O que cobrimos",
+    "cap.1": "Estratégia",
+    "cap.2": "Campanhas",
+    "cap.3": "Análise",
+    "cap.4": "Alcance global",
+    "cap.5": "Criadores",
+    "cap.6": "Influência",
+    "cap.7": "Performance",
+    "cap.8": "Engajamento",
+    "cap.9": "Conteúdo",
+    "cap.10": "Parcerias",
+    "cap.11": "Segurança de marca",
+    "cap.12": "Segmentação",
+    "cap.13": "Multiplataforma",
+    "cap.14": "Crescimento",
+    "cap.15": "Longo prazo"
   },
 
   de: {
@@ -278,7 +329,24 @@ window.I18N = {
     "cr.n1": "578.000 Follower",
     "cr.n2": "261.000 Follower",
     "cr.n3": "244.000 Follower",
-    "cr.n4": "138.000 Follower"
+    "cr.n4": "138.000 Follower",
+    "nav.partners": "Partnerprogramm",
+    "cap.label": "Was wir abdecken",
+    "cap.1": "Strategie",
+    "cap.2": "Kampagnen",
+    "cap.3": "Analytics",
+    "cap.4": "Globale Reichweite",
+    "cap.5": "Creator",
+    "cap.6": "Einfluss",
+    "cap.7": "Performance",
+    "cap.8": "Engagement",
+    "cap.9": "Content",
+    "cap.10": "Partnerschaften",
+    "cap.11": "Markensicherheit",
+    "cap.12": "Targeting",
+    "cap.13": "Multi-Plattform",
+    "cap.14": "Wachstum",
+    "cap.15": "Langfristig"
   },
 
   ru: {
@@ -348,6 +416,23 @@ window.I18N = {
     "cr.n1": "578 тыс. подписчиков",
     "cr.n2": "261 тыс. подписчиков",
     "cr.n3": "244 тыс. подписчиков",
-    "cr.n4": "138 тыс. подписчиков"
+    "cr.n4": "138 тыс. подписчиков",
+    "nav.partners": "Партнёрка",
+    "cap.label": "Что мы закрываем",
+    "cap.1": "Стратегия",
+    "cap.2": "Кампании",
+    "cap.3": "Аналитика",
+    "cap.4": "Глобальный охват",
+    "cap.5": "Креаторы",
+    "cap.6": "Влияние",
+    "cap.7": "Эффективность",
+    "cap.8": "Вовлечённость",
+    "cap.9": "Контент",
+    "cap.10": "Партнёрства",
+    "cap.11": "Безопасность бренда",
+    "cap.12": "Таргетинг",
+    "cap.13": "Мультиплатформа",
+    "cap.14": "Рост",
+    "cap.15": "В долгую"
   }
 };

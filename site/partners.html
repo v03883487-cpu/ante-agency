@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#f7f7fa" />
+  <title>Partner program — Antefluence</title>
+  <meta name="description" content="Antefluence partner program for webmasters: iGaming CPA offers, S2S postbacks with other networks and our own payment system." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&display=swap" />
+  <link rel="stylesheet" href="styles.css?v=f9546581" />
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body data-page="partners">
+  <script src="layout.js?v=62330cdc" data-part="header"></script>
+
+  <main id="main">
+    <section class="page-hero">
+      <img class="page-hero-art" src="assets/web/hero-cluster.webp" alt="" aria-hidden="true" />
+      <div class="container reveal">
+        <div class="eyebrow" data-i18n="pa.eyebrow">Partner program</div>
+        <h1 data-i18n-html="pa.title.html">Drive CPA traffic<br>to <span>iGaming offers</span></h1>
+        <p class="page-lead" data-i18n="pa.lead">The Antefluence partner program for webmasters: direct and exclusive offers, postbacks with other affiliate networks and our own payment system.</p>
+        <div class="hero-ctas" style="margin-top:36px">
+          <a class="btn btn-dark" href="#join"><span data-i18n="pa.cta1">Become a partner</span> <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-light" href="#offers" data-i18n="pa.cta2">See offers</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-section">
+      <div class="container">
+        <div class="stats-grid compact">
+          <article><img class="stat-icon" src="assets/icons3d/dice.webp" alt="" /><div><strong>CPA · RS · Hybrid</strong><span data-i18n="pa.f1">Payout models</span></div></article>
+          <article><img class="stat-icon" src="assets/icons3d/bolt.webp" alt="" /><div><strong>S2S</strong><span data-i18n="pa.f2">Postbacks with any tracker</span></div></article>
+          <article><img class="stat-icon" src="assets/icons3d/wallet.webp" alt="" /><div><strong data-i18n="pa.f3.t">Own payments</strong><span data-i18n="pa.f3">Crypto and fiat</span></div></article>
+          <article><img class="stat-icon" src="assets/icons3d/globe.webp" alt="" /><div><strong>40+</strong><span data-i18n="pa.f4">GEOs for offers</span></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section" id="offers">
+      <div class="container">
+        <div class="section-intro split-intro reveal">
+          <div><div class="eyebrow" data-i18n="pa.off.eyebrow">Offers</div><h2 data-i18n="pa.off.title">Current offers</h2></div>
+          <div class="intro-side"><p data-i18n="pa.off.lead">Filter by GEO, vertical and payout model. New offers appear here as soon as they are added.</p></div>
+        </div>
+        <div class="filters reveal">
+          <select class="field" id="flt-geo" aria-label="GEO"></select>
+          <select class="field" id="flt-vertical" aria-label="Vertical"></select>
+          <select class="field" id="flt-model" aria-label="Model"></select>
+        </div>
+        <div class="table-wrap reveal">
+          <table class="data-table" id="offers-table">
+            <thead><tr>
+              <th data-i18n="pa.th.offer">Offer</th><th data-i18n="pa.th.geo">GEO</th><th data-i18n="pa.th.model">Model</th>
+              <th data-i18n="pa.th.payout">Payout</th><th data-i18n="pa.th.baseline">Baseline</th><th data-i18n="pa.th.cap">Cap</th>
+              <th data-i18n="pa.th.status">Status</th><th></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+          <p class="empty-state" id="offers-empty" hidden data-i18n="pa.empty">No offers match these filters.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section" id="postback">
+      <div class="container">
+        <div class="section-intro split-intro reveal">
+          <div><div class="eyebrow" data-i18n="pa.pb.eyebrow">Postback</div><h2 data-i18n-html="pa.pb.title.html">S2S postbacks<br>in both directions</h2></div>
+          <div class="intro-side"><p data-i18n="pa.pb.lead">Conversions flow between us, partner networks and your tracker automatically — no manual reports.</p></div>
+        </div>
+        <div class="split">
+          <div class="info-card reveal">
+            <span class="kicker" data-i18n="pa.pb.in.k">Incoming</span>
+            <h3 data-i18n="pa.pb.in.t">Postbacks from other networks</h3>
+            <p data-i18n="pa.pb.in.d">Run offers of other affiliate networks through us: they send conversions to our endpoint, and we pass them on to you in real time.</p>
+            <div class="code-box"><code id="pb-in">https://postback.antefluence.com/in/{token}?click_id={clickid}&amp;goal={goal}&amp;payout={payout}&amp;currency={currency}&amp;status={status}</code><button class="copy" type="button" data-copy="#pb-in" data-i18n="pa.copy">Copy</button></div>
+            <p class="small-note" data-i18n="pa.pb.in.note">Your personal endpoint with a token is issued by your manager when you connect.</p>
+          </div>
+          <div class="info-card reveal delay-1">
+            <span class="kicker" data-i18n="pa.pb.out.k">Outgoing</span>
+            <h3 data-i18n="pa.pb.out.t">Postback to your tracker</h3>
+            <p data-i18n="pa.pb.out.d">Pick your tracker, enter its domain and copy a ready postback URL.</p>
+            <div class="seg" id="pb-trackers" role="group" aria-label="Tracker">
+              <button type="button" data-tracker="keitaro" aria-pressed="true">Keitaro</button>
+              <button type="button" data-tracker="binom" aria-pressed="false">Binom</button>
+              <button type="button" data-tracker="voluum" aria-pressed="false">Voluum</button>
+              <button type="button" data-tracker="redtrack" aria-pressed="false">RedTrack</button>
+              <button type="button" data-tracker="bemob" aria-pressed="false">BeMob</button>
+              <button type="button" data-tracker="custom" aria-pressed="false" data-i18n="pa.pb.custom">Custom</button>
+            </div>
+            <div class="field-row">
+              <label><span data-i18n="pa.pb.domain">Tracker domain</span><input class="field" id="pb-domain" placeholder="your-tracker.com" autocomplete="off" /></label>
+              <label id="pb-key-wrap"><span data-i18n="pa.pb.key">Postback key</span><input class="field" id="pb-key" placeholder="POSTBACK_KEY" autocomplete="off" /></label>
+            </div>
+            <div class="code-box"><code id="pb-out"></code><button class="copy" type="button" data-copy="#pb-out" data-i18n="pa.copy">Copy</button></div>
+          </div>
+        </div>
+        <div class="table-wrap reveal" style="margin-top:28px">
+          <table class="data-table macro-table">
+            <thead><tr><th data-i18n="pa.pb.macro">Macro</th><th data-i18n="pa.pb.meaning">What it passes</th></tr></thead>
+            <tbody>
+              <tr><td><code>{sub1}</code></td><td data-i18n="pa.m.sub1">Your click ID — pass it in the offer link</td></tr>
+              <tr><td><code>{sub2}…{sub5}</code></td><td data-i18n="pa.m.sub2">Additional sub-IDs: source, creative, placement</td></tr>
+              <tr><td><code>{offer_id}</code></td><td data-i18n="pa.m.offer">Offer ID</td></tr>
+              <tr><td><code>{goal}</code></td><td data-i18n="pa.m.goal">Event: reg, ftd or rd (redeposit)</td></tr>
+              <tr><td><code>{payout}</code></td><td data-i18n="pa.m.payout">Payout amount for the event</td></tr>
+              <tr><td><code>{currency}</code></td><td data-i18n="pa.m.currency">Payout currency</td></tr>
+              <tr><td><code>{status}</code></td><td data-i18n="pa.m.status">approved, pending or rejected</td></tr>
+              <tr><td><code>{geo}</code></td><td data-i18n="pa.m.geo">Player's country</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section" id="payments">
+      <div class="container">
+        <div class="section-intro split-intro reveal">
+          <div><div class="eyebrow" data-i18n="pa.pay.eyebrow">Payouts</div><h2 data-i18n="pa.pay.title">Our own payment system</h2></div>
+          <div class="intro-side"><p data-i18n="pa.pay.lead">We process payouts in-house, without third-party payment agents in the middle.</p></div>
+        </div>
+        <div class="card-grid cols-4">
+          <article class="info-card reveal"><img class="card-icon" src="assets/icons3d/chip.webp" alt="" /><h3 data-i18n="pa.p1.t">Crypto and fiat</h3><p data-i18n="pa.p1.d">USDT, BTC, bank cards and e-wallets.</p></article>
+          <article class="info-card reveal delay-1"><img class="card-icon" src="assets/icons3d/calendar.webp" alt="" /><h3 data-i18n="pa.p2.t">Fixed schedule</h3><p data-i18n="pa.p2.d">Payouts on a schedule agreed before you start.</p></article>
+          <article class="info-card reveal delay-2"><img class="card-icon" src="assets/icons3d/eye.webp" alt="" /><h3 data-i18n="pa.p3.t">Transparent history</h3><p data-i18n="pa.p3.d">Every accrual and payout is visible in your statistics.</p></article>
+          <article class="info-card reveal delay-3"><img class="card-icon" src="assets/icons3d/shield.webp" alt="" /><h3 data-i18n="pa.p4.t">No middlemen</h3><p data-i18n="pa.p4.d">Our own payment rails mean fewer fees and delays.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section">
+      <div class="container">
+        <div class="section-intro reveal">
+          <div class="eyebrow" data-i18n="pa.s.eyebrow">How to start</div>
+          <h2 data-i18n="pa.s.title">Four steps to your first payout</h2>
+        </div>
+        <ol class="steps">
+          <li class="reveal"><img class="step-icon" src="assets/icons3d/chat.webp" alt="" /><h3 data-i18n="pa.s1.t">Sign up</h3><p data-i18n="pa.s1.d">Leave a request — your manager will contact you.</p></li>
+          <li class="reveal delay-1"><img class="step-icon" src="assets/icons3d/target.webp" alt="" /><h3 data-i18n="pa.s2.t">Choose offers</h3><p data-i18n="pa.s2.d">Get links for the offers that fit your traffic and GEO.</p></li>
+          <li class="reveal delay-2"><img class="step-icon" src="assets/icons3d/magnet.webp" alt="" /><h3 data-i18n="pa.s3.t">Set up postback</h3><p data-i18n="pa.s3.d">Connect your tracker in a couple of minutes.</p></li>
+          <li class="reveal delay-3"><img class="step-icon" src="assets/icons3d/growth.webp" alt="" /><h3 data-i18n="pa.s4.t">Drive traffic, get paid</h3><p data-i18n="pa.s4.d">Track conversions in real time and receive payouts.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="page-section">
+      <div class="container split">
+        <div class="reveal">
+          <div class="eyebrow" data-i18n="pa.q.eyebrow">FAQ</div>
+          <h2 data-i18n="pa.q.title">Before you start</h2>
+          <ul class="chip-list" style="margin-top:28px" aria-label="Traffic sources">
+            <li data-i18n="pa.tr1">Streams (Twitch, Kick)</li><li>YouTube</li><li>SEO</li><li>PPC</li><li>Telegram</li><li data-i18n="pa.tr2">In-app</li><li data-i18n="pa.tr3">Push</li><li data-i18n="pa.tr4">Email</li>
+          </ul>
+        </div>
+        <div class="faq reveal delay-1">
+          <details><summary data-i18n="pa.q1">Which payout models do you offer?</summary><p data-i18n="pa.a1">CPA, RevShare and Hybrid. The model and the rate depend on the offer and the GEO.</p></details>
+          <details><summary data-i18n="pa.q2">Can I use my own tracker?</summary><p data-i18n="pa.a2">Yes. We support S2S postbacks for Keitaro, Binom, Voluum, RedTrack, BeMob and any tracker that accepts a postback URL.</p></details>
+          <details><summary data-i18n="pa.q3">Can I run other networks' offers through you?</summary><p data-i18n="pa.a3">Yes. Other networks send conversions to our endpoint and we pass them on to your tracker, so all your statistics stay in one place.</p></details>
+          <details><summary data-i18n="pa.q4">How do payouts work?</summary><p data-i18n="pa.a4">Through our own payment system: crypto or fiat, on a schedule agreed when you start.</p></details>
+          <details><summary data-i18n="pa.q5">Which traffic is not allowed?</summary><p data-i18n="pa.a5">Incentivized traffic, brand bidding without approval, fraud and any traffic to audiences under 18.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-section" id="join">
+      <div class="container contact-grid">
+        <div class="contact-copy reveal"><div class="eyebrow" data-i18n="pa.j.eyebrow">Join</div><h2 data-i18n="pa.j.title">Become a partner</h2><p data-i18n="pa.j.lead">Tell us about your traffic — your manager will get back to you with offers and links.</p></div>
+        <form class="lead-form reveal delay-1" novalidate>
+          <label><span class="sr-only" data-i18n="pa.j.contact">Telegram or email</span><input type="text" name="contact" placeholder="Telegram or email" data-i18n-ph="pa.j.contact" required /></label>
+          <label><span class="sr-only" data-i18n="pa.j.sources">Traffic sources</span><input type="text" name="sources" placeholder="Traffic sources" data-i18n-ph="pa.j.sources" required /></label>
+          <label><span class="sr-only" data-i18n="pa.j.geo">GEO and volume</span><input type="text" name="geo" placeholder="GEO and volume" data-i18n-ph="pa.j.geo" /></label>
+          <label><span class="sr-only" data-i18n="pa.j.msg">Comment</span><textarea name="message" placeholder="Comment" data-i18n-ph="pa.j.msg" rows="3"></textarea></label>
+          <input type="hidden" name="language" value="en" />
+          <input type="hidden" name="form" value="partners" />
+          <button class="btn btn-dark" type="submit"><span data-i18n="pa.j.send">Send request</span> <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          <p class="form-status" role="status" aria-live="polite"></p>
+        </form>
+        <div class="contact-art reveal delay-2" aria-hidden="true">
+          <img src="assets/web/corner-metal-disc.webp" alt="" loading="lazy" />
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="layout.js?v=62330cdc" data-part="footer"></script>
+  <script src="i18n.js?v=0d488b28"></script>
+  <script src="i18n-pages.js?v=6efabbd2"></script>
+  <script src="script.js?v=ec1967d5"></script>
+  <script src="offers.js?v=be73d0fe"></script>
+  <script src="partners.js?v=6c7b1a8c"></script>
+</body>
+</html>
