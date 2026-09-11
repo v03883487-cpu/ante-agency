@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { streamers } from "@/lib/streamers";
 import { StreamerCard } from "./StreamerCard";
+import { basePath } from "@/lib/site";
 
 export function StreamersPreview() {
   return (
@@ -13,8 +14,9 @@ export function StreamersPreview() {
               Стримеры
             </h2>
           </div>
-          <Link href="/streamers" className="flex items-center gap-1 text-sm font-medium text-white hover:opacity-60">
-            Весь ростер <span aria-hidden>→</span>
+          <Link href="/streamers" className="group flex items-center gap-1.5 text-sm font-medium text-white hover:opacity-60">
+            Весь ростер
+            <img src={`${basePath}/icons/arrow-right.webp`} alt="" aria-hidden className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
 

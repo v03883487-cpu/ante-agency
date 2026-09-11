@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { basePath } from "@/lib/site";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -21,12 +22,12 @@ export function FaqAccordion({ items }: { items: { q: string; a: string }[] }) {
               <span className={`font-display text-xl font-semibold sm:text-2xl ${isOpen ? "text-white" : "text-zinc-500"}`}>
                 {item.q}
               </span>
-              <motion.span
-                animate={{ rotate: isOpen ? 45 : 0 }}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/15 text-lg text-white"
-              >
-                +
-              </motion.span>
+              <img
+                src={`${basePath}/icons/${isOpen ? "x-circle" : "plus-circle"}.webp`}
+                alt=""
+                aria-hidden
+                className="h-8 w-8 shrink-0"
+              />
             </button>
             <AnimatePresence initial={false}>
               {isOpen && (

@@ -1,9 +1,16 @@
 import Link from "next/link";
 import { BarbedWire } from "@/components/BarbedWire";
+import { basePath } from "@/lib/site";
 
 export default function NotFound() {
   return (
     <section className="relative flex min-h-[80vh] flex-col items-center justify-center overflow-hidden bg-white px-6 text-center text-white">
+      <img
+        src={`${basePath}/textures/crack-glass.webp`}
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-70"
+      />
       <BarbedWire />
       <div className="relative flex flex-col items-center gap-6">
         <span className="font-display text-7xl font-bold tracking-tight sm:text-9xl">

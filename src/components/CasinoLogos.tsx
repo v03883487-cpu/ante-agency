@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { brands } from "@/lib/brands";
 import { BrandLogo } from "./BrandLogo";
+import { basePath } from "@/lib/site";
 
 export function CasinoLogos({
   withLinkToPage = true,
@@ -25,8 +26,9 @@ export function CasinoLogos({
               </h2>
             </div>
             {withLinkToPage && (
-              <Link href="/brands" className="text-sm font-medium text-white hover:opacity-60">
-                Все бренды →
+              <Link href="/brands" className="group flex items-center gap-1.5 text-sm font-medium text-white hover:opacity-60">
+                Все бренды
+                <img src={`${basePath}/icons/arrow-right.webp`} alt="" aria-hidden className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </Link>
             )}
           </div>

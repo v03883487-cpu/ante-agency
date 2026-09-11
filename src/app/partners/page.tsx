@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BreadcrumbsJsonLd } from "@/components/Breadcrumbs";
 import { BarbedWire } from "@/components/BarbedWire";
+import { basePath } from "@/lib/site";
 import { CasinoLogos } from "@/components/CasinoLogos";
 import { PartnerSignupForm } from "@/components/PartnerSignupForm";
 import { CountUp } from "@/components/CountUp";
@@ -55,7 +56,7 @@ export default function PartnersPage() {
           style={{ background: "radial-gradient(ellipse 60% 100% at 50% 0%, rgba(215,28,61,0.22), transparent 70%)" }}
           aria-hidden
         />
-        <BarbedWire className="text-white/10" />
+        <BarbedWire className="opacity-45" />
         <div className="relative mx-auto max-w-2xl">
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Ante Partners</span>
           <h1 className="mt-3 font-display text-5xl font-bold tracking-tight sm:text-7xl">
@@ -176,9 +177,10 @@ export default function PartnersPage() {
               href={`${PARTNERS_APP_URL}/register`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-6 inline-flex rounded-full bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+              className="group mt-6 inline-flex items-center gap-1.5 rounded-full bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-85"
             >
-              Открыть личный кабинет →
+              Открыть личный кабинет
+              <img src={`${basePath}/icons/arrow-right.webp`} alt="" aria-hidden className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </a>
             <p className="mt-6 text-sm text-zinc-400">
               Или: <a href="mailto:partners@ante.agency" className="text-white hover:opacity-60">partners@ante.agency</a>

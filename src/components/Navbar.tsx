@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { basePath } from "@/lib/site";
 
 const links = [
   { href: "/#services", label: "Услуги" },
@@ -36,7 +37,7 @@ export function Navbar() {
           className="hidden items-center gap-1.5 rounded-full border border-[var(--accent)] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent)] sm:flex"
         >
           Партнёрка
-          <span aria-hidden>↗</span>
+          <img src={`${basePath}/icons/arrow-diagonal.webp`} alt="" aria-hidden className="h-3.5 w-3.5" />
         </Link>
         <Link
           href="/contact"

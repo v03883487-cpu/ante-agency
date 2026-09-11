@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { basePath } from "@/lib/site";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -25,8 +26,9 @@ export function Services() {
               Полный цикл
             </h2>
           </div>
-          <a href="#contact" className="flex items-center gap-1 text-sm font-medium text-white hover:opacity-60">
-            Обсудить <span aria-hidden>→</span>
+          <a href="#contact" className="group flex items-center gap-1.5 text-sm font-medium text-white hover:opacity-60">
+            Обсудить
+            <img src={`${basePath}/icons/arrow-right.webp`} alt="" aria-hidden className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
 
@@ -43,12 +45,12 @@ export function Services() {
                   <span className={`flex-1 font-display text-2xl font-semibold sm:text-3xl ${isOpen ? "text-white" : "text-zinc-500"}`}>
                     {s.title}
                   </span>
-                  <motion.span
-                    animate={{ rotate: isOpen ? 45 : 0 }}
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 text-xl text-white"
-                  >
-                    +
-                  </motion.span>
+                  <img
+                    src={`${basePath}/icons/${isOpen ? "x-circle" : "plus-circle"}.webp`}
+                    alt=""
+                    aria-hidden
+                    className="h-9 w-9 shrink-0"
+                  />
                 </button>
                 <AnimatePresence initial={false}>
                   {isOpen && (

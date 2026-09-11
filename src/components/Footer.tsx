@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { basePath } from "@/lib/site";
 
 const columns = [
   {
@@ -28,8 +29,14 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-white/10 bg-white px-6 pb-10 pt-10 sm:px-12">
-      <div className="mx-auto flex max-w-5xl flex-col gap-10 sm:flex-row sm:justify-between">
+    <footer className="relative overflow-hidden border-t border-white/10 bg-white px-6 pb-10 pt-10 sm:px-12">
+      <img
+        src={`${basePath}/textures/wave-mesh.webp`}
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 mix-blend-screen"
+      />
+      <div className="relative mx-auto flex max-w-5xl flex-col gap-10 sm:flex-row sm:justify-between">
         <div className="max-w-xs">
           <Link href="/" aria-label="Ante — на главную" className="font-display text-xl font-bold uppercase tracking-tight text-white">
             ANTE<span aria-hidden className="text-[var(--accent)]">.</span>
