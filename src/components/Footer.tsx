@@ -34,7 +34,7 @@ export function Footer() {
         src={`${basePath}/textures/wave-mesh.webp`}
         alt=""
         aria-hidden
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 mix-blend-screen"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-45 mix-blend-screen"
       />
       <div className="relative mx-auto flex max-w-5xl flex-col gap-10 sm:flex-row sm:justify-between">
         <div className="max-w-xs">

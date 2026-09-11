@@ -21,13 +21,14 @@ export function StreamersPreview() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ staggerChildren: 0.08 }}
-          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          transition={{ staggerChildren: 0.06 }}
+          className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {streamers.map((s) => (
             <motion.div
               key={s.handle}
               variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } } }}
+              className="w-44 shrink-0 snap-start sm:w-52"
             >
               <StreamerCard streamer={s} />
             </motion.div>

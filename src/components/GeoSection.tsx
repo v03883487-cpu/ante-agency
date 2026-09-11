@@ -5,7 +5,7 @@ import { tier1Countries, tier2Countries, tier3Note } from "@/lib/geoTiers";
 export function GeoSection() {
   return (
     <section id="geo" className="relative bg-white px-6 pb-28 sm:px-12">
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-7xl">
         <FadeIn className="mb-10">
           <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Покрытие</span>
           <h2 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-6xl">
@@ -16,11 +16,11 @@ export function GeoSection() {
           </p>
         </FadeIn>
 
-        <FadeIn className="mx-auto max-w-4xl">
+        <FadeIn>
           <WorldTierMap />
         </FadeIn>
 
-        <StaggerGroup className="mx-auto mt-10 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3">
+        <StaggerGroup className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-3">
           <StaggerItem className="rounded-3xl border border-white/10 bg-white p-6">
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Tier 1</span>
             <ul className="mt-3 space-y-1 text-sm text-zinc-300">

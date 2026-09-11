@@ -38,17 +38,14 @@ export function StreamerCard({ streamer }: { streamer: Streamer }) {
         />
       </div>
 
-      <div className="flex flex-col gap-3 p-5">
-        <div className="flex items-baseline justify-between gap-2">
-          <span className="font-display text-xl font-bold uppercase tracking-tight text-white">
-            {streamer.handle}
-          </span>
-          <span className="shrink-0 text-xs text-zinc-500">{formatFollowers(streamer.followers)}</span>
-        </div>
-        <dl className="flex flex-col gap-1.5 border-t border-white/10 pt-3 text-xs">
+      <div className="flex flex-col gap-2 p-3.5">
+        <span className="truncate font-display text-base font-bold uppercase tracking-tight text-white">
+          {streamer.handle}
+        </span>
+        <dl className="flex flex-col gap-1 border-t border-white/10 pt-2.5 text-[11px]">
           <div className="flex items-center justify-between gap-2">
-            <dt className="uppercase tracking-wide text-zinc-500">Платформы</dt>
-            <dd className="text-zinc-300">{streamer.links.map((l) => platformLabel[l.platform]).join(", ")}</dd>
+            <dt className="uppercase tracking-wide text-zinc-500">Платформа</dt>
+            <dd className="truncate text-zinc-300">{streamer.links.map((l) => platformLabel[l.platform]).join(", ")}</dd>
           </div>
           <div className="flex items-center justify-between gap-2">
             <dt className="uppercase tracking-wide text-zinc-500">Подписчики</dt>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { basePath } from "@/lib/site";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const links = [
   { href: "/#services", label: "Услуги" },
@@ -32,6 +33,9 @@ export function Navbar() {
         ))}
       </div>
       <div className="flex items-center gap-3">
+        <div className="hidden sm:block">
+          <LanguageSwitcher />
+        </div>
         <Link
           href="/partners"
           className="hidden items-center gap-1.5 rounded-full border border-[var(--accent)] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent)] sm:flex"

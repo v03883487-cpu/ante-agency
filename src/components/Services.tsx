@@ -1,21 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { basePath } from "@/lib/site";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-const services = [
-  { title: "Подбор стримеров", body: "Найдём стримеров под ключ, любые гео и охваты." },
-  { title: "Медиабаинг", body: "Брифы, форматы, размещение под ключ." },
-  { title: "Комплаенс", body: "Рекламные ограничения по гео закрыты." },
-  { title: "Отчётность", body: "Охваты, переходы, конверсии — адаптируемся под любую необходимую отчётность." },
-];
-
 export function Services() {
-  const [open, setOpen] = useState(0);
-
   return (
     <section id="services" className="relative bg-white px-6 pb-28 sm:px-12">
       <div className="mx-auto max-w-5xl">
@@ -38,54 +28,17 @@ export function Services() {
           </a>
         </motion.div>
 
-        <motion.div
-          initial="hidden"
-          whileInView="show"
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ staggerChildren: 0.08 }}
-          className="divide-y divide-white/10 border-y border-white/10"
+          transition={{ duration: 0.6, ease: EASE, delay: 0.1 }}
+          className="max-w-3xl border-t border-white/10 pt-8 text-xl leading-relaxed text-zinc-300 sm:text-2xl"
         >
-          {services.map((s, i) => {
-            const isOpen = open === i;
-            return (
-              <motion.div
-                key={s.title}
-                variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } } }}
-              >
-                <button
-                  onClick={() => setOpen(isOpen ? -1 : i)}
-                  className="flex w-full items-center gap-6 py-8 text-left"
-                >
-                  <span className="font-display text-lg font-bold text-white/20">{String(i + 1).padStart(2, "0")}</span>
-                  <span className={`flex-1 font-display text-2xl font-semibold sm:text-3xl transition-colors ${isOpen ? "text-white" : "text-zinc-500"}`}>
-                    {s.title}
-                  </span>
-                  <motion.img
-                    animate={{ rotate: isOpen ? 180 : 0 }}
-                    transition={{ duration: 0.3, ease: EASE }}
-                    src={`${basePath}/icons/${isOpen ? "x-circle" : "plus-circle"}.webp`}
-                    alt=""
-                    aria-hidden
-                    className="h-9 w-9 shrink-0"
-                  />
-                </button>
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.35, ease: EASE }}
-                      className="overflow-hidden"
-                    >
-                      <p className="max-w-xl pb-8 pl-14 text-lg text-zinc-400">{s.body}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+          Находим стримеров под ключ — под любые гео и охваты, договариваемся о форматах и размещении,
+          закрываем рекламные ограничения по каждому гео и ведём отчётность по охватам, переходам и
+          конверсиям на всём протяжении кампании.
+        </motion.p>
       </div>
     </section>
   );

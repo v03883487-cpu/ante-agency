@@ -24,6 +24,7 @@
 .DS_Store
 *.pem
 /public/avatars_original_backup/
+/public/textures_original_backup/
 
 # debug
 npm-debug.log*
