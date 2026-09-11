@@ -25,16 +25,30 @@ function detectLang() {
   return 'en';
 }
 
+// English copy for inner pages lives in the HTML itself; it's snapshotted on first run
+// and used whenever the current language has no entry for a key.
 function translatePage() {
-  $$('[data-i18n]').forEach(el => { const v = t(el.dataset.i18n); if (v) el.textContent = v; });
-  $$('[data-i18n-html]').forEach(el => { const v = t(el.dataset.i18nHtml); if (v) el.innerHTML = v; });
-  $$('[data-i18n-ph]').forEach(el => { const v = t(el.dataset.i18nPh); if (v) el.placeholder = v; });
-  $$('[data-i18n-aria]').forEach(el => { const v = t(el.dataset.i18nAria); if (v) el.setAttribute('aria-label', v); });
-  $$('.service-card').forEach(card => $('.card-arrow', card).setAttribute('aria-label', `${t('a11y.discuss')}: ${$('h3', card).textContent}`));
-  $$('.creator-card').forEach(card => $('.card-arrow', card).setAttribute('aria-label', `${t('a11y.book')} ${$('h3', card).textContent}`));
-  document.title = t('meta.title');
+  const apply = (attr, get, set) => $$(`[${attr}]`).forEach(el => {
+    const key = el.getAttribute(attr);
+    const store = `en_${attr}`;
+    if (!(store in el)) el[store] = get(el);
+    set(el, t(key) || el[store]);
+  });
+  apply('data-i18n', el => el.textContent, (el, v) => { el.textContent = v; });
+  apply('data-i18n-html', el => el.innerHTML, (el, v) => { el.innerHTML = v; });
+  apply('data-i18n-ph', el => el.placeholder, (el, v) => { el.placeholder = v; });
+  apply('data-i18n-aria', el => el.getAttribute('aria-label') || '', (el, v) => { el.setAttribute('aria-label', v); });
+  $$('.creator-card').forEach(card => {
+    const arrow = $('.card-arrow', card);
+    if (!arrow) return;
+    const name = $('h3', card).textContent;
+    arrow.setAttribute('aria-label', arrow.hasAttribute('data-channel') ? `${t('a11y.channel')}: ${name}` : `${t('a11y.book')} ${name}`);
+  });
+  const pageKey = document.body.dataset.page && document.body.dataset.page !== 'home' ? document.body.dataset.page : '';
   const desc = $('meta[name="description"]');
-  if (desc) desc.setAttribute('content', t('meta.desc'));
+  if (!('enTitle' in document)) { document.enTitle = document.title; document.enDesc = desc ? desc.content : ''; }
+  document.title = (pageKey ? t(`${pageKey}.meta.title`) : t('meta.title')) || document.enTitle;
+  if (desc) desc.setAttribute('content', (pageKey ? t(`${pageKey}.meta.desc`) : t('meta.desc')) || document.enDesc);
   document.documentElement.lang = current;
 }
 
@@ -72,20 +86,47 @@ if ('IntersectionObserver' in window) {
   revealEls.forEach(el => el.classList.add('in-view'));
 }
 
-/* ---------- Active nav link ---------- */
-const navLinks = $$('.desktop-nav a');
-const sections = navLinks.map(a => $(a.getAttribute('href'))).filter(Boolean);
-if (sections.length && 'IntersectionObserver' in window) {
+/* ---------- Desktop dropdowns ---------- */
+const navItems = $$('.nav-item');
+function closeNav(except) {
+  navItems.forEach(item => {
+    if (item === except) return;
+    item.classList.remove('is-open');
+    $('.nav-trigger', item).setAttribute('aria-expanded', 'false');
+  });
+}
+navItems.forEach(item => {
+  const trigger = $('.nav-trigger', item);
+  trigger.addEventListener('click', () => {
+    const open = !item.classList.contains('is-open');
+    closeNav(item);
+    item.classList.toggle('is-open', open);
+    trigger.setAttribute('aria-expanded', String(open));
+  });
+  item.addEventListener('mouseleave', () => {
+    if (!item.contains(document.activeElement)) closeNav();
+  });
+  item.addEventListener('focusout', e => {
+    if (!item.contains(e.relatedTarget)) {
+      item.classList.remove('is-open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+  });
+  $$('.nav-sub a', item).forEach(a => a.addEventListener('click', () => closeNav()));
+});
+document.addEventListener('click', e => { if (!e.target.closest('.nav-item')) closeNav(); });
+
+/* ---------- Active nav item (home page scrollspy) ---------- */
+const spyItems = $$('.desktop-nav [data-section]');
+const spySections = spyItems.map(el => document.getElementById(el.dataset.section)).filter(Boolean);
+if (spySections.length && 'IntersectionObserver' in window) {
+  const setActive = id => spyItems.forEach(el => el.classList.toggle('is-active', el.dataset.section === id));
   const navIo = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      navLinks.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === `#${entry.target.id}`));
-    });
+    entries.forEach(entry => { if (entry.isIntersecting) setActive(entry.target.id); });
   }, { rootMargin: '-45% 0px -50% 0px' });
-  sections.forEach(s => navIo.observe(s));
-  const clearAtTop = () => {
-    if (window.scrollY < sections[0].offsetTop - window.innerHeight / 2) navLinks.forEach(a => a.classList.remove('is-active'));
-  };
+  spySections.forEach(s => navIo.observe(s));
+  const firstTop = () => Math.min(...spySections.map(s => s.offsetTop));
+  const clearAtTop = () => { if (window.scrollY < firstTop() - window.innerHeight / 2) setActive(null); };
   window.addEventListener('scroll', clearAtTop, { passive: true });
   clearAtTop();
 }
@@ -110,6 +151,7 @@ if (track && prevBtn && nextBtn) {
   track.addEventListener('scroll', updateCarousel, { passive: true });
   window.addEventListener('resize', updateCarousel);
 }
+
 
 /* ---------- Language menu ---------- */
 const langs = $$('[data-lang]');
@@ -177,6 +219,8 @@ langs.forEach(root => {
 document.addEventListener('click', e => langs.forEach(root => { if (!root.contains(e.target)) closeLang(root); }));
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
+  const openItem = navItems.find(i => i.classList.contains('is-open'));
+  if (openItem) { closeNav(); $('.nav-trigger', openItem).focus(); return; }
   if (mobileMenu && !mobileMenu.hidden) { setMenu(false); menuButton.focus(); }
 });
 
@@ -240,3 +284,38 @@ if (form) {
     }
   });
 }
+
+/* ---------- Section exit: the section leaving at the top drifts up-right and blurs ---------- */
+const exitSections = $$('main > section');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+let exitTicking = false;
+function renderExit() {
+  exitTicking = false;
+  const vh = window.innerHeight;
+  const small = window.innerWidth < 720;
+  const dx = small ? 24 : 64, dy = small ? 28 : 44, blur = small ? 4 : 7;
+  const y = window.scrollY;
+  exitSections.forEach(sec => {
+    // Scroll-based progress: starts when the section's bottom passes mid-screen
+    // (or immediately for sections that already end above it), ends when it leaves the top.
+    // Measured without the current transform so the effect doesn't feed back into itself.
+    const bottom = sec.offsetTop + sec.offsetHeight;
+    const start = Math.max(0, bottom - vh * 0.5);
+    const p = Math.min(1, Math.max(0, (y - start) / Math.max(1, bottom - start)));
+    if (p <= 0 || reduceMotion.matches) {
+      if (sec.style.transform) { sec.style.transform = ''; sec.style.filter = ''; sec.style.opacity = ''; sec.style.willChange = ''; }
+      return;
+    }
+    const e = p * p * (3 - 2 * p);
+    sec.style.willChange = 'transform, filter, opacity';
+    sec.style.transform = `translate3d(${(e * dx).toFixed(1)}px, ${(-e * dy).toFixed(1)}px, 0)`;
+    sec.style.filter = `blur(${(e * blur).toFixed(2)}px)`;
+    sec.style.opacity = (1 - e * 0.6).toFixed(3);
+  });
+}
+function requestExit() {
+  if (!exitTicking) { exitTicking = true; requestAnimationFrame(renderExit); }
+}
+window.addEventListener('scroll', requestExit, { passive: true });
+window.addEventListener('resize', requestExit);
+requestExit();
