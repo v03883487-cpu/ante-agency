@@ -51,14 +51,14 @@ export function Hero() {
 
         <motion.div variants={item} className="mt-8 flex flex-col gap-4 sm:flex-row">
           <Link
-            href="/contact"
+            href="/#contact"
             className="pulse-glow group flex items-center justify-center gap-2 rounded-full bg-[var(--accent)] px-7 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-85"
           >
             Запустить кампанию
             <img src={`${basePath}/icons/arrow-right.webp`} alt="" aria-hidden className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
           <Link
-            href="/streamers"
+            href="/#streamers"
             className="group flex items-center justify-center gap-2 rounded-full border border-white/25 px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
           >
             Каталог стримеров

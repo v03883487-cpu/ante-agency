@@ -6,9 +6,9 @@ import { basePath } from "@/lib/site";
 
 const links = [
   { href: "/#services", label: "Услуги" },
-  { href: "/streamers", label: "Стримеры" },
-  { href: "/geo", label: "Гео" },
-  { href: "/cases", label: "Кейсы" },
+  { href: "/#streamers", label: "Стримеры" },
+  { href: "/#geo", label: "Гео" },
+  { href: "/#cases", label: "Кейсы" },
 ];
 
 export function Navbar() {
@@ -40,7 +40,7 @@ export function Navbar() {
           <img src={`${basePath}/icons/arrow-diagonal.webp`} alt="" aria-hidden className="h-3.5 w-3.5" />
         </Link>
         <Link
-          href="/contact"
+          href="/#contact"
           className="rounded-full bg-[var(--accent)] px-5 py-2 text-sm font-medium text-white transition-opacity hover:opacity-85"
         >
           Связаться

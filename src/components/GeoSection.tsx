@@ -1,35 +1,26 @@
-import type { Metadata } from "next";
-import { PageHeader } from "@/components/PageHeader";
-import { CtaBand } from "@/components/CtaBand";
-import { BreadcrumbsJsonLd } from "@/components/Breadcrumbs";
 import { WorldTierMap } from "@/components/WorldTierMap";
 import { FadeIn, StaggerGroup, StaggerItem } from "@/components/FadeIn";
 import { tier1Countries, tier2Countries, tier3Note } from "@/lib/geoTiers";
 
-export const metadata: Metadata = {
-  title: "Гео покрытие: Tier 1, Tier 2, Tier 3",
-  description: "Карта гео, с которыми работает Ante — основной фокус на Tier 1 и Tier 2, Tier 3 покрыт точечно.",
-  alternates: { canonical: "/geo" },
-};
-
-export default function GeoPage() {
+export function GeoSection() {
   return (
-    <>
-      <BreadcrumbsJsonLd path="/geo" label="Гео" />
-      <PageHeader
-        eyebrow="Покрытие"
-        title="Гео"
-        subtitle="Основной фокус — Tier 1 и Tier 2. Tier 3 закрываем точечно."
-      />
+    <section id="geo" className="relative bg-white px-6 pb-28 sm:px-12">
+      <div className="mx-auto max-w-5xl">
+        <FadeIn className="mb-10">
+          <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Покрытие</span>
+          <h2 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-6xl">
+            Гео
+          </h2>
+          <p className="mt-3 max-w-xl text-lg text-zinc-400">
+            Основной фокус — Tier 1 и Tier 2. Tier 3 закрываем точечно.
+          </p>
+        </FadeIn>
 
-      <section className="bg-white px-6 pb-20 sm:px-12">
         <FadeIn className="mx-auto max-w-4xl">
           <WorldTierMap />
         </FadeIn>
-      </section>
 
-      <section className="bg-white px-6 pb-28 sm:px-12">
-        <StaggerGroup className="mx-auto grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3">
+        <StaggerGroup className="mx-auto mt-10 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3">
           <StaggerItem className="rounded-3xl border border-white/10 bg-white p-6">
             <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Tier 1</span>
             <ul className="mt-3 space-y-1 text-sm text-zinc-300">
@@ -51,9 +42,7 @@ export default function GeoPage() {
             <p className="mt-3 text-sm text-zinc-400">{tier3Note}</p>
           </StaggerItem>
         </StaggerGroup>
-      </section>
-
-      <CtaBand />
-    </>
+      </div>
+    </section>
   );
 }

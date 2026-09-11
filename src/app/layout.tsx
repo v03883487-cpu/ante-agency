@@ -4,6 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CursorGlow } from "@/components/CursorGlow";
 import { AmbientBg } from "@/components/AmbientBg";
+import { SmoothScroll } from "@/components/SmoothScroll";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -76,6 +77,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <AmbientBg />
+        <SmoothScroll />
         <CursorGlow />
         <div className="film-grain" aria-hidden />
         <Navbar />

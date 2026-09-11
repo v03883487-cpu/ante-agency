@@ -1,14 +1,4 @@
-import type { Metadata } from "next";
-import { PageHeader } from "@/components/PageHeader";
-import { CtaBand } from "@/components/CtaBand";
-import { BreadcrumbsJsonLd } from "@/components/Breadcrumbs";
-import { StaggerGroup, StaggerItem } from "@/components/FadeIn";
-
-export const metadata: Metadata = {
-  title: "Кейсы инфлюенс-кампаний",
-  description: "Примеры формата кейсов Ante для gambling и iGaming брендов: охват, вовлечённость и результаты кампаний.",
-  alternates: { canonical: "/cases" },
-};
+import { FadeIn, StaggerGroup, StaggerItem } from "@/components/FadeIn";
 
 const cases = [
   { brand: "Casino A", metric: "3.2M", label: "просмотров", format: "Twitch" },
@@ -17,17 +7,18 @@ const cases = [
   { brand: "Slots D", metric: "5.4M", label: "охват", format: "YouTube" },
 ];
 
-export default function CasesPage() {
+export function CasesSection() {
   return (
-    <>
-      <BreadcrumbsJsonLd path="/cases" label="Кейсы" />
-      <PageHeader
-        eyebrow="Результаты"
-        title="Кейсы"
-        subtitle="Пример структуры отчётности по кампаниям."
-      />
-      <section className="bg-white px-6 pb-28 sm:px-12">
-        <StaggerGroup className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-2">
+    <section id="cases" className="relative bg-white px-6 pb-28 sm:px-12">
+      <div className="mx-auto max-w-5xl">
+        <FadeIn className="mb-10">
+          <span className="text-xs font-bold uppercase tracking-widest text-[var(--accent)]">Результаты</span>
+          <h2 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-6xl">
+            Кейсы
+          </h2>
+        </FadeIn>
+
+        <StaggerGroup className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {cases.map((c) => (
             <StaggerItem key={c.brand} className="card-hover rounded-3xl border border-white/10 bg-white p-8 hover:border-white/30">
               <span className="text-xs uppercase tracking-widest text-zinc-400">{c.brand} · {c.format}</span>
@@ -39,8 +30,7 @@ export default function CasesPage() {
         <p className="mx-auto mt-8 max-w-5xl text-center text-xs text-zinc-500">
           Иллюстративные цифры — реальные кейсы по согласованию с партнёром.
         </p>
-      </section>
-      <CtaBand />
-    </>
+      </div>
+    </section>
   );
 }

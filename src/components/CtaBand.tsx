@@ -18,7 +18,7 @@ export function CtaBand() {
         </h2>
         <p className="max-w-md text-lg text-zinc-400">Подберём стримеров под ваш бренд.</p>
         <Link
-          href="/contact"
+          href="/#contact"
           className="pulse-glow rounded-full bg-[var(--accent)] px-8 py-4 text-base font-semibold text-white transition-opacity hover:opacity-85"
         >
           Оставить заявку

@@ -6,15 +6,15 @@ const columns = [
     title: "Агентство",
     links: [
       { href: "/#services", label: "Услуги" },
-      { href: "/cases", label: "Кейсы" },
-      { href: "/contact", label: "Связаться" },
+      { href: "/#cases", label: "Кейсы" },
+      { href: "/#contact", label: "Связаться" },
     ],
   },
   {
     title: "Креаторы",
     links: [
-      { href: "/streamers", label: "Каталог стримеров" },
-      { href: "/geo", label: "Гео" },
+      { href: "/#streamers", label: "Каталог стримеров" },
+      { href: "/#geo", label: "Гео" },
     ],
   },
   {

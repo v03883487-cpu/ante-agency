@@ -3,7 +3,10 @@ import { TrustBand } from "@/components/TrustBand";
 import { BentoStats } from "@/components/BentoStats";
 import { Services } from "@/components/Services";
 import { StreamersPreview } from "@/components/StreamersPreview";
+import { GeoSection } from "@/components/GeoSection";
+import { CasesSection } from "@/components/CasesSection";
 import { FAQ } from "@/components/FAQ";
+import { ContactSection } from "@/components/ContactSection";
 import { CtaBand } from "@/components/CtaBand";
 import { faqItems } from "@/lib/faq";
 
@@ -26,7 +29,10 @@ export default function Home() {
       <BentoStats />
       <Services />
       <StreamersPreview />
+      <GeoSection />
+      <CasesSection />
       <FAQ />
+      <ContactSection />
       <CtaBand />
     </>
   );
