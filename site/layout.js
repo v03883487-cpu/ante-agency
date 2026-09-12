@@ -15,7 +15,7 @@
     { id: 'services', key: 'nav.services', label: 'Services', pages: ['analytics', 'content', 'partners'], section: 'services', items: [
       { href: H + '#services', key: 'ft.s1', label: 'Influencer Campaigns' },
       { href: 'analytics.html', key: 'ft.s3', label: 'Performance Analytics' },
-      { href: 'content.html', key: 'ft.s6', label: 'Creative Strategy' },
+      { href: 'content.html', key: 'ft.s6', label: 'Content Factories' },
       { href: 'partners.html', key: 'nav.partners', label: 'Partner program' }
     ] },
     { id: 'creators', key: 'nav.creators', label: 'Creators', pages: ['creators'], section: 'creators', items: [
@@ -112,7 +112,7 @@
     col('services', 'ft.services', 'Services', [
       [H + '#services', 'ft.s1', 'Influencer Campaigns'],
       ['analytics.html', 'ft.s3', 'Performance Analytics'],
-      ['content.html', 'ft.s6', 'Creative Strategy'],
+      ['content.html', 'ft.s6', 'Content Factories'],
       ['partners.html', 'nav.partners', 'Partner program']
     ]) +
     col('company', 'ft.company', 'Company', [

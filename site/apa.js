@@ -1,4 +1,5 @@
-// Ad Performance Analytics — client-side dashboard (demo mode: state lives in localStorage).
+// Ad Performance Analytics — the working dashboard.
+// Data lives in this browser and syncs with the analytics API once it is connected in Integrations.
 (function () {
   const root = document.getElementById('apa');
   if (!root) return;
@@ -56,6 +57,8 @@
     return day;
   }
 
+  const blank = () => ({ v: 1, sample: false, trackers: [], daily: {}, conv: [], pixels: { meta: { id: '', on: false }, tiktok: { id: '', on: false }, gads: { id: '', on: false }, ga4: { id: '', on: false } }, apiKey: 'af_live_' + randId(24), api: { base: '', key: '', status: '', synced: '' } });
+
   function seed() {
     const r = rng(20260911);
     const created = iso(addDays(today(), -90));
@@ -84,16 +87,17 @@
       conv.push({ ts: now - Math.round(r() * 3 * DAY), tid: tr.id, event, amount: event === 'reg' ? 0 : Math.round(20 + r() * 380), geo: tr.geo, src: r() < 0.75 ? 'postback' : 'pixel' });
     }
     conv.sort((a, b) => b.ts - a.ts);
-    return { v: 1, trackers, daily, conv, pixels: { meta: { id: '', on: false }, tiktok: { id: '', on: false }, gads: { id: '', on: false }, ga4: { id: '', on: false } }, apiKey: 'af_live_' + randId(24) };
+    return { ...blank(), sample: true, trackers, daily, conv };
   }
 
   let state;
   try { state = JSON.parse(localStorage.getItem(STORE)); } catch { state = null; }
   if (!state || state.v !== 1) state = seed();
+  if (!state.api) state.api = { base: '', key: '', status: '', synced: '' };
   const save = () => { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch {} };
   save();
 
-  const ui = { tab: 'overview', period: 30, tracker: '', platform: '', geo: '', sort: { key: 'rev', dir: -1 }, pbTracker: '' };
+  const ui = { tab: 'overview', period: 30, tracker: '', platform: '', geo: '', sort: { key: 'rev', dir: -1 }, pbTracker: '', logTracker: '' };
 
   /* ---------- aggregation ---------- */
   const trackerById = id => state.trackers.find(t => t.id === id);
@@ -196,10 +200,16 @@
     const geos = [...new Set(state.trackers.map(t => t.geo))].sort().map(g => [g, g]);
     return `
       <div class="apa-top">
-        <div class="apa-brand"><img src="assets/web/logo-mark.webp" alt="" /><b>Ad Performance Analytics</b><span class="badge demo">${esc(L('apa.demoBadge', 'Demo'))}</span></div>
+        <div class="apa-brand"><img src="assets/web/logo-mark.webp" alt="" /><b>Ad Performance Analytics</b>
+          ${state.sample ? `<span class="badge demo">${esc(L('pk.sample', 'Sample data'))}</span>` : ''}
+          <span class="status ${state.api.status === 'ok' ? '' : 'status-off'}">${esc(state.api.status === 'ok' ? L('pk.api.on', 'API connected') : L('pk.api.local', 'Local workspace'))}</span>
+        </div>
         <div class="apa-actions">
           <button type="button" class="apa-btn" data-action="export">${esc(L('apa.export', 'Export CSV'))}</button>
-          <button type="button" class="apa-btn ghost" data-action="reset">${esc(L('apa.reset', 'Reset demo'))}</button>
+          <button type="button" class="apa-btn ghost" data-action="backup">${esc(L('pk.backup', 'Backup'))}</button>
+          ${state.sample
+            ? `<button type="button" class="apa-btn ghost" data-action="clear-sample">${esc(L('pk.clearSample', 'Clear sample data'))}</button>`
+            : `<button type="button" class="apa-btn ghost" data-action="load-sample">${esc(L('pk.start.sample', 'Load sample data'))}</button>`}
         </div>
       </div>
       <div class="apa-bar">
@@ -333,14 +343,16 @@
         <div class="trk-actions">
           <button type="button" class="apa-btn" data-action="copy-link">${esc(L('apa.tr.copyLink', 'Copy link'))}</button>
           <button type="button" class="apa-btn ghost" data-action="copy-pb">${esc(L('apa.tr.copyPb', 'Copy postback'))}</button>
-          <button type="button" class="apa-btn ghost" data-action="sim">${esc(L('apa.tr.sim', 'Simulate traffic'))}</button>
+          <button type="button" class="apa-btn ghost" data-action="log">${esc(L('apa.tr.log', 'Log stats'))}</button>
           <button type="button" class="apa-btn danger" data-action="delete">${esc(L('apa.tr.del', 'Delete'))}</button>
         </div>
       </div>`;
     }).join('') : `<p class="empty-state">${esc(L('apa.tr.none', 'No trackers yet — create the first one.'))}</p>`;
 
+    const trOpts = state.trackers.map(t => [t.id, t.name]);
     return `
       <div class="apa-grid tr-grid">
+       <div class="apa-col">
         <form class="apa-card form-grid" id="apa-new" novalidate>
           <div class="apa-card-head"><h3>${esc(L('apa.tr.new', 'New tracker'))}</h3></div>
           <label>${esc(L('apa.tr.name', 'Name'))}<input class="field" name="name" required maxlength="60" placeholder="Kick · Stream series" /></label>
@@ -359,6 +371,21 @@
           <button class="btn btn-dark" type="submit">${esc(L('apa.tr.create', 'Create tracker'))}</button>
           <p class="small-note">${esc(L('apa.tr.note', 'Tracking links carry UTM tags and the tracker ID, so clicks are attributed in any analytics. Postbacks go to your personal endpoint, issued when your account is connected.'))}</p>
         </form>
+        <form class="apa-card form-grid" id="apa-log" novalidate>
+          <div class="apa-card-head"><h3>${esc(L('apa.log.t', 'Log daily stats'))}</h3></div>
+          <label>${esc(L('apa.t.tracker', 'Tracker'))}<select class="field" name="tid">${options(trOpts, ui.logTracker || (trOpts[0] && trOpts[0][0]))}</select></label>
+          <div class="two">
+            <label>${esc(L('apa.c.date', 'Date'))}<input class="field" name="date" type="date" value="${iso(today())}" max="${iso(today())}" /></label>
+            <label>${esc(L('apa.k.views', 'Views'))}<input class="field" name="views" type="number" min="0" step="1" placeholder="0" /></label>
+          </div>
+          <div class="two">
+            <label>${esc(L('apa.k.clicks', 'Clicks'))}<input class="field" name="clicks" type="number" min="0" step="1" placeholder="0" /></label>
+            <label>${esc(L('apa.log.spend', 'Spend, $'))}<input class="field" name="spend" type="number" min="0" step="0.01" placeholder="0" /></label>
+          </div>
+          <button class="btn btn-light" type="submit">${esc(L('apa.log.save', 'Save stats'))}</button>
+          <p class="small-note">${esc(L('apa.log.note', 'Views, clicks and fixed fees come from the creator report; registrations and deposits arrive through postbacks, pixels or a CSV import.'))}</p>
+        </form>
+       </div>
         <div class="apa-card">
           <div class="apa-card-head"><h3>${esc(L('apa.tr.list', 'Your trackers'))}</h3></div>
           <div class="trk-list">${list}</div>
@@ -448,7 +475,22 @@
         <div class="code-box"><code id="apa-key">${esc(masked)}</code><button class="copy" type="button" data-action="copy-key">${esc(L('pa.copy', 'Copy'))}</button></div>
         <div class="code-box"><code id="apa-curl">curl -H "Authorization: Bearer ${esc(masked)}" "https://api.antefluence.com/v1/stats?from=${iso(range().from)}&amp;to=${iso(today())}&amp;group=tracker"</code><button class="copy" type="button" data-action="copy-code" data-target="#apa-curl">${esc(L('pa.copy', 'Copy'))}</button></div>
         <div class="apa-stack" style="margin-top:14px"><button type="button" class="apa-btn ghost" data-action="regen">${esc(L('apa.i.regen', 'Generate a new key'))}</button></div>
-        <p class="small-note">${esc(L('apa.i.note', 'Postback endpoint and API become active once your account is connected.'))}</p>
+        <div class="apa-sep"></div>
+        <div class="apa-card-head"><h3>${esc(L('pk.api.connect', 'Connect your account'))}</h3>
+          <span class="status ${state.api.status === 'ok' ? '' : 'status-off'}">${esc(state.api.status === 'ok' ? L('pk.api.on', 'API connected') : state.api.status === 'err' ? L('pk.api.err', 'Not reachable') : L('pk.api.local', 'Local workspace'))}</span></div>
+        <p class="small-note">${esc(L('apa.api.d', 'Point the dashboard at your analytics API and it works on live data instead of the local workspace.'))}</p>
+        <form class="form-grid" id="apa-api" style="margin-top:14px">
+          <div class="two">
+            <label>${esc(L('pk.api.base', 'API base URL'))}<input class="field" name="base" value="${esc(state.api.base)}" placeholder="https://api.antefluence.com" /></label>
+            <label>${esc(L('pk.api.key', 'API key'))}<input class="field" name="key" value="${esc(state.api.key)}" placeholder="af_live_…" /></label>
+          </div>
+          <div class="apa-stack">
+            <button class="apa-btn" type="submit">${esc(L('pk.api.test', 'Save and test'))}</button>
+            <button class="apa-btn ghost" type="button" data-action="sync"${state.api.base ? '' : ' disabled'}>${esc(L('pk.api.sync', 'Sync now'))}</button>
+            <label class="apa-btn ghost file-btn">${esc(L('pk.restore', 'Restore from backup'))}<input type="file" accept=".json,application/json" data-action="restore" hidden /></label>
+          </div>
+        </form>
+        ${state.api.synced ? `<p class="small-note">${esc(L('pk.api.last', 'Last sync'))}: ${esc(state.api.synced)}</p>` : ''}
       </div>`;
   }
 
@@ -481,18 +523,53 @@
   }
 
   /* ---------- actions ---------- */
-  function simulate(tr, days = 7) {
-    const r = rng(Date.now() % 100000);
-    for (let n = days - 1; n >= 0; n--) {
-      const d = addDays(today(), -n);
-      const day = genDay(tr, d, r, 1800 + r() * 2200);
-      const cur = state.daily[tr.id][iso(d)] || { views: 0, clicks: 0, regs: 0, ftd: 0, rev: 0, spend: 0 };
-      for (const k in cur) cur[k] += day[k];
-      state.daily[tr.id][iso(d)] = cur;
+  function restore(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(String(reader.result));
+        if (!data || data.v !== 1 || !Array.isArray(data.trackers)) throw new Error('bad');
+        state = data;
+        if (!state.api) state.api = { base: '', key: '', status: '', synced: '' };
+        save(); render();
+        toast(L('pk.restored', 'Backup restored'));
+      } catch { toast(L('pk.badBackup', 'This file is not a cabinet backup')); }
+    };
+    reader.readAsText(file);
+  }
+  async function apiCall(path) {
+    const base = (state.api.base || '').trim().replace(/\/+$/, '');
+    if (!/^https:\/\//i.test(base)) throw new Error('base');
+    const res = await fetch(base + path, { headers: { Authorization: 'Bearer ' + (state.api.key || ''), Accept: 'application/json' } });
+    if (!res.ok) throw new Error('http ' + res.status);
+    return res.json();
+  }
+  async function apiTest() {
+    try {
+      await apiCall('/v1/ping');
+      state.api.status = 'ok';
+      toast(L('pk.api.ok', 'API answered — the cabinet is connected'));
+    } catch {
+      state.api.status = 'err';
+      toast(L('pk.api.fail', 'No answer from the API — check the URL and the key'));
     }
-    for (let k = 0; k < 6; k++) {
-      const event = EVENTS[Math.floor(r() * 3)];
-      state.conv.unshift({ ts: Date.now() - Math.round(r() * DAY), tid: tr.id, event, amount: event === 'reg' ? 0 : Math.round(30 + r() * 300), geo: tr.geo, src: 'sim' });
+    save(); render();
+  }
+  async function apiSync() {
+    const { from, to } = range();
+    try {
+      const data = await apiCall(`/v1/stats?from=${iso(from)}&to=${iso(to)}&group=tracker`);
+      if (Array.isArray(data.trackers)) state.trackers = data.trackers;
+      if (data.daily && typeof data.daily === 'object') state.daily = data.daily;
+      if (Array.isArray(data.conversions)) state.conv = data.conversions;
+      state.sample = false;
+      state.api.status = 'ok';
+      state.api.synced = new Date().toLocaleString(loc());
+      save(); render();
+      toast(L('pk.api.synced', 'Data synced from the API'));
+    } catch {
+      state.api.status = 'err'; save(); render();
+      toast(L('pk.api.fail', 'No answer from the API — check the URL and the key'));
     }
   }
 
@@ -538,13 +615,19 @@
     const tr = card && trackerById(card.dataset.id);
     switch (action) {
       case 'export': exportCsv(); break;
-      case 'reset':
-        if (confirm(L('apa.resetq', 'Reset demo data? Trackers and conversions in this browser will be replaced.'))) { state = seed(); save(); render(); }
+      case 'backup': download(`antefluence-analytics-backup-${iso(today())}.json`, JSON.stringify(state, null, 2), 'application/json'); break;
+      case 'load-sample': state = seed(); save(); render(); toast(L('pk.sampleOn', 'Sample data loaded')); break;
+      case 'clear-sample':
+        if (confirm(L('pk.clearQ', 'Clear the sample data and start with an empty cabinet?'))) { state = blank(); save(); render(); }
+        break;
+      case 'sync': apiSync(); break;
+      case 'log':
+        ui.logTracker = tr.id; ui.tab = 'trackers'; render();
+        { const f = root.querySelector('#apa-log'); if (f) { f.scrollIntoView({ behavior: 'smooth', block: 'center' }); f.elements.views.focus({ preventScroll: true }); } }
         break;
       case 'toggle': tr.status = tr.status === 'active' ? 'paused' : 'active'; save(); render(); break;
       case 'copy-link': copy(trackingLink(tr)); break;
       case 'copy-pb': copy(postbackUrl(tr.id)); break;
-      case 'sim': simulate(tr); save(); render(); toast(L('apa.tr.simmed', 'Added 7 days of simulated traffic')); break;
       case 'delete':
         if (confirm(L('apa.tr.delq', 'Delete this tracker and all its data?'))) {
           state.trackers = state.trackers.filter(t => t.id !== tr.id);
@@ -583,6 +666,8 @@
     if (el.dataset.filter) { ui[el.dataset.filter] = el.value; render(); }
     if (el.dataset.action === 'pb-tracker') { ui.pbTracker = el.value; root.querySelector('#apa-pb').textContent = postbackUrl(el.value); }
     if (el.dataset.action === 'import' && el.files[0]) importCsv(el.files[0]);
+    if (el.dataset.action === 'restore' && el.files[0]) restore(el.files[0]);
+    if (el.form && el.form.id === 'apa-log' && el.name === 'tid') ui.logTracker = el.value;
     if (el.form && el.form.id === 'apa-add' && el.name === 'tid') {
       const t = trackerById(el.value);
       if (t) el.form.elements.geo.value = GEOS.includes(t.geo) ? t.geo : el.form.elements.geo.value;
@@ -615,6 +700,29 @@
       applyConversion({ tid: v.tid, event: v.event, amount: v.amount, geo: v.geo, date: v.date ? fromIso(v.date) : today(), src: 'manual' });
       save(); render();
       toast(L('apa.c.added', 'Conversion added'));
+    }
+    if (f.id === 'apa-log') {
+      const v = Object.fromEntries(new FormData(f));
+      const tr = trackerById(v.tid);
+      if (!tr) return;
+      const key = v.date || iso(today());
+      const days = state.daily[v.tid] || (state.daily[v.tid] = {});
+      const d = days[key] || (days[key] = { views: 0, clicks: 0, regs: 0, ftd: 0, rev: 0, spend: 0 });
+      d.views += Math.max(0, Number(v.views) || 0);
+      d.clicks += Math.max(0, Number(v.clicks) || 0);
+      d.spend += Math.max(0, Number(v.spend) || 0);
+      ui.logTracker = v.tid;
+      save(); render();
+      toast(L('apa.log.saved', 'Stats saved'));
+      return;
+    }
+    if (f.id === 'apa-api') {
+      const v = Object.fromEntries(new FormData(f));
+      state.api.base = (v.base || '').trim();
+      state.api.key = (v.key || '').trim();
+      save();
+      apiTest();
+      return;
     }
     if (f.dataset.pixel) {
       const id = f.elements.id.value.trim();

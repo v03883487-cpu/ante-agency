@@ -11,11 +11,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&display=swap" />
-  <link rel="stylesheet" href="styles.css?v=f6989ed8" />
+  <link rel="stylesheet" href="styles.css?v=f4112cf9" />
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body data-page="partners">
-  <script src="layout.js?v=62330cdc" data-part="header"></script>
+  <script src="layout.js?v=104b4690" data-part="header"></script>
 
   <main id="main">
     <section class="page-hero">
@@ -26,8 +26,9 @@
         <p class="page-lead" data-i18n="pa.lead">The Antefluence partner program for webmasters: direct and exclusive offers, postbacks with other affiliate networks and our own payment system.</p>
         <div class="hero-ctas" style="margin-top:36px">
           <a class="btn btn-dark" href="#join"><span data-i18n="pa.cta1">Become a partner</span> <svg class="i" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-          <a class="btn btn-light" href="#offers" data-i18n="pa.cta2">See offers</a>
+          <a class="btn btn-light" href="#cabinet" data-i18n="pa.cta2">Open the cabinet</a>
         </div>
+        <p class="apa-live-note"><span class="dot"></span><span data-i18n="pa.live">The cabinet below is live: create links, follow conversions and request payouts.</span></p>
       </div>
     </section>
 
@@ -42,79 +43,13 @@
       </div>
     </section>
 
-    <section class="page-section" id="offers">
+    <section class="apa-section" id="cabinet" data-no-exit>
       <div class="container">
         <div class="section-intro split-intro reveal">
-          <div><div class="eyebrow" data-i18n="pa.off.eyebrow">Offers</div><h2 data-i18n="pa.off.title">Current offers</h2></div>
-          <div class="intro-side"><p data-i18n="pa.off.lead">Filter by GEO, vertical and payout model. New offers appear here as soon as they are added.</p></div>
+          <div><div class="eyebrow" data-i18n="pa.cab.eyebrow">Partner cabinet</div><h2 data-i18n="pa.cab.title">Offers, links, statistics and payouts</h2></div>
+          <div class="intro-side"><p data-i18n="pa.cab.lead">Everything a partner needs in one place: pick an offer, build a tracking link with sub IDs, watch conversions arrive and request a payout.</p></div>
         </div>
-        <div class="filters reveal">
-          <select class="field" id="flt-geo" aria-label="GEO"></select>
-          <select class="field" id="flt-vertical" aria-label="Vertical"></select>
-          <select class="field" id="flt-model" aria-label="Model"></select>
-        </div>
-        <div class="table-wrap reveal">
-          <table class="data-table" id="offers-table">
-            <thead><tr>
-              <th data-i18n="pa.th.offer">Offer</th><th data-i18n="pa.th.geo">GEO</th><th data-i18n="pa.th.model">Model</th>
-              <th data-i18n="pa.th.payout">Payout</th><th data-i18n="pa.th.baseline">Baseline</th><th data-i18n="pa.th.cap">Cap</th>
-              <th data-i18n="pa.th.status">Status</th><th></th>
-            </tr></thead>
-            <tbody></tbody>
-          </table>
-          <p class="empty-state" id="offers-empty" hidden data-i18n="pa.empty">No offers match these filters.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="page-section" id="postback">
-      <div class="container">
-        <div class="section-intro split-intro reveal">
-          <div><div class="eyebrow" data-i18n="pa.pb.eyebrow">Postback</div><h2 data-i18n-html="pa.pb.title.html">S2S postbacks<br>in both directions</h2></div>
-          <div class="intro-side"><p data-i18n="pa.pb.lead">Conversions flow between us, partner networks and your tracker automatically — no manual reports.</p></div>
-        </div>
-        <div class="split">
-          <div class="info-card reveal">
-            <span class="kicker" data-i18n="pa.pb.in.k">Incoming</span>
-            <h3 data-i18n="pa.pb.in.t">Postbacks from other networks</h3>
-            <p data-i18n="pa.pb.in.d">Run offers of other affiliate networks through us: they send conversions to our endpoint, and we pass them on to you in real time.</p>
-            <div class="code-box"><code id="pb-in">https://postback.antefluence.com/in/{token}?click_id={clickid}&amp;goal={goal}&amp;payout={payout}&amp;currency={currency}&amp;status={status}</code><button class="copy" type="button" data-copy="#pb-in" data-i18n="pa.copy">Copy</button></div>
-            <p class="small-note" data-i18n="pa.pb.in.note">Your personal endpoint with a token is issued by your manager when you connect.</p>
-          </div>
-          <div class="info-card reveal delay-1">
-            <span class="kicker" data-i18n="pa.pb.out.k">Outgoing</span>
-            <h3 data-i18n="pa.pb.out.t">Postback to your tracker</h3>
-            <p data-i18n="pa.pb.out.d">Pick your tracker, enter its domain and copy a ready postback URL.</p>
-            <div class="seg" id="pb-trackers" role="group" aria-label="Tracker">
-              <button type="button" data-tracker="keitaro" aria-pressed="true">Keitaro</button>
-              <button type="button" data-tracker="binom" aria-pressed="false">Binom</button>
-              <button type="button" data-tracker="voluum" aria-pressed="false">Voluum</button>
-              <button type="button" data-tracker="redtrack" aria-pressed="false">RedTrack</button>
-              <button type="button" data-tracker="bemob" aria-pressed="false">BeMob</button>
-              <button type="button" data-tracker="custom" aria-pressed="false" data-i18n="pa.pb.custom">Custom</button>
-            </div>
-            <div class="field-row">
-              <label><span data-i18n="pa.pb.domain">Tracker domain</span><input class="field" id="pb-domain" placeholder="your-tracker.com" autocomplete="off" /></label>
-              <label id="pb-key-wrap"><span data-i18n="pa.pb.key">Postback key</span><input class="field" id="pb-key" placeholder="POSTBACK_KEY" autocomplete="off" /></label>
-            </div>
-            <div class="code-box"><code id="pb-out"></code><button class="copy" type="button" data-copy="#pb-out" data-i18n="pa.copy">Copy</button></div>
-          </div>
-        </div>
-        <div class="table-wrap reveal" style="margin-top:28px">
-          <table class="data-table macro-table">
-            <thead><tr><th data-i18n="pa.pb.macro">Macro</th><th data-i18n="pa.pb.meaning">What it passes</th></tr></thead>
-            <tbody>
-              <tr><td><code>{sub1}</code></td><td data-i18n="pa.m.sub1">Your click ID — pass it in the offer link</td></tr>
-              <tr><td><code>{sub2}…{sub5}</code></td><td data-i18n="pa.m.sub2">Additional sub-IDs: source, creative, placement</td></tr>
-              <tr><td><code>{offer_id}</code></td><td data-i18n="pa.m.offer">Offer ID</td></tr>
-              <tr><td><code>{goal}</code></td><td data-i18n="pa.m.goal">Event: reg, ftd or rd (redeposit)</td></tr>
-              <tr><td><code>{payout}</code></td><td data-i18n="pa.m.payout">Payout amount for the event</td></tr>
-              <tr><td><code>{currency}</code></td><td data-i18n="pa.m.currency">Payout currency</td></tr>
-              <tr><td><code>{status}</code></td><td data-i18n="pa.m.status">approved, pending or rejected</td></tr>
-              <tr><td><code>{geo}</code></td><td data-i18n="pa.m.geo">Player's country</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="apa" id="partner-app"></div>
       </div>
     </section>
 
@@ -187,11 +122,11 @@
     </section>
   </main>
 
-  <script src="layout.js?v=62330cdc" data-part="footer"></script>
-  <script src="i18n.js?v=0d488b28"></script>
-  <script src="i18n-pages.js?v=6efabbd2"></script>
+  <script src="layout.js?v=104b4690" data-part="footer"></script>
+  <script src="i18n.js?v=a6678633"></script>
+  <script src="i18n-pages.js?v=3ff42e43"></script>
   <script src="script.js?v=ec1967d5"></script>
   <script src="offers.js?v=be73d0fe"></script>
-  <script src="partners.js?v=6c7b1a8c"></script>
+  <script src="partner-app.js?v=a7bb863e"></script>
 </body>
 </html>
