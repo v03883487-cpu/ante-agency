@@ -311,6 +311,32 @@ html:is([lang="es"], [lang="pt"], [lang="de"]) .hero h1 { font-size: clamp(40px,
 
 /* ============ Services ============ */
 .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.svc-blocks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+.svc-block {
+  display: flex;
+  flex-direction: column;
+  padding: 36px 36px 34px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, .9), rgba(246, 246, 250, .7));
+  border: 1px solid #e0e1e8;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform .3s var(--ease), border-color .3s, box-shadow .3s;
+}
+.svc-block:hover { transform: translateY(-6px); border-color: #d2c9fb; box-shadow: var(--shadow-hover); }
+.svc-block-head { display: flex; align-items: flex-start; justify-content: space-between; }
+.svc-block-head .num { font-size: 13px; color: #a3a5b1; }
+.svc-block:hover .service-icon { transform: translateY(-3px) rotate(-4deg); }
+.svc-block h3 { font-size: 22px; letter-spacing: -.02em; margin-bottom: 12px; }
+.svc-block > p { margin: 0 0 20px; font-size: 15px; line-height: 1.6; color: #666977; }
+.svc-points { display: grid; gap: 10px; margin: 0 0 28px; padding: 0; list-style: none; }
+.svc-points li { position: relative; padding-left: 28px; font-size: 14.5px; line-height: 1.5; color: #3d4050; }
+.svc-points li::before { content: ""; position: absolute; left: 0; top: 1px; width: 19px; height: 19px; border-radius: 50%; background: var(--purple-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m4.5 8.3 2.3 2.2 4.7-5' fill='none' stroke='%237b4dff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 13px no-repeat; }
+.svc-cta { align-self: flex-start; margin-top: auto; }
+@media (max-width: 860px) {
+  .svc-blocks { grid-template-columns: 1fr; gap: 20px; }
+  .svc-block { padding: 28px 24px 26px; }
+  .svc-block h3 { font-size: 20px; }
+}
 .service-card {
   position: relative;
   min-height: 272px;
