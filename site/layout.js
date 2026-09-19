@@ -18,10 +18,7 @@
       { href: 'content.html', key: 'ft.s6', label: 'Content Factories' },
       { href: 'partners.html', key: 'nav.partners', label: 'Partner program' }
     ] },
-    { id: 'creators', key: 'nav.creators', label: 'Creators', pages: ['creators'], section: 'creators', items: [
-      { href: H + '#creators', key: 'nav.top', label: 'Top creators' },
-      { href: 'creators.html', key: 'ft.r3', label: 'Creator Guidelines' }
-    ] },
+    { id: 'creators', key: 'nav.creators', label: 'Creators', pages: ['creators'], href: 'creators.html' },
     { id: 'cases', key: 'nav.cases', label: 'Cases', href: H + '#cases', section: 'cases' },
     { id: 'about', key: 'nav.about', label: 'About', pages: ['about', 'blog'], items: [
       { href: 'about.html', key: 'nav.company', label: 'About the company' },
@@ -117,7 +114,7 @@
     ]) +
     col('company', 'ft.company', 'Company', [
       ['about.html', 'ft.c1', 'About Us'],
-      [H + '#creators', 'ft.c2', 'Our Creators'],
+      ['creators.html', 'ft.c2', 'Our Creators'],
       [H + '#cases', 'ft.c3', 'Case Studies'],
       [H + '#contact', 'ft.c4', 'Careers'],
       [H + '#contact', 'ft.c5', 'Contact']
