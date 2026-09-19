@@ -104,7 +104,10 @@ window.I18N = {
     "svcb.4.b2": "Postbacks with any tracker",
     "svcb.4.b3": "Payouts in crypto and fiat",
     "svcb.4.cta": "Become a partner",
-    "svcb.more": "Learn more"
+    "svcb.more": "Learn more",
+    "apa.start": "Get started",
+    "apa.login": "Sign in",
+    "ft.apa": "Analytics sign-in"
   },
 
   es: {
@@ -210,7 +213,10 @@ window.I18N = {
     "svcb.4.b2": "Postbacks con cualquier tracker",
     "svcb.4.b3": "Pagos en cripto y fiat",
     "svcb.4.cta": "Hacerse socio",
-    "svcb.more": "Más información"
+    "svcb.more": "Más información",
+    "apa.start": "Empezar",
+    "apa.login": "Iniciar sesión",
+    "ft.apa": "Acceso a la analítica"
   },
 
   pt: {
@@ -316,7 +322,10 @@ window.I18N = {
     "svcb.4.b2": "Postbacks com qualquer tracker",
     "svcb.4.b3": "Pagamentos em cripto e fiat",
     "svcb.4.cta": "Tornar-se parceiro",
-    "svcb.more": "Saiba mais"
+    "svcb.more": "Saiba mais",
+    "apa.start": "Começar",
+    "apa.login": "Entrar",
+    "ft.apa": "Acesso à análise"
   },
 
   de: {
@@ -422,7 +431,10 @@ window.I18N = {
     "svcb.4.b2": "Postbacks mit jedem Tracker",
     "svcb.4.b3": "Auszahlungen in Krypto und Fiat",
     "svcb.4.cta": "Partner werden",
-    "svcb.more": "Mehr erfahren"
+    "svcb.more": "Mehr erfahren",
+    "apa.start": "Loslegen",
+    "apa.login": "Anmelden",
+    "ft.apa": "Analytics-Login"
   },
 
   ru: {
@@ -528,6 +540,9 @@ window.I18N = {
     "svcb.4.b2": "Постбэки с любым трекером",
     "svcb.4.b3": "Выплаты в крипте и фиате",
     "svcb.4.cta": "Стать партнёром",
-    "svcb.more": "Подробнее"
+    "svcb.more": "Подробнее",
+    "apa.start": "Начать",
+    "apa.login": "Войти",
+    "ft.apa": "Вход в аналитику"
   }
 };

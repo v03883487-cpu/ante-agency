@@ -2,6 +2,8 @@
 //   <script src="layout.js" data-part="header"></script>
 // Pages set <body data-page="..."> ("home" for index.html).
 (function () {
+  // Ad Performance Analytics product — change here when it moves to its own domain.
+  var APA_URL = 'https://antefluence-analytics.shadow-coriander.workers.dev';
   var script = document.currentScript;
   var page = document.body.getAttribute('data-page') || 'home';
   var home = page === 'home';
@@ -120,6 +122,7 @@
       [H + '#contact', 'ft.c5', 'Contact']
     ]) +
     col('resources', 'ft.resources', 'Resources', [
+      [APA_URL + '/app', 'ft.apa', 'Analytics sign-in'],
       ['blog.html', 'ft.r1', 'Blog'],
       ['blog.html#insights', 'ft.r2', 'Insights'],
       ['creators.html', 'ft.r3', 'Creator Guidelines'],
