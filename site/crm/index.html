@@ -326,6 +326,23 @@ td .sub{display:block;margin-top:2px;font-size:12.5px;color:var(--faint)}
 .scam-ev{display:inline-block;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
 .flag{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--red-bg);color:var(--red);font-size:11px;font-weight:700;vertical-align:middle}
 
+/* ---------- finance ---------- */
+.fin-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.fin-legend span{display:inline-flex;align-items:center;gap:6px}
+.fin-legend i{width:10px;height:10px;border-radius:3px}
+.in{color:var(--green);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.out{color:var(--red);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.net{font-variant-numeric:tabular-nums;font-weight:650}
+.net.minus{color:var(--red)}
+.auto-tag{background:#eef1f7;color:#5b6577}
+.cat-bars{display:grid;gap:10px}
+.cat-row{display:grid;grid-template-columns:150px 1fr auto;align-items:center;gap:10px;font-size:13px}
+.cat-row .track{height:9px;border-radius:99px;background:#f0eff6;overflow:hidden}
+.cat-row .track i{display:block;height:100%;border-radius:99px}
+.cat-row b{font-variant-numeric:tabular-nums}
+.money-add{display:grid;grid-template-columns:110px 150px 1fr 120px auto;gap:8px;align-items:end}
+@media (max-width:900px){.money-add{grid-template-columns:1fr 1fr}.cat-row{grid-template-columns:110px 1fr auto}}
+
 /* ---------- dialog ---------- */
 dialog{width:min(600px,94vw);padding:0;border:0;border-radius:20px;box-shadow:0 40px 90px rgba(18,17,28,.34);background:#fff}
 dialog::backdrop{background:rgba(18,17,28,.45)}
@@ -381,7 +398,7 @@ dialog::backdrop{background:rgba(18,17,28,.45)}
 <script>
 /* ---------------- storage ---------------- */
 const KEY = 'antefluence-crm-v1';
-const BLANK = { v: 1, tasks: [], deals: [], contacts: [], scam: [], notes: '', seq: 1 };
+const BLANK = { v: 1, tasks: [], deals: [], contacts: [], scam: [], money: [], notes: '', seq: 1 };
 let db;
 try { db = JSON.parse(localStorage.getItem(KEY)) || null; } catch { db = null; }
 if (!db || db.v !== 1) db = structuredClone(BLANK);
@@ -411,6 +428,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 const addDays = n => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
 const fmtDate = d => d ? new Date(d + 'T00:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) : '';
 const money = v => new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(v) || 0);
+const short = v => new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: Math.abs(Number(v) || 0) >= 1000 ? 1 : 0 }).format(Number(v) || 0);
 const daysTo = d => d ? Math.round((new Date(d + 'T00:00:00') - new Date(today() + 'T00:00:00')) / 86400000) : null;
 const initials = s => String(s || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
 function toast(msg) {
@@ -466,6 +484,24 @@ const SCAM_KINDS = { brand: 'Бренд', creator: 'Креатор', network: '�
 const SCAM_STATUS = { confirmed: 'Подтверждено', suspect: 'Под вопросом', resolved: 'Вопрос закрыт' };
 const SCAM_TAG = { confirmed: 'r', suspect: 'y', resolved: 'g' };
 const scamList = () => Array.isArray(db.scam) ? db.scam : (db.scam = []);
+/* ---------------- деньги ---------------- */
+const CATS_IN = { commission: 'Комиссия с креаторов', brand: 'Оплата от бренда', other: 'Прочий доход' };
+const CATS_OUT = { creator: 'Выплата креатору', ads: 'Реклама и трафик', tools: 'Сервисы и подписки', team: 'Команда и подряд', tax: 'Налоги и комиссии', office: 'Офис и прочее' };
+const catName = m => (m.dir === 'in' ? CATS_IN : CATS_OUT)[m.cat] || m.cat;
+const moneyList = () => Array.isArray(db.money) ? db.money : (db.money = []);
+// Комиссии из сделок с креаторами попадают в финансы сами — их не нужно вносить руками.
+function autoRows() {
+  const rows = [];
+  dealsOfKind('creator').forEach(d => commissionsOf(d).forEach((c, i) => rows.push({
+    id: `${d.id}#${i}`, auto: true, dir: 'in', cat: 'commission', amount: Number(c.amount) || 0,
+    date: new Date(c.ts).toISOString().slice(0, 10), note: c.note || d.name, contact: d.contact, deal: d.id
+  })));
+  return rows;
+}
+const allMoney = () => [...autoRows(), ...moneyList()].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+const inRange = (m, from, to) => (m.date || '') >= from && (m.date || '') <= to;
+const monthKey = d => (d || '').slice(0, 7);
+const monthLabel = k => { const [y, m] = k.split('-'); return new Date(Number(y), Number(m) - 1, 1).toLocaleDateString('ru-RU', { month: 'short', year: '2-digit' }); };
 // совпадение по имени или нику — чтобы предупреждение всплывало там, где вводят контакт
 function scamMatch(name) {
   const n = String(name || '').trim().toLowerCase().replace(/^@/, '');
@@ -495,7 +531,7 @@ const defaultOrd = t => t.due ? Date.parse(t.due + 'T00:00:00') : (t.created || 
 const ordOf = t => (typeof t.ord === 'number' ? t.ord : defaultOrd(t));
 const byOrder = (a, b) => ordOf(a) - ordOf(b) || byDue(a, b);
 
-const state = { tab: 'today', q: '', board: false, vizTable: false, dealKind: 'brand', area: 'all', filter: { status: '', contact: '', who: '' } };
+const state = { tab: 'today', q: '', board: false, vizTable: false, dealKind: 'brand', area: 'all', fin: 30, filter: { status: '', contact: '', who: '' } };
 const matches = (obj, q) => !q || JSON.stringify(obj).toLowerCase().includes(q.toLowerCase());
 // search also looks at linked names, not just the record's own fields
 const taskHay = t => [t.title, t.note, t.who, STATUS[t.status], PRIO[t.prio], contactName(t.contact), dealName(t.deal), isOwn(t) ? 'внутренняя ' + (TOPICS[t.topic] || '') : ''].join(' ').toLowerCase();
@@ -954,6 +990,61 @@ $('#dlg-body').addEventListener('keydown', e => {
   if (dlgDeal && e.key === 'Enter' && ['comm-amount', 'comm-note', 'comm-date'].includes(e.target.id)) { e.preventDefault(); addCommission(); }
 });
 
+function moneyDialog(entry) {
+  const m = entry || { id: '', dir: 'out', cat: 'ads', amount: '', date: today(), note: '', contact: '', deal: '' };
+  dlgTask = null; dlgDeal = null;
+  const cats = dir => Object.entries(dir === 'in' ? CATS_IN : CATS_OUT).map(([k, v]) => `<option value="${k}"${m.cat === k ? ' selected' : ''}>${v}</option>`).join('');
+  $('#dlg-body').innerHTML = `
+    <h3>${entry ? 'Операция' : 'Новая операция'}</h3>
+    <form id="money-form" class="grid">
+      <div class="two">
+        <div><span class="lab" style="display:block;margin-bottom:6px">Тип</span>
+          <div class="seg" role="group" aria-label="Тип операции">
+            <button type="button" data-dir="in" aria-pressed="${m.dir === 'in'}">Доход</button>
+            <button type="button" data-dir="out" aria-pressed="${m.dir === 'out'}">Расход</button>
+          </div>
+          <input type="hidden" name="dir" value="${h(m.dir)}" />
+        </div>
+        <label class="lab">Сумма, $<input class="field" name="amount" type="number" min="0" step="10" value="${h(m.amount)}" required /></label>
+      </div>
+      <div class="two">
+        <label class="lab">Категория<select class="field" name="cat">${cats(m.dir)}</select></label>
+        <label class="lab">Дата<input class="field" name="date" type="date" value="${h(m.date || today())}" /></label>
+      </div>
+      <div class="two">
+        <label class="lab">Контрагент<input class="field" name="contact_name" value="${h(contactName(m.contact))}" maxlength="80" list="contact-list" placeholder="Бренд, креатор, сервис" autocomplete="off" /></label>
+        <label class="lab">Сделка<input class="field" name="deal_name" value="${h(dealName(m.deal))}" maxlength="120" list="deal-list" placeholder="Необязательно" autocomplete="off" /></label>
+      </div>
+      <label class="lab">Комментарий<input class="field" name="note" value="${h(m.note)}" maxlength="140" placeholder="За что" autocomplete="off" /></label>
+      ${contactList()}${dealList()}
+      <footer>
+        <div>${entry ? `<button class="btn danger sm" type="button" id="del">Удалить</button>` : ''}</div>
+        <div class="row"><button class="btn ghost" type="button" data-close>Отмена</button><button class="btn" type="submit">Сохранить</button></div>
+      </footer>
+    </form>`;
+  openDialog();
+  const form = $('#money-form');
+  form.querySelectorAll('[data-dir]').forEach(btn => btn.addEventListener('click', () => {
+    const dir = btn.dataset.dir;
+    form.elements.dir.value = dir;
+    form.querySelectorAll('[data-dir]').forEach(x => x.setAttribute('aria-pressed', String(x === btn)));
+    form.elements.cat.innerHTML = Object.entries(dir === 'in' ? CATS_IN : CATS_OUT).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+  }));
+  const del = $('#del');
+  if (del) del.onclick = () => { if (confirm('Удалить операцию?')) { db.money = moneyList().filter(x => x.id !== m.id); save(); $('#dlg').close(); render(); } };
+  form.onsubmit = e => {
+    e.preventDefault();
+    const v = Object.fromEntries(new FormData(e.target));
+    if (!(Number(v.amount) > 0)) { toast('Укажите сумму'); return; }
+    v.contact = resolveContact(v.contact_name, 'other');
+    v.deal = findDeal(v.deal_name) ? findDeal(v.deal_name).id : '';
+    delete v.contact_name; delete v.deal_name;
+    v.amount = Number(v.amount);
+    if (entry) Object.assign(m, v); else moneyList().unshift({ ...m, ...v, id: id(), created: Date.now() });
+    save(); $('#dlg').close(); render();
+  };
+}
+
 function scamDialog(entry) {
   const e = entry || { id: '', name: '', handle: '', kind: 'creator', reason: '', amount: '', date: today(), evidence: '', source: '', status: 'confirmed', note: '' };
   dlgTask = null; dlgDeal = null;
@@ -1281,6 +1372,7 @@ function dataView() {
       <div class="list">
         <div class="item"><div class="main" style="grid-column:1/4"><span class="t">Задачи</span><div class="meta">открытых ${openTasks().length}<span class="dot"></span>просрочено ${overdue().length}</div></div><div class="right"><b>${db.tasks.length}</b></div></div>
         <div class="item"><div class="main" style="grid-column:1/4"><span class="t">Сделки</span><div class="meta">с брендами ${dealsOfKind('brand').length}<span class="dot"></span>с креаторами ${dealsOfKind('creator').length}</div></div><div class="right"><b>${db.deals.length}</b></div></div>
+        <div class="item"><div class="main" style="grid-column:1/4"><span class="t">Операции по деньгам</span><div class="meta">своих ${moneyList().length}<span class="dot"></span>из сделок ${autoRows().length}</div></div><div class="right"><b>${allMoney().length}</b></div></div>
         <div class="item"><div class="main" style="grid-column:1/4"><span class="t">Скамлист</span><div class="meta">активных ${scamList().filter(x => x.status !== 'resolved').length}</div></div><div class="right"><b>${scamList().length}</b></div></div>
         <div class="item"><div class="main" style="grid-column:1/4"><span class="t">Контакты</span><div class="meta">брендов ${db.contacts.filter(c => c.kind === 'brand').length}<span class="dot"></span>креаторов ${db.contacts.filter(c => c.kind === 'creator').length}</div></div><div class="right"><b>${db.contacts.length}</b></div></div>
       </div>
@@ -1488,6 +1580,105 @@ function statsTable() {
     <tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody></table></div>`;
 }
 
+// месяцы: доход и расход рядом, прибыль подписана числом
+function monthBars(rows, months = 6) {
+  const now = new Date();
+  const keys = [];
+  // ключ месяца собираем вручную: toISOString сдвигает дату на часовой пояс
+  for (let i = months - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    keys.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+  }
+  const data = keys.map(k => ({
+    k, label: monthLabel(k),
+    inc: rows.filter(m => m.dir === 'in' && monthKey(m.date) === k).reduce((a, m) => a + m.amount, 0),
+    exp: rows.filter(m => m.dir === 'out' && monthKey(m.date) === k).reduce((a, m) => a + m.amount, 0)
+  }));
+  const max = Math.max(1, ...data.flatMap(d => [d.inc, d.exp])) * 1.15;
+  const W = 640, H = 210, padL = 42, padB = 34, padT = 16;
+  const y = v => padT + (H - padT - padB) * (1 - v / max);
+  const bw = (W - padL) / months, gap = 5, barW = (bw - gap * 3) / 2;
+  const grid = [0, .5, 1].map(f => `<line class="grid" x1="${padL}" x2="${W}" y1="${y(max * f)}" y2="${y(max * f)}"/><text class="lbl" x="0" y="${y(max * f) + 4}">$${short(max * f)}</text>`).join('');
+  const bars = data.map((d, i) => {
+    const x0 = padL + i * bw + gap;
+    const h1 = Math.max(d.inc ? 3 : 0, H - padB - y(d.inc)), h2 = Math.max(d.exp ? 3 : 0, H - padB - y(d.exp));
+    const net = d.inc - d.exp;
+    return `<rect class="mark" x="${x0}" y="${H - padB - h1}" width="${barW}" height="${h1}" rx="4" fill="#1baf7a"><title>${d.label}: доход ${money(d.inc)}</title></rect>
+      <rect class="mark" x="${x0 + barW + gap}" y="${H - padB - h2}" width="${barW}" height="${h2}" rx="4" fill="#c9cbd6"><title>${d.label}: расход ${money(d.exp)}</title></rect>
+      <text class="val" x="${x0 + bw / 2 - gap}" y="${H - padB - Math.max(h1, h2) - 6}" text-anchor="middle" fill="${net < 0 ? '#c23a5e' : '#12795a'}">${net ? (net > 0 ? '+' : '−') + short(Math.abs(net)) : ''}</text>
+      <text class="lbl" x="${x0 + bw / 2 - gap}" y="${H - 12}" text-anchor="middle">${h(d.label)}</text>`;
+  }).join('');
+  return `<div class="viz" style="max-width:760px"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Доходы и расходы по месяцам">${grid}<line class="axis" x1="${padL}" x2="${W}" y1="${H - padB}" y2="${H - padB}"/>${bars}</svg>
+    <div class="fin-legend" style="margin-top:8px"><span><i style="background:#1baf7a"></i>доход</span><span><i style="background:#c9cbd6"></i>расход</span><span>над столбцами — прибыль месяца</span></div></div>`;
+}
+function catBars(rows, dir) {
+  const cats = dir === 'in' ? CATS_IN : CATS_OUT;
+  const list = Object.keys(cats).map(k => ({
+    k, label: cats[k], sum: rows.filter(m => m.dir === dir && m.cat === k).reduce((a, m) => a + m.amount, 0)
+  })).filter(x => x.sum).sort((a, b) => b.sum - a.sum);
+  if (!list.length) return `<p class="empty"><b>${dir === 'in' ? 'Доходов' : 'Расходов'} за период нет</b></p>`;
+  const total = list.reduce((a, x) => a + x.sum, 0);
+  const max = Math.max(...list.map(x => x.sum));
+  return `<div class="cat-bars">${list.map(x => `<div class="cat-row"><span>${h(x.label)}</span>
+    <div class="track"><i style="width:${(x.sum / max * 100).toFixed(1)}%;background:${dir === 'in' ? '#1baf7a' : '#7b4dff'}"></i></div>
+    <b class="${dir === 'in' ? 'in' : 'out'}">${money(x.sum)} · ${Math.round(x.sum / total * 100)}%</b></div>`).join('')}</div>`;
+}
+function moneyView() {
+  const days = state.fin || 30;
+  const from = new Date(Date.now() - (days - 1) * 86400000).toISOString().slice(0, 10), to = today();
+  const all = allMoney();
+  const rows = all.filter(m => inRange(m, from, to)).filter(m => hit([m.note, catName(m), contactName(m.contact), dealName(m.deal)].join(' ').toLowerCase(), state.q));
+  const inc = rows.filter(m => m.dir === 'in').reduce((a, m) => a + m.amount, 0);
+  const exp = rows.filter(m => m.dir === 'out').reduce((a, m) => a + m.amount, 0);
+  const net = inc - exp;
+  const prevFrom = new Date(Date.now() - (days * 2 - 1) * 86400000).toISOString().slice(0, 10);
+  const prev = all.filter(m => inRange(m, prevFrom, from));
+  const prevNet = prev.filter(m => m.dir === 'in').reduce((a, m) => a + m.amount, 0) - prev.filter(m => m.dir === 'out').reduce((a, m) => a + m.amount, 0);
+  const byWho = {};
+  rows.forEach(m => { const k = contactName(m.contact) || 'Без контрагента'; byWho[k] = (byWho[k] || 0) + (m.dir === 'in' ? m.amount : -m.amount); });
+  const who = Object.entries(byWho).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const whoMax = Math.max(1, ...who.map(([, v]) => Math.abs(v)));
+  const dt2 = d => d ? new Date(d + 'T00:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) : '—';
+  return `<div class="bar"><h2>Финансы</h2>
+      <div class="row">
+        <div class="seg" role="group" aria-label="Период">
+          ${[[7, '7 дней'], [30, '30 дней'], [90, '90 дней'], [365, 'Год']].map(([d, l]) => `<button type="button" data-finperiod="${d}" aria-pressed="${(state.fin || 30) === d}">${l}</button>`).join('')}
+        </div>
+        <button class="btn ghost sm" data-action="export-money">CSV</button>
+        <button class="btn sm" data-action="new-money">+ Операция</button>
+      </div></div>
+    <div class="stats">
+      <div class="stat green"><i></i><span>Доход</span><b>${money(inc)}</b><small>операций ${rows.filter(m => m.dir === 'in').length}</small></div>
+      <div class="stat red"><i></i><span>Расход</span><b>${money(exp)}</b><small>операций ${rows.filter(m => m.dir === 'out').length}</small></div>
+      <div class="stat"><i></i><span>Прибыль</span><b class="net ${net < 0 ? 'minus' : ''}">${money(net)}</b><small>прошлый период ${money(prevNet)}</small></div>
+      <div class="stat amber"><i></i><span>Рентабельность</span><b>${inc ? Math.round(net / inc * 100) : 0}%</b><small>прибыль от дохода</small></div>
+    </div>
+    <div class="panel"><div class="panel-head"><h3>Доходы и расходы по месяцам</h3><span class="side">6 месяцев</span></div>${monthBars(all)}</div>
+    <div class="chart-grid" style="margin-top:16px">
+      <div class="panel"><div class="panel-head"><h3>Откуда доход</h3><span class="side">${money(inc)}</span></div>${catBars(rows, 'in')}</div>
+      <div class="panel"><div class="panel-head"><h3>На что тратим</h3><span class="side">${money(exp)}</span></div>${catBars(rows, 'out')}</div>
+      <div class="panel" style="grid-column:1/-1"><div class="panel-head"><h3>По контрагентам</h3><span class="side">доход минус расход</span></div>
+        ${who.length ? `<div class="cat-bars">${who.map(([name, v]) => `<div class="cat-row"><span>${h(name.slice(0, 18))}</span>
+          <div class="track"><i style="width:${(Math.abs(v) / whoMax * 100).toFixed(1)}%;background:${v < 0 ? '#c23a5e' : '#1baf7a'}"></i></div>
+          <b class="${v < 0 ? 'out' : 'in'}">${money(v)}</b></div>`).join('')}</div>` : `<p class="empty"><b>Нет операций за период</b></p>`}
+      </div>
+    </div>
+    <div class="panel" style="margin-top:16px"><div class="panel-head"><h3>Операции</h3><span class="side">${rows.length} за период</span></div>
+      ${rows.length ? `<div class="table-wrap"><table><thead><tr><th>Дата</th><th>Категория</th><th>Контрагент</th><th>Комментарий</th><th>Доход</th><th>Расход</th><th></th></tr></thead>
+        <tbody>${rows.slice(0, 200).map(m => `<tr>
+          <td>${h(dt2(m.date))}</td>
+          <td><span class="tag ${m.dir === 'in' ? 'g' : 'line'}">${h(catName(m))}</span>${m.auto ? ' <span class="tag auto-tag">из сделки</span>' : ''}</td>
+          <td>${h(contactName(m.contact) || '—')}${m.deal ? `<span class="sub">${h(dealName(m.deal))}</span>` : ''}</td>
+          <td>${h(m.note || '—')}</td>
+          <td class="in">${m.dir === 'in' ? money(m.amount) : ''}</td>
+          <td class="out">${m.dir === 'out' ? money(m.amount) : ''}</td>
+          <td>${m.auto ? '' : `<button class="btn ghost sm" data-money-edit="${h(m.id)}">Открыть</button>`}</td>
+        </tr>`).join('')}</tbody></table></div>`
+        : `<p class="empty"><b>Операций за период нет</b><span>Комиссии с креаторов попадают сюда сами, остальное добавляйте кнопкой «+ Операция».</span></p>`}
+      <p class="hint">Комиссии из сделок с креаторами подтягиваются автоматически и правятся в самой сделке.</p>
+    </div>`;
+}
+
 function chartsView() {
   const doneAll = db.tasks.filter(t => t.status === 'done').length;
   const done30 = db.tasks.filter(t => t.done_at && Date.now() - t.done_at < 30 * 86400000).length;
@@ -1531,6 +1722,7 @@ const TABS = [
   ['deals', 'Сделки', () => db.deals.filter(isOpenDeal).length],
   ['contacts', 'Контакты', () => db.contacts.length],
   ['scam', 'Скамлист', () => scamList().filter(x => x.status !== 'resolved').length],
+  ['money', 'Финансы', () => 0],
   ['charts', 'Аналитика', () => 0],
   ['data', 'Данные', () => 0]
 ];
@@ -1539,7 +1731,7 @@ function render() {
     const n = count();
     return `<button role="tab" data-tab="${k}" aria-selected="${state.tab === k}">${label}${n ? `<span class="n${warn && overdue().length ? ' warn' : ''}">${n}</span>` : ''}</button>`;
   }).join('');
-  $('#view').innerHTML = { today: todayView, tasks: tasksView, deals: dealsView, contacts: contactsView, scam: scamView, charts: chartsView, data: dataView }[state.tab]();
+  $('#view').innerHTML = { today: todayView, tasks: tasksView, deals: dealsView, contacts: contactsView, scam: scamView, money: moneyView, charts: chartsView, data: dataView }[state.tab]();
   bindDrag();
 }
 
@@ -1647,14 +1839,20 @@ document.addEventListener('click', e => {
   if (el.dataset.tab) { state.tab = el.dataset.tab; return render(); }
   if (el.dataset.dealkind) { state.dealKind = el.dataset.dealkind; return render(); }
   if (el.dataset.areafilter) { state.area = el.dataset.areafilter; return render(); }
+  if (el.dataset.finperiod) { state.fin = Number(el.dataset.finperiod); return render(); }
   if (el.dataset.edit) return taskDialog(db.tasks.find(t => t.id === el.dataset.edit));
   if (el.dataset.dealEdit) return dealDialog(db.deals.find(d => d.id === el.dataset.dealEdit));
   if (el.dataset.contactEdit) return contactDialog(db.contacts.find(c => c.id === el.dataset.contactEdit));
   if (el.dataset.scamEdit) return scamDialog(scamList().find(x => x.id === el.dataset.scamEdit));
+  if (el.dataset.moneyEdit) return moneyDialog(moneyList().find(x => x.id === el.dataset.moneyEdit));
   switch (el.dataset.action || el.id) {
     case 'add-task': case 'new-task': return taskDialog(null);
     case 'new-own': return taskDialog(null, 'own');
     case 'new-scam': return scamDialog(null);
+    case 'new-money': return moneyDialog(null);
+    case 'export-money':
+      return download(`money-${today()}.csv`, csv([['Дата', 'Тип', 'Категория', 'Сумма', 'Контрагент', 'Сделка', 'Комментарий', 'Источник'],
+        ...allMoney().map(m => [m.date, m.dir === 'in' ? 'Доход' : 'Расход', catName(m), m.amount, contactName(m.contact), dealName(m.deal), m.note, m.auto ? 'из сделки' : 'вручную'])]), 'text/csv');
     case 'export-scam':
       return download(`scamlist-${today()}.csv`, csv([['Кто', 'Ник или ссылка', 'Тип', 'Что произошло', 'Ущерб', 'Дата', 'Статус', 'Источник', 'Доказательства', 'Заметки'],
         ...scamList().map(x => [x.name, x.handle, SCAM_KINDS[x.kind], x.reason, x.amount, x.date, SCAM_STATUS[x.status], x.source, x.evidence, x.note])]), 'text/csv');
