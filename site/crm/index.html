@@ -413,8 +413,9 @@ const crewCommission = brandId => crewOf(brandId).reduce((a, d) => a + commissio
 // берём то, что расписано по креаторам: платит за них всё равно бренд.
 const brandBudget = d => (Number(d.amount) || 0) || crewPayouts(d.id);
 const brandDerived = d => !(Number(d.amount) || 0) && crewPayouts(d.id) > 0;
-const brandTotal = d => brandBudget(d) + crewCommission(d.id);               // бюджет бренда + комиссия с его креаторов
-const brandMargin = d => brandTotal(d) - crewPayouts(d.id);                  // что остаётся после выплат креаторам
+// Бюджет — это оборот сделки, он почти весь уходит креаторам.
+// Наш доход = что осталось от бюджета после выплат + комиссия с креаторов.
+const brandIncome = d => brandBudget(d) - crewPayouts(d.id) + crewCommission(d.id);
 const brandDealName = did => { const x = db.deals.find(d => d.id === did && (d.kind || 'brand') === 'brand'); return x ? x.name : ''; };
 const findBrandDeal = name => { const n = String(name || '').trim().toLowerCase(); return n ? dealsOfKind('brand').find(d => d.name.trim().toLowerCase() === n) : null; };
 function resolveBrandDeal(name, contactId) {
@@ -812,15 +813,14 @@ function renderCrew() {
   if (f && f.elements.amount) dlgDeal.amount = f.elements.amount.value;
   const crew = crewOf(dlgDeal.id);
   const payouts = crewPayouts(dlgDeal.id), comm = crewCommission(dlgDeal.id);
-  const total = brandTotal(dlgDeal), margin = brandMargin(dlgDeal);
+  const budget = brandBudget(dlgDeal), income = brandIncome(dlgDeal);
   box.innerHTML = `<div class="rollup">
     <h4>Креаторы в кампании<em>${crew.length ? crew.length + ' ' + (crew.length === 1 ? 'креатор' : crew.length < 5 ? 'креатора' : 'креаторов') : 'пока никого'}</em></h4>
-    <div class="sum-grid five">
-      <div><span>Бюджет бренда</span><b>${money(brandBudget(dlgDeal))}</b>${brandDerived(dlgDeal) ? '<small>из выплат креаторам</small>' : ''}</div>
-      <div><span>Выплаты креаторам</span><b>${money(payouts)}</b></div>
-      <div><span>Комиссия с креаторов</span><b>${money(comm)}</b></div>
-      <div class="tot"><span>Итого по сделке</span><b>${money(total)}</b></div>
-      <div class="marg"><span>Остаётся у нас</span><b class="${margin < 0 ? 'neg' : ''}">${money(margin)}</b></div>
+    <div class="sum-grid">
+      <div><span>Бюджет бренда</span><b>${money(budget)}</b>${brandDerived(dlgDeal) ? '<small>из выплат креаторам</small>' : ''}</div>
+      <div><span>Выплаты креаторам</span><b>−${money(payouts)}</b></div>
+      <div><span>Комиссия с креаторов</span><b>+${money(comm)}</b></div>
+      <div class="marg"><span>Наш доход</span><b class="${income < 0 ? 'neg' : ''}">${money(income)}</b></div>
     </div>
     ${crew.length ? `<ul class="crew">${crew.map(c => `<li>
         <span class="nm">${h(contactName(c.contact) || c.name)}<small>${h(stageLabel(c))}${Number(c.streams_total) ? ` · ${c.streams_done || 0}/${c.streams_total} стримов · ${streamPct(c)}%` : ''}</small></span>
@@ -938,8 +938,8 @@ function todayView() {
   const noDate = openTasks().filter(t => !t.due).sort((a, b) => b.created - a.created);
   const doing = openTasks().filter(t => t.status === 'doing');
   const steps = db.deals.filter(d => isOpenDeal(d) && d.next).sort((a, b) => (a.next_at || '9999').localeCompare(b.next_at || '9999'));
-  const pipeline = dealsOfKind('brand').filter(isOpenDeal).reduce((s, d) => s + brandTotal(d), 0);
-  const won = dealsOfKind('brand').filter(d => d.stage === 'won').reduce((s, d) => s + brandTotal(d), 0);
+  const pipeline = dealsOfKind('brand').filter(isOpenDeal).reduce((s, d) => s + brandBudget(d), 0);
+  const won = dealsOfKind('brand').filter(d => d.stage === 'won').reduce((s, d) => s + brandBudget(d), 0);
   const doneWeek = db.tasks.filter(t => t.done_at && Date.now() - t.done_at < 7 * 86400000).length;
   return `
     <div class="stats">
@@ -1025,13 +1025,13 @@ function dealsView() {
                      : open.reduce((a, d) => a + crewPayouts(d.id), 0),
     commission: creator ? list.reduce((a, d) => a + commissionSum(d), 0)
                         : open.reduce((a, d) => a + crewCommission(d.id), 0),      // комиссия с креаторов кампании
-    total: open.reduce((a, d) => a + (creator ? (Number(d.amount) || 0) : brandTotal(d)), 0),
-    closed: list.filter(d => !isOpenDeal(d)).reduce((a, d) => a + (creator ? commissionSum(d) : brandTotal(d)), 0),
+    income: open.reduce((a, d) => a + (creator ? commissionSum(d) : brandIncome(d)), 0),
+    closed: list.filter(d => !isOpenDeal(d)).reduce((a, d) => a + (creator ? commissionSum(d) : brandBudget(d)), 0),
     streams: list.reduce((a, d) => a + (Number(d.streams_done) || 0), 0)
   };
   const cols = Object.entries(stages).map(([k, v]) => {
     const items = list.filter(d => d.stage === k);
-    const sum = creator ? items.reduce((a, d) => a + commissionSum(d), 0) : items.reduce((a, d) => a + brandTotal(d), 0);
+    const sum = creator ? items.reduce((a, d) => a + commissionSum(d), 0) : items.reduce((a, d) => a + brandBudget(d), 0);
     return `<div class="col" data-stage="${k}"><div class="col-head"><i></i>${v}<span class="c">${sum ? money(sum) : items.length}</span></div>
       ${items.length ? items.map(d => {
         const pct = streamPct(d), comm = commissionSum(d);
@@ -1040,10 +1040,10 @@ function dealsView() {
           <div class="meta">${d.contact ? `<span>${h(contactName(d.contact))}</span>` : ''}
             ${creator
               ? `${comm ? `<span class="tag money-tag">${money(comm)} комиссии</span>` : ''}${d.rate ? `<span>${money(d.rate)}/стрим</span>` : ''}${d.brand_deal ? `<span>${h(brandDealName(d.brand_deal))}</span>` : ''}`
-              : `${brandTotal(d) ? `<span class="tag line">${money(brandTotal(d))}</span>` : ''}${crewOf(d.id).length ? `<span>${crewOf(d.id).length} креат.</span>` : ''}`}
+              : `${brandBudget(d) ? `<span class="tag line">${money(brandBudget(d))}</span>` : ''}${crewOf(d.id).length ? `<span>${crewOf(d.id).length} креат.</span>` : ''}`}
             ${d.next ? `<span>→ ${h(d.next)}</span>` : ''}${d.next_at ? dueChip(d.next_at) : ''}</div>
           ${creator && Number(d.streams_total) ? `<div class="streams"><div class="bar${pct >= 100 ? ' full' : ''}"><i style="width:${pct}%"></i></div><b>${d.streams_done || 0}/${d.streams_total} · ${pct}%</b></div>` : ''}
-          ${!creator && crewOf(d.id).length ? `<span class="sub-sum">бюджет ${money(brandBudget(d))}${brandDerived(d) ? ' (по креаторам)' : ''} + комиссия ${money(crewCommission(d.id))}</span>` : ''}
+          ${!creator && crewOf(d.id).length ? `<span class="sub-sum">выплаты ${money(crewPayouts(d.id))} · комиссия ${money(crewCommission(d.id))} · наш доход ${money(brandIncome(d))}</span>` : ''}
         </div>`;
       }).join('') : '<div class="col-empty">пусто</div>'}</div>`;
   }).join('');
@@ -1060,7 +1060,7 @@ function dealsView() {
       <div class="stat"><i></i><span>${creator ? 'Активных креаторов' : 'Сделок в работе'}</span><b>${totals.open}</b><small>всего ${list.length}</small></div>
       <div class="stat amber"><i></i><span>${creator ? 'Выплаты креаторам' : 'Бюджеты брендов'}</span><b>${money(totals.budget)}</b><small>${creator ? `из бюджетов брендов · стримов: ${totals.streams}` : `включая выплаты креаторам ${money(totals.payouts)}`}</small></div>
       <div class="stat green"><i></i><span>${creator ? 'Комиссия получена' : 'Комиссия с креаторов'}</span><b>${money(totals.commission)}</b><small>${creator ? 'за всё время' : 'по тем же сделкам'}</small></div>
-      ${creator ? '' : `<div class="stat"><i></i><span>Итого в работе</span><b>${money(totals.total)}</b><small>бюджеты + комиссия · закрыто на ${money(totals.closed)}</small></div>`}
+      ${creator ? '' : `<div class="stat"><i></i><span>Наш доход</span><b>${money(totals.income)}</b><small>остаток бюджета + комиссия · закрыто сделок на ${money(totals.closed)}</small></div>`}
     </div>
     ${list.length ? `<div class="pipe">${cols}</div><p class="hint">Карточки перетаскиваются между этапами.</p>`
       : `<p class="empty"><b>${creator ? 'Сделок с креаторами пока нет' : 'Сделок с брендами пока нет'}</b><span>${creator ? 'Заведите креатора, укажите число стримов и записывайте комиссию.' : 'Добавьте бренд, бюджет и следующий шаг.'}</span></p>`}`;
@@ -1223,7 +1223,7 @@ function statusBar() {
 function funnel() {
   const rows = Object.entries(STAGES).map(([k, label], i) => {
     const items = dealsOfKind('brand').filter(d => d.stage === k);
-    return { label, n: items.length, sum: items.reduce((a, d) => a + brandTotal(d), 0), shade: i };
+    return { label, n: items.length, sum: items.reduce((a, d) => a + brandBudget(d), 0), shade: i };
   });
   const max = Math.max(1, ...rows.map(r => r.sum || r.n));
   const W = 640, rowH = 34, gap = 8, labelW = 120;
@@ -1416,13 +1416,13 @@ document.addEventListener('click', e => {
             last ? logDate(last.ts) + ': ' + last.text : '', t.note];
         })]), 'text/csv');
     case 'export-deals':
-      return download(`deals-${today()}.csv`, csv([['Тип', 'Сделка', 'Этап', 'Бюджет', 'Контакт', 'Кампания бренда', 'Стримы', 'Наш %', 'Комиссия получена', 'Итого по сделке', 'Следующий шаг', 'Когда', 'Заметки'],
+      return download(`deals-${today()}.csv`, csv([['Тип', 'Сделка', 'Этап', 'Бюджет', 'Контакт', 'Кампания бренда', 'Стримы', 'Наш %', 'Комиссия получена', 'Наш доход', 'Следующий шаг', 'Когда', 'Заметки'],
         ...db.deals.map(d => [d.kind === 'creator' ? 'Креатор' : 'Бренд', d.name, stageLabel(d), d.amount, contactName(d.contact),
           d.kind === 'creator' ? brandDealName(d.brand_deal) : '',
           d.kind === 'creator' ? `${d.streams_done || 0}/${d.streams_total || 0} (${streamPct(d)}%)` : '',
           d.kind === 'creator' ? (d.commission_pct || 0) + '%' : '',
           d.kind === 'creator' ? commissionSum(d) : '',
-          d.kind === 'creator' ? '' : brandTotal(d),
+          d.kind === 'creator' ? '' : brandIncome(d),
           d.next, d.next_at, d.note])]), 'text/csv');
     case 'export-contacts':
       return download(`contacts-${today()}.csv`, csv([['Имя', 'Тип', 'Telegram', 'Email', 'Заметки'],
