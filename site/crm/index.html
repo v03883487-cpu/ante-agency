@@ -430,6 +430,53 @@ function refreshExtras(t, persist) {
 }
 
 /* ---------------- dialogs ---------------- */
+// The open task dialog lives here. Handlers below are registered once at start-up:
+// binding them per open used to stack listeners, so one note landed in every task
+// opened earlier in the session.
+let dlgTask = null, dlgPersist = false;
+function addStep() {
+  if (!dlgTask) return;
+  const box = $('#step-input');
+  const text = box ? box.value.trim() : '';
+  if (!text) return;
+  stepsOf(dlgTask).push({ text, done: false });
+  refreshExtras(dlgTask, dlgPersist);
+  const next = $('#step-input');
+  if (next) next.focus();
+}
+function addLog() {
+  if (!dlgTask) return;
+  const box = $('#log-input');
+  const text = box ? box.value.trim() : '';
+  if (!text) return;
+  logOf(dlgTask).unshift({ ts: Date.now(), text });
+  refreshExtras(dlgTask, dlgPersist);
+  const next = $('#log-input');
+  if (next) next.focus();
+}
+$('#dlg-body').addEventListener('click', e => {
+  const el = e.target.closest('[data-step-del],[data-log-del],#step-add,#log-add');
+  if (!el || !dlgTask) return;
+  if (el.id === 'step-add') return addStep();
+  if (el.id === 'log-add') return addLog();
+  if (el.dataset.stepDel !== undefined) { stepsOf(dlgTask).splice(Number(el.dataset.stepDel), 1); return refreshExtras(dlgTask, dlgPersist); }
+  if (el.dataset.logDel !== undefined) { logOf(dlgTask).splice(Number(el.dataset.logDel), 1); return refreshExtras(dlgTask, dlgPersist); }
+});
+$('#dlg-body').addEventListener('change', e => {
+  if (!dlgTask || e.target.dataset.step === undefined) return;
+  const i = Number(e.target.dataset.step);
+  stepsOf(dlgTask)[i].done = e.target.checked;
+  const pr = progress(dlgTask);
+  if (e.target.checked && pr.total && pr.done === pr.total) toast('Чек-лист закрыт полностью — задачу можно отмечать готовой');
+  refreshExtras(dlgTask, dlgPersist);
+});
+$('#dlg-body').addEventListener('keydown', e => {
+  if (!dlgTask) return;
+  if (e.target.id === 'step-input' && e.key === 'Enter') { e.preventDefault(); addStep(); }
+  if (e.target.id === 'log-input' && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); addLog(); }
+});
+$('#dlg').addEventListener('close', () => { dlgTask = null; render(); });
+
 function openDialog() {
   const dlg = $('#dlg');
   dlg.showModal();
@@ -466,47 +513,9 @@ function taskDialog(task) {
   openDialog();
   const del = $('#del');
   if (del) del.onclick = () => { if (confirm('Удалить задачу?')) { db.tasks = db.tasks.filter(x => x.id !== t.id); save(); $('#dlg').close(); render(); } };
-  $('#dlg').addEventListener('close', () => render(), { once: true });
+  dlgTask = t;
+  dlgPersist = !!task;             // an existing task keeps checklist and log even without pressing Save
   bindNewEntity($('#task-form'));
-  const persist = !!task;          // an existing task keeps checklist and log even without pressing Save
-  const addStep = () => {
-    const box = $('#step-input');
-    const text = box.value.trim();
-    if (!text) return;
-    stepsOf(t).push({ text, done: false });
-    refreshExtras(t, persist);
-    const next = $('#step-input');
-    if (next) next.focus();
-  };
-  const addLog = () => {
-    const box = $('#log-input');
-    const text = box.value.trim();
-    if (!text) return;
-    logOf(t).unshift({ ts: Date.now(), text });
-    refreshExtras(t, persist);
-    const next = $('#log-input');
-    if (next) next.focus();
-  };
-  $('#dlg-body').addEventListener('click', e => {
-    const el = e.target.closest('[data-step-del],[data-log-del],#step-add,#log-add');
-    if (!el) return;
-    if (el.id === 'step-add') return addStep();
-    if (el.id === 'log-add') return addLog();
-    if (el.dataset.stepDel !== undefined) { stepsOf(t).splice(Number(el.dataset.stepDel), 1); return refreshExtras(t, persist); }
-    if (el.dataset.logDel !== undefined) { logOf(t).splice(Number(el.dataset.logDel), 1); return refreshExtras(t, persist); }
-  });
-  $('#dlg-body').addEventListener('change', e => {
-    if (e.target.dataset.step === undefined) return;
-    const i = Number(e.target.dataset.step);
-    stepsOf(t)[i].done = e.target.checked;
-    const pr = progress(t);
-    if (e.target.checked && pr.total && pr.done === pr.total) toast('Чек-лист закрыт полностью — задачу можно отмечать готовой');
-    refreshExtras(t, persist);
-  });
-  $('#dlg-body').addEventListener('keydown', e => {
-    if (e.target.id === 'step-input' && e.key === 'Enter') { e.preventDefault(); addStep(); }
-    if (e.target.id === 'log-input' && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); addLog(); }
-  });
   $('#task-form').onsubmit = e => {
     e.preventDefault();
     const v = Object.fromEntries(new FormData(e.target));
@@ -520,6 +529,7 @@ function taskDialog(task) {
   };
 }
 function dealDialog(deal) {
+  dlgTask = null;
   const d = deal || { id: '', name: '', contact: '', stage: 'lead', amount: '', next: '', next_at: '', note: '' };
   $('#dlg-body').innerHTML = `
     <h3>${deal ? 'Сделка' : 'Новая сделка'}</h3>
@@ -556,6 +566,7 @@ function dealDialog(deal) {
   };
 }
 function contactDialog(contact) {
+  dlgTask = null;
   const c = contact || { id: '', name: '', kind: 'brand', tg: '', email: '', note: '' };
   $('#dlg-body').innerHTML = `
     <h3>${contact ? 'Контакт' : 'Новый контакт'}</h3>
