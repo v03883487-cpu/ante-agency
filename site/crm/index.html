@@ -274,6 +274,29 @@ td .sub{display:block;margin-top:2px;font-size:12.5px;color:var(--faint)}
 .comm-total span{color:#2f6d57}
 @media (max-width:720px){.comm-add{grid-template-columns:1fr 1fr}.comm li{grid-template-columns:70px 1fr auto}}
 
+/* ---------- brand rollup ---------- */
+.rollup{margin-top:4px;padding:16px;border:1px solid var(--line);border-radius:var(--r);background:#fbfbfe}
+.rollup h4{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;font-size:12px;font-weight:650;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.rollup h4 em{font-style:normal;font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--faint)}
+.sum-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin-bottom:12px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--line)}
+.sum-grid div{padding:10px 12px;background:#fff}
+.sum-grid span{display:block;font-size:11.5px;color:var(--faint)}
+.sum-grid b{font-size:16px;font-weight:650;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.sum-grid .tot b{color:var(--accent)}
+.sum-grid .marg b{color:var(--green)}
+.sum-grid .marg b.neg{color:var(--red)}
+.crew{display:flex;flex-direction:column;gap:2px;margin:0;padding:0;list-style:none}
+.crew li{display:grid;grid-template-columns:1fr 92px 92px auto;align-items:center;gap:10px;padding:8px;border-radius:9px;font-size:13.5px;transition:background-color .15s}
+.crew li:hover{background:#f6f5fc}
+.crew .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:550}
+.crew .nm small{display:block;font-weight:400;font-size:11.5px;color:var(--faint)}
+.crew .pay{color:var(--muted);font-variant-numeric:tabular-nums}
+.crew .com{color:var(--green);font-weight:600;font-variant-numeric:tabular-nums}
+.crew .go{width:26px;height:26px;padding:0;border:0;border-radius:7px;background:none;color:#b9bac6;cursor:pointer}
+.crew .go:hover{background:var(--accent-soft);color:var(--accent)}
+.ticket .sub-sum{display:block;margin-top:5px;font-size:11.5px;color:var(--faint)}
+@media (max-width:720px){.sum-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.crew li{grid-template-columns:1fr auto auto}}
+
 /* ---------- dialog ---------- */
 dialog{width:min(600px,94vw);padding:0;border:0;border-radius:20px;box-shadow:0 40px 90px rgba(18,17,28,.34);background:#fff}
 dialog::backdrop{background:rgba(18,17,28,.45)}
@@ -379,6 +402,24 @@ const commissionSum = d => commissionsOf(d).reduce((a, c) => a + (Number(c.amoun
 const streamPct = d => { const n = Number(d.streams_total) || 0; return n ? Math.min(100, Math.round((Number(d.streams_done) || 0) / n * 100)) : 0; };
 const expectedCommission = d => (Number(d.rate) || 0) * (Number(d.streams_total) || 0) * (Number(d.commission_pct) || 0) / 100;
 const dealsOfKind = kind => db.deals.filter(d => (d.kind || 'brand') === kind);
+// creator deals attached to a brand campaign; the brand deal's money adds up from them
+const crewOf = brandId => brandId ? dealsOfKind('creator').filter(d => d.brand_deal === brandId) : [];
+const crewPayouts = brandId => crewOf(brandId).reduce((a, d) => a + (Number(d.amount) || 0), 0);
+const crewCommission = brandId => crewOf(brandId).reduce((a, d) => a + commissionSum(d), 0);
+const brandTotal = d => (Number(d.amount) || 0) + crewCommission(d.id);      // деньги бренда + комиссия с его креаторов
+const brandMargin = d => brandTotal(d) - crewPayouts(d.id);
+const brandDealName = did => { const x = db.deals.find(d => d.id === did && (d.kind || 'brand') === 'brand'); return x ? x.name : ''; };
+const findBrandDeal = name => { const n = String(name || '').trim().toLowerCase(); return n ? dealsOfKind('brand').find(d => d.name.trim().toLowerCase() === n) : null; };
+function resolveBrandDeal(name, contactId) {
+  const clean = String(name || '').trim();
+  if (!clean) return '';
+  const found = findBrandDeal(clean);
+  if (found) return found.id;
+  db.deals.unshift({ id: id(), kind: 'brand', name: clean, contact: contactId || '', stage: 'lead', amount: '', commissions: [], next: '', next_at: '', note: '', created: Date.now() });
+  toast('Кампания «' + clean + '» добавлена в сделки с брендами');
+  return db.deals[0].id;
+}
+const brandDealList = () => `<datalist id="brand-deal-list">${dealsOfKind('brand').map(d => `<option value="${h(d.name)}">`).join('')}</datalist>`;
 const KINDS = { brand: 'Бренд', creator: 'Креатор', partner: 'Партнёр', other: 'Другое' };
 
 const contactName = cid => (db.contacts.find(c => c.id === cid) || {}).name || '';
@@ -677,14 +718,17 @@ function dealDialog(deal, kind) {
       <div class="two">
         <label class="lab">Наша комиссия, %<input class="field" name="commission_pct" type="number" min="0" max="100" step="0.5" value="${h(d.commission_pct)}" /></label>
         <div id="deal-progress"></div>
-      </div>` : ''}
+      </div>
+      <label class="lab">Кампания бренда<input class="field" name="brand_deal_name" value="${h(brandDealName(d.brand_deal))}" maxlength="120" list="brand-deal-list" placeholder="К какой сделке с брендом относится" autocomplete="off" />
+        <span class="hint" style="margin:0">Бюджет и комиссия этого креатора попадут в выбранную сделку с брендом.</span></label>
+      ${brandDealList()}` : ''}
       <div class="two">
         <label class="lab">Следующий шаг<input class="field" name="next" value="${h(d.next)}" maxlength="120" placeholder="Отправить условия" autocomplete="off" /></label>
         <label class="lab">Когда<input class="field" name="next_at" type="date" value="${h(d.next_at)}" /></label>
       </div>
       ${newEntityRow(creator ? 'creator' : 'brand')}
       <label class="lab">Заметки<textarea class="field" name="note" maxlength="2000">${h(d.note)}</textarea></label>
-      ${creator ? '<div id="deal-comm"></div>' : ''}
+      ${creator ? '<div id="deal-comm"></div>' : '<div id="deal-crew"></div>'}
       ${contactList()}
       <footer>
         <div>${deal ? `<button class="btn danger sm" type="button" id="del">Удалить</button>` : ''}</div>
@@ -692,15 +736,21 @@ function dealDialog(deal, kind) {
       </footer>
     </form>`;
   openDialog();
-  if (creator) { renderDealProgress(); renderCommissions(); }
+  if (creator) { renderDealProgress(); renderCommissions(); } else renderCrew();
   const del = $('#del');
-  if (del) del.onclick = () => { if (confirm('Удалить сделку?')) { db.deals = db.deals.filter(x => x.id !== d.id); save(); $('#dlg').close(); render(); } };
+  if (del) del.onclick = () => {
+    if (!confirm('Удалить сделку?')) return;
+    db.deals = db.deals.filter(x => x.id !== d.id);
+    db.deals.forEach(x => { if (x.brand_deal === d.id) x.brand_deal = ''; });
+    save(); $('#dlg').close(); render();
+  };
   bindNewEntity($('#deal-form'));
   $('#deal-form').onsubmit = e => {
     e.preventDefault();
     const v = Object.fromEntries(new FormData(e.target));
     v.contact = resolveContact(v.contact_name, v.contact_kind || (creator ? 'creator' : 'brand'));
     delete v.contact_name; delete v.contact_kind;
+    if (creator) { v.brand_deal = resolveBrandDeal(v.brand_deal_name); delete v.brand_deal_name; }
     v.kind = k;
     if (deal) Object.assign(d, v, { commissions: commissionsOf(d) });
     else db.deals.unshift({ ...d, ...v, commissions: commissionsOf(d), id: id(), created: Date.now() });
@@ -748,6 +798,30 @@ function renderCommissions() {
     <p class="hint">Записывайте каждое поступление отдельно — так видно, сколько креатор принёс за всё время.</p>
   </div>`;
 }
+function renderCrew() {
+  const box = $('#deal-crew');
+  if (!box || !dlgDeal) return;
+  const f = $('#deal-form');
+  if (f && f.elements.amount) dlgDeal.amount = f.elements.amount.value;
+  const crew = crewOf(dlgDeal.id);
+  const payouts = crewPayouts(dlgDeal.id), comm = crewCommission(dlgDeal.id);
+  const total = brandTotal(dlgDeal), margin = brandMargin(dlgDeal);
+  box.innerHTML = `<div class="rollup">
+    <h4>Креаторы в кампании<em>${crew.length ? crew.length + ' ' + (crew.length === 1 ? 'креатор' : crew.length < 5 ? 'креатора' : 'креаторов') : 'пока никого'}</em></h4>
+    <div class="sum-grid">
+      <div><span>Бюджет бренда</span><b>${money(Number(dlgDeal.amount) || 0)}</b></div>
+      <div><span>Комиссия с креаторов</span><b>${money(comm)}</b></div>
+      <div class="tot"><span>Итого по сделке</span><b>${money(total)}</b></div>
+      <div class="marg"><span>За вычетом выплат</span><b class="${margin < 0 ? 'neg' : ''}">${money(margin)}</b></div>
+    </div>
+    ${crew.length ? `<ul class="crew">${crew.map(c => `<li>
+        <span class="nm">${h(contactName(c.contact) || c.name)}<small>${h(stageLabel(c))}${Number(c.streams_total) ? ` · ${c.streams_done || 0}/${c.streams_total} стримов · ${streamPct(c)}%` : ''}</small></span>
+        <span class="pay">${c.amount ? '−' + money(c.amount) : '—'}</span>
+        <span class="com">${commissionSum(c) ? '+' + money(commissionSum(c)) : '—'}</span>
+        <button class="go" type="button" data-open-deal="${c.id}" title="Открыть сделку креатора">→</button></li>`).join('')}</ul>`
+      : `<p class="hint" style="margin:0">Чтобы креатор попал сюда, откройте его сделку и выберите эту кампанию в поле «Кампания бренда».</p>`}
+  </div>`;
+}
 function addCommission() {
   if (!dlgDeal) return;
   const amount = Number($('#comm-amount').value);
@@ -759,7 +833,13 @@ function addCommission() {
   renderCommissions();
 }
 $('#dlg-body').addEventListener('click', e => {
-  const el = e.target.closest('#comm-add,[data-comm-del]');
+  const el = e.target.closest('#comm-add,[data-comm-del],[data-open-deal]');
+  if (el && el.dataset.openDeal) {
+    const target = db.deals.find(x => x.id === el.dataset.openDeal);
+    $('#dlg').close();
+    if (target) setTimeout(() => dealDialog(target), 60);
+    return;
+  }
   if (!el || !dlgDeal) return;
   if (el.id === 'comm-add') return addCommission();
   if (!confirm('Удалить этот платёж?')) return;
@@ -772,6 +852,7 @@ $('#dlg-body').addEventListener('input', e => {
   if (['rate', 'streams_total', 'streams_done', 'commission_pct'].includes(e.target.name)) {
     readDealFields(); renderDealProgress(); renderCommissions();
   }
+  if (e.target.name === 'amount' && (dlgDeal.kind || 'brand') === 'brand') renderCrew();
 });
 $('#dlg-body').addEventListener('keydown', e => {
   if (dlgDeal && e.key === 'Enter' && ['comm-amount', 'comm-note', 'comm-date'].includes(e.target.id)) { e.preventDefault(); addCommission(); }
@@ -849,8 +930,8 @@ function todayView() {
   const noDate = openTasks().filter(t => !t.due).sort((a, b) => b.created - a.created);
   const doing = openTasks().filter(t => t.status === 'doing');
   const steps = db.deals.filter(d => isOpenDeal(d) && d.next).sort((a, b) => (a.next_at || '9999').localeCompare(b.next_at || '9999'));
-  const pipeline = dealsOfKind('brand').filter(isOpenDeal).reduce((s, d) => s + (Number(d.amount) || 0), 0);
-  const won = dealsOfKind('brand').filter(d => d.stage === 'won').reduce((s, d) => s + (Number(d.amount) || 0), 0);
+  const pipeline = dealsOfKind('brand').filter(isOpenDeal).reduce((s, d) => s + brandTotal(d), 0);
+  const won = dealsOfKind('brand').filter(d => d.stage === 'won').reduce((s, d) => s + brandTotal(d), 0);
   const doneWeek = db.tasks.filter(t => t.done_at && Date.now() - t.done_at < 7 * 86400000).length;
   return `
     <div class="stats">
@@ -930,13 +1011,13 @@ function dealsView() {
   const stages = stagesOf(kind);
   const totals = {
     open: list.filter(isOpenDeal).length,
-    budget: list.filter(isOpenDeal).reduce((a, d) => a + (Number(d.amount) || 0), 0),
+    budget: list.filter(isOpenDeal).reduce((a, d) => a + (creator ? (Number(d.amount) || 0) : brandTotal(d)), 0),
     commission: list.reduce((a, d) => a + commissionSum(d), 0),
     streams: list.reduce((a, d) => a + (Number(d.streams_done) || 0), 0)
   };
   const cols = Object.entries(stages).map(([k, v]) => {
     const items = list.filter(d => d.stage === k);
-    const sum = creator ? items.reduce((a, d) => a + commissionSum(d), 0) : items.reduce((a, d) => a + (Number(d.amount) || 0), 0);
+    const sum = creator ? items.reduce((a, d) => a + commissionSum(d), 0) : items.reduce((a, d) => a + brandTotal(d), 0);
     return `<div class="col" data-stage="${k}"><div class="col-head"><i></i>${v}<span class="c">${sum ? money(sum) : items.length}</span></div>
       ${items.length ? items.map(d => {
         const pct = streamPct(d), comm = commissionSum(d);
@@ -944,10 +1025,11 @@ function dealsView() {
           <b>${h(d.name)}</b>
           <div class="meta">${d.contact ? `<span>${h(contactName(d.contact))}</span>` : ''}
             ${creator
-              ? `${comm ? `<span class="tag money-tag">${money(comm)} комиссии</span>` : ''}${d.rate ? `<span>${money(d.rate)}/стрим</span>` : ''}`
-              : `${d.amount ? `<span class="tag line">${money(d.amount)}</span>` : ''}`}
+              ? `${comm ? `<span class="tag money-tag">${money(comm)} комиссии</span>` : ''}${d.rate ? `<span>${money(d.rate)}/стрим</span>` : ''}${d.brand_deal ? `<span>${h(brandDealName(d.brand_deal))}</span>` : ''}`
+              : `${brandTotal(d) ? `<span class="tag line">${money(brandTotal(d))}</span>` : ''}${crewOf(d.id).length ? `<span>${crewOf(d.id).length} креат.</span>` : ''}`}
             ${d.next ? `<span>→ ${h(d.next)}</span>` : ''}${d.next_at ? dueChip(d.next_at) : ''}</div>
           ${creator && Number(d.streams_total) ? `<div class="streams"><div class="bar${pct >= 100 ? ' full' : ''}"><i style="width:${pct}%"></i></div><b>${d.streams_done || 0}/${d.streams_total} · ${pct}%</b></div>` : ''}
+          ${!creator && crewCommission(d.id) ? `<span class="sub-sum">бюджет ${money(Number(d.amount) || 0)} + комиссия ${money(crewCommission(d.id))}</span>` : ''}
         </div>`;
       }).join('') : '<div class="col-empty">пусто</div>'}</div>`;
   }).join('');
@@ -963,7 +1045,7 @@ function dealsView() {
     <div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr))">
       <div class="stat"><i></i><span>${creator ? 'Активных креаторов' : 'Сделок в работе'}</span><b>${totals.open}</b><small>всего ${list.length}</small></div>
       <div class="stat${creator ? ' amber' : ''}"><i></i><span>${creator ? 'Бюджет креаторам' : 'Сумма в работе'}</span><b>${money(totals.budget)}</b><small>${creator ? `проведено стримов: ${totals.streams}` : 'по открытым сделкам'}</small></div>
-      <div class="stat green"><i></i><span>${creator ? 'Комиссия получена' : 'Закрыто на сумму'}</span><b>${money(creator ? totals.commission : list.filter(d => !isOpenDeal(d)).reduce((a, d) => a + (Number(d.amount) || 0), 0))}</b><small>${creator ? 'за всё время' : 'по закрытым сделкам'}</small></div>
+      <div class="stat green"><i></i><span>${creator ? 'Комиссия получена' : 'Закрыто на сумму'}</span><b>${money(creator ? totals.commission : list.filter(d => !isOpenDeal(d)).reduce((a, d) => a + brandTotal(d), 0))}</b><small>${creator ? 'за всё время' : 'по закрытым сделкам'}</small></div>
     </div>
     ${list.length ? `<div class="pipe">${cols}</div><p class="hint">Карточки перетаскиваются между этапами.</p>`
       : `<p class="empty"><b>${creator ? 'Сделок с креаторами пока нет' : 'Сделок с брендами пока нет'}</b><span>${creator ? 'Заведите креатора, укажите число стримов и записывайте комиссию.' : 'Добавьте бренд, бюджет и следующий шаг.'}</span></p>`}`;
@@ -1126,7 +1208,7 @@ function statusBar() {
 function funnel() {
   const rows = Object.entries(STAGES).map(([k, label], i) => {
     const items = dealsOfKind('brand').filter(d => d.stage === k);
-    return { label, n: items.length, sum: items.reduce((a, d) => a + (Number(d.amount) || 0), 0), shade: i };
+    return { label, n: items.length, sum: items.reduce((a, d) => a + brandTotal(d), 0), shade: i };
   });
   const max = Math.max(1, ...rows.map(r => r.sum || r.n));
   const W = 640, rowH = 34, gap = 8, labelW = 120;
@@ -1319,11 +1401,13 @@ document.addEventListener('click', e => {
             last ? logDate(last.ts) + ': ' + last.text : '', t.note];
         })]), 'text/csv');
     case 'export-deals':
-      return download(`deals-${today()}.csv`, csv([['Тип', 'Сделка', 'Этап', 'Бюджет', 'Контакт', 'Стримы', 'Наш %', 'Комиссия получена', 'Следующий шаг', 'Когда', 'Заметки'],
+      return download(`deals-${today()}.csv`, csv([['Тип', 'Сделка', 'Этап', 'Бюджет', 'Контакт', 'Кампания бренда', 'Стримы', 'Наш %', 'Комиссия получена', 'Итого по сделке', 'Следующий шаг', 'Когда', 'Заметки'],
         ...db.deals.map(d => [d.kind === 'creator' ? 'Креатор' : 'Бренд', d.name, stageLabel(d), d.amount, contactName(d.contact),
+          d.kind === 'creator' ? brandDealName(d.brand_deal) : '',
           d.kind === 'creator' ? `${d.streams_done || 0}/${d.streams_total || 0} (${streamPct(d)}%)` : '',
           d.kind === 'creator' ? (d.commission_pct || 0) + '%' : '',
           d.kind === 'creator' ? commissionSum(d) : '',
+          d.kind === 'creator' ? '' : brandTotal(d),
           d.next, d.next_at, d.note])]), 'text/csv');
     case 'export-contacts':
       return download(`contacts-${today()}.csv`, csv([['Имя', 'Тип', 'Telegram', 'Email', 'Заметки'],
@@ -1382,7 +1466,7 @@ if (!db.tasks.length && !db.deals.length && !db.contacts.length) {
   const creator = { id: id(), name: 'szecskaaa', kind: 'creator', tg: '', email: '', note: 'Kick, серия стримов', created: Date.now() };
   db.contacts.push(brand, creator);
   db.deals.push({ id: id(), kind: 'brand', name: 'Luciabby · серия стримов', contact: brand.id, stage: 'talks', amount: 3000, commissions: [], next: 'Запросить постбэк у менеджера', next_at: addDays(1), note: '', created: Date.now() });
-  db.deals.push({ id: id(), kind: 'creator', name: 'szecskaaa · 5 стримов', contact: creator.id, stage: 'streaming', amount: 1500,
+  db.deals.push({ id: id(), kind: 'creator', name: 'szecskaaa · 5 стримов', contact: creator.id, stage: 'streaming', amount: 1500, brand_deal: db.deals[0].id,
     rate: 300, streams_total: 5, streams_done: 2, commission_pct: 20,
     commissions: [{ ts: Date.now() - 6 * 86400000, amount: 120, note: 'Стрим 1' }, { ts: Date.now() - 2 * 86400000, amount: 140, note: 'Стрим 2' }],
     next: 'Согласовать даты 3-го стрима', next_at: addDays(2), note: '', created: Date.now() });
