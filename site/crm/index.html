@@ -195,6 +195,39 @@ td .sub{display:block;margin-top:2px;font-size:12.5px;color:var(--faint)}
 .ticket .meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12px;color:var(--faint)}
 .col-empty{padding:14px 2px;font-size:12.5px;color:#b3b4c0;text-align:center}
 
+/* ---------- charts ----------
+   Palette checked with the dataviz validator on a white surface:
+   workflow trio #2a78d6 / #eda100 / #1baf7a passes chroma, CVD and normal-vision gates
+   (contrast WARN answered by direct labels + the table view). Backlog keeps the
+   de-emphasis gray on purpose, and the weekly chart is an emphasis pair:
+   accent violet for "закрыто", gray for the "создано" context series. */
+.viz{--s1:#6a3cf0;--s2:#b9bac6;--st-backlog:#b9bac6;--st-doing:#2a78d6;--st-waiting:#eda100;--st-done:#1baf7a;
+  --hm0:#eeeef4;--hm1:#ddd3ff;--hm2:#b9a6ff;--hm3:#8f6bff;--hm4:#6a3cf0;--hm5:#4a2fb5}
+.viz svg{display:block;width:100%;height:auto;overflow:visible}
+.viz svg.fixed{width:auto;max-width:100%}
+.viz text{font-family:inherit;fill:var(--muted)}
+.viz .lbl{font-size:11px}
+.viz .val{font-size:11.5px;font-weight:650;fill:var(--ink-2)}
+.viz .axis{stroke:var(--line);stroke-width:1}
+.viz .grid{stroke:var(--line-2);stroke-width:1}
+.viz rect.mark,.viz rect.cell{transition:opacity .15s}
+.viz:hover rect.mark:not(:hover){opacity:.82}
+.hm-cell{rx:3;ry:3}
+.hm-legend{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--faint)}
+.hm-legend i{width:11px;height:11px;border-radius:3px}
+.legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px}
+.chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+.meter{height:8px;border-radius:99px;background:#eceaf4;overflow:hidden;margin-top:10px}
+.meter i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#9d83ff,#6a3cf0)}
+.meter.full i{background:var(--green)}
+.spark{display:block;width:100%;height:26px;margin-top:8px;overflow:visible}
+.spark path{fill:none;stroke:var(--accent);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.spark .area{fill:rgba(123,77,255,.12);stroke:none}
+.viz-table td:last-child,.viz-table th:last-child{text-align:right}
+@media (max-width:900px){.chart-grid{grid-template-columns:1fr}}
+
 /* ---------- dialog ---------- */
 dialog{width:min(600px,94vw);padding:0;border:0;border-radius:20px;box-shadow:0 40px 90px rgba(18,17,28,.34);background:#fff}
 dialog::backdrop{background:rgba(18,17,28,.45)}
@@ -296,7 +329,7 @@ const dueToday = () => openTasks().filter(t => t.due && daysTo(t.due) === 0);
 const dueWeek = () => openTasks().filter(t => t.due && daysTo(t.due) > 0 && daysTo(t.due) <= 7);
 const byDue = (a, b) => (a.due || '9999').localeCompare(b.due || '9999') || (a.prio === 'high' ? -1 : b.prio === 'high' ? 1 : 0);
 
-const state = { tab: 'today', q: '', board: false, filter: { status: '', contact: '', who: '' } };
+const state = { tab: 'today', q: '', board: false, vizTable: false, filter: { status: '', contact: '', who: '' } };
 const matches = (obj, q) => !q || JSON.stringify(obj).toLowerCase().includes(q.toLowerCase());
 // search also looks at linked names, not just the record's own fields
 const taskHay = t => [t.title, t.note, t.who, STATUS[t.status], PRIO[t.prio], contactName(t.contact), dealName(t.deal)].join(' ').toLowerCase();
@@ -466,6 +499,8 @@ function taskDialog(task) {
     if (e.target.dataset.step === undefined) return;
     const i = Number(e.target.dataset.step);
     stepsOf(t)[i].done = e.target.checked;
+    const pr = progress(t);
+    if (e.target.checked && pr.total && pr.done === pr.total) toast('Чек-лист закрыт полностью — задачу можно отмечать готовой');
     refreshExtras(t, persist);
   });
   $('#dlg-body').addEventListener('keydown', e => {
@@ -727,11 +762,221 @@ function dataView() {
   </div>`;
 }
 
+/* ---------------- analytics ---------------- */
+const dayKey = ts => new Date(ts).toISOString().slice(0, 10);
+const startOfWeek = d => { const x = new Date(d); const wd = (x.getDay() + 6) % 7; x.setDate(x.getDate() - wd); x.setHours(0, 0, 0, 0); return x; };
+function doneByDay() {
+  const m = new Map();
+  db.tasks.forEach(t => { if (t.done_at) m.set(dayKey(t.done_at), (m.get(dayKey(t.done_at)) || 0) + 1); });
+  return m;
+}
+function streakDays() {
+  const m = doneByDay();
+  let n = 0;
+  for (let i = 0; i < 400; i++) {
+    const d = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10);
+    if (m.get(d)) n++; else if (i > 0) break;
+  }
+  return n;
+}
+function leadTimeDays() {
+  const done = db.tasks.filter(t => t.done_at && t.created);
+  if (!done.length) return null;
+  return done.reduce((a, t) => a + (t.done_at - t.created), 0) / done.length / 86400000;
+}
+
+// 1. activity heatmap — sequential violet ramp, one hue, light → dark
+function heatmap() {
+  const m = doneByDay();
+  const weeks = 18, cell = 15, gap = 4, top = 18, left = 30;
+  const end = startOfWeek(new Date());
+  const start = new Date(end.getTime() - (weeks - 1) * 7 * 86400000);
+  const max = Math.max(1, ...[...m.values()]);
+  const step = v => v === 0 ? 'var(--hm0)' : v >= max * .8 ? 'var(--hm5)' : v >= max * .6 ? 'var(--hm4)' : v >= max * .4 ? 'var(--hm3)' : v >= max * .2 ? 'var(--hm2)' : 'var(--hm1)';
+  const days = ['Пн', '', 'Ср', '', 'Пт', '', 'Вс'];
+  let cells = '', months = '', lastMonth = -1, lastLabelWeek = -9;
+  for (let w = 0; w < weeks; w++) {
+    const colDate = new Date(start.getTime() + w * 7 * 86400000);
+    if (colDate.getMonth() !== lastMonth && w - lastLabelWeek >= 3) {
+      lastMonth = colDate.getMonth();
+      lastLabelWeek = w;
+      months += `<text class="lbl" x="${left + w * (cell + gap)}" y="10">${colDate.toLocaleDateString('ru-RU', { month: 'short' })}</text>`;
+    }
+    for (let d = 0; d < 7; d++) {
+      const date = new Date(colDate.getTime() + d * 86400000);
+      if (date > new Date()) continue;
+      const key = date.toISOString().slice(0, 10);
+      const v = m.get(key) || 0;
+      cells += `<rect class="cell hm-cell" x="${left + w * (cell + gap)}" y="${top + d * (cell + gap)}" width="${cell}" height="${cell}" fill="${step(v)}">
+        <title>${date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}: ${v ? v + ' задач закрыто' : 'ничего не закрыто'}</title></rect>`;
+    }
+  }
+  const labels = days.map((t, i) => t ? `<text class="lbl" x="0" y="${top + i * (cell + gap) + 10}">${t}</text>` : '').join('');
+  const w = left + weeks * (cell + gap), hgt = top + 7 * (cell + gap);
+  return `<div class="viz"><div style="overflow-x:auto"><svg class="fixed" width="${w}" height="${hgt}" viewBox="0 0 ${w} ${hgt}" role="img" aria-label="Закрытые задачи по дням за ${weeks} недель">${months}${labels}${cells}</svg></div>
+    <div class="hm-legend" style="margin-top:10px">меньше
+      <i style="background:var(--hm0)"></i><i style="background:var(--hm1)"></i><i style="background:var(--hm2)"></i><i style="background:var(--hm3)"></i><i style="background:var(--hm4)"></i><i style="background:var(--hm5)"></i>
+      больше</div></div>`;
+}
+
+// 2. week by week — emphasis pair: accent = closed, gray = created
+function weeklyBars() {
+  const weeks = 8, W = 640, H = 200, padL = 30, padB = 26, padT = 14;
+  const buckets = [];
+  const thisWeek = startOfWeek(new Date());
+  for (let i = weeks - 1; i >= 0; i--) {
+    const from = new Date(thisWeek.getTime() - i * 7 * 86400000), to = new Date(from.getTime() + 7 * 86400000);
+    buckets.push({
+      label: from.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
+      created: db.tasks.filter(t => t.created >= from && t.created < to).length,
+      done: db.tasks.filter(t => t.done_at && t.done_at >= from && t.done_at < to).length
+    });
+  }
+  const max = Math.max(1, ...buckets.flatMap(b => [b.created, b.done]));
+  const bw = (W - padL) / weeks, gap = 6, barW = (bw - gap * 3) / 2;
+  const y = v => padT + (H - padT - padB) * (1 - v / max);
+  const grid = [0, .5, 1].map(f => `<line class="grid" x1="${padL}" x2="${W}" y1="${y(max * f)}" y2="${y(max * f)}"/><text class="lbl" x="0" y="${y(max * f) + 4}">${Math.round(max * f)}</text>`).join('');
+  const bars = buckets.map((b, i) => {
+    const x0 = padL + i * bw + gap;
+    const h1 = Math.max(b.created ? 3 : 0, H - padB - y(b.created)), h2 = Math.max(b.done ? 3 : 0, H - padB - y(b.done));
+    return `<rect class="mark" x="${x0}" y="${H - padB - h1}" width="${barW}" height="${h1}" rx="4" fill="var(--s2)"><title>${b.label}: создано ${b.created}</title></rect>
+      <rect class="mark" x="${x0 + barW + gap}" y="${H - padB - h2}" width="${barW}" height="${h2}" rx="4" fill="var(--s1)"><title>${b.label}: закрыто ${b.done}</title></rect>
+      ${b.done ? `<text class="val" x="${x0 + barW + gap + barW / 2}" y="${H - padB - h2 - 5}" text-anchor="middle">${b.done}</text>` : ''}
+      <text class="lbl" x="${x0 + bw / 2 - gap}" y="${H - 8}" text-anchor="middle">${b.label}</text>`;
+  }).join('');
+  return `<div class="viz"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Создано и закрыто задач по неделям">
+      ${grid}<line class="axis" x1="${padL}" x2="${W}" y1="${H - padB}" y2="${H - padB}"/>${bars}</svg>
+    <div class="legend" style="margin-top:10px"><span><i style="background:var(--s1)"></i>закрыто</span><span><i style="background:var(--s2)"></i>создано</span></div></div>`;
+}
+
+// 3. status split — part-to-whole, every segment direct-labelled
+function statusBar() {
+  const counts = Object.keys(STATUS).map(k => ({ k, label: STATUS[k], n: db.tasks.filter(t => t.status === k).length }));
+  const total = counts.reduce((a, c) => a + c.n, 0);
+  if (!total) return `<p class="empty"><b>Задач пока нет</b></p>`;
+  const W = 640, H = 34;
+  let x = 0;
+  const segs = counts.filter(c => c.n).map(c => {
+    const w = c.n / total * W, seg = `<rect class="mark" x="${x + 1}" y="0" width="${Math.max(0, w - 2)}" height="${H}" rx="6" fill="var(--st-${c.k})">
+      <title>${c.label}: ${c.n} (${Math.round(c.n / total * 100)}%)</title></rect>
+      ${w > 42 ? `<text class="val" x="${x + w / 2}" y="${H / 2 + 4}" text-anchor="middle" fill="#fff">${c.n}</text>` : ''}`;
+    x += w;
+    return seg;
+  }).join('');
+  return `<div class="viz"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Задачи по статусам">${segs}</svg>
+    <div class="legend" style="margin-top:12px">${counts.map(c => `<span><i style="background:var(--st-${c.k})"></i>${c.label} — ${c.n}</span>`).join('')}</div></div>`;
+}
+
+// 4. deal funnel — ordinal ramp, darker as the stage advances
+function funnel() {
+  const rows = Object.entries(STAGES).map(([k, label], i) => {
+    const items = db.deals.filter(d => d.stage === k);
+    return { label, n: items.length, sum: items.reduce((a, d) => a + (Number(d.amount) || 0), 0), shade: i };
+  });
+  const max = Math.max(1, ...rows.map(r => r.sum || r.n));
+  const W = 640, rowH = 34, gap = 8, labelW = 120;
+  const shades = ['var(--hm1)', 'var(--hm2)', 'var(--hm3)', 'var(--hm4)', 'var(--hm5)'];
+  const bars = rows.map((r, i) => {
+    const v = r.sum || r.n;
+    const w = Math.max(v ? 4 : 0, (W - labelW - 70) * (v / max));
+    const y = i * (rowH + gap);
+    return `<text class="lbl" x="0" y="${y + rowH / 2 + 4}">${r.label}</text>
+      <rect class="mark" x="${labelW}" y="${y + 5}" width="${w}" height="${rowH - 10}" rx="4" fill="${shades[i]}">
+        <title>${r.label}: ${r.n} сделок${r.sum ? ', ' + money(r.sum) : ''}</title></rect>
+      <text class="val" x="${labelW + w + 8}" y="${y + rowH / 2 + 4}">${r.n}${r.sum ? ' · ' + money(r.sum) : ''}</text>`;
+  }).join('');
+  return `<div class="viz"><svg viewBox="0 0 ${W} ${rows.length * (rowH + gap)}" role="img" aria-label="Сделки по этапам">${bars}</svg></div>`;
+}
+
+// 5. top clients — single series, one hue
+function topClients() {
+  const rows = db.contacts.map(c => ({
+    name: c.name,
+    tasks: openTasks().filter(t => t.contact === c.id).length,
+    sum: db.deals.filter(d => d.contact === c.id).reduce((a, d) => a + (Number(d.amount) || 0), 0)
+  })).filter(r => r.tasks || r.sum).sort((a, b) => (b.sum - a.sum) || (b.tasks - a.tasks)).slice(0, 6);
+  if (!rows.length) return `<p class="empty"><b>Нет данных по клиентам</b><span>Привяжите задачи и сделки к контактам.</span></p>`;
+  const max = Math.max(1, ...rows.map(r => r.sum || r.tasks));
+  const W = 640, rowH = 30, gap = 8, labelW = 130;
+  const bars = rows.map((r, i) => {
+    const v = r.sum || r.tasks;
+    const w = Math.max(4, (W - labelW - 90) * (v / max));
+    const y = i * (rowH + gap);
+    return `<text class="lbl" x="0" y="${y + rowH / 2 + 4}">${h(r.name.slice(0, 16))}</text>
+      <rect class="mark" x="${labelW}" y="${y + 4}" width="${w}" height="${rowH - 8}" rx="4" fill="var(--s1)">
+        <title>${h(r.name)}: ${r.sum ? money(r.sum) + ' в сделках, ' : ''}${r.tasks} открытых задач</title></rect>
+      <text class="val" x="${labelW + w + 8}" y="${y + rowH / 2 + 4}">${r.sum ? money(r.sum) : ''}${r.tasks ? (r.sum ? ' · ' : '') + r.tasks + ' задач' : ''}</text>`;
+  }).join('');
+  return `<div class="viz"><svg viewBox="0 0 ${W} ${rows.length * (rowH + gap)}" role="img" aria-label="Клиенты по сумме сделок">${bars}</svg></div>`;
+}
+
+// tiny sparkline for the stat tile: closed tasks per day, 14 days
+function sparkline() {
+  const m = doneByDay();
+  const pts = [];
+  for (let i = 13; i >= 0; i--) pts.push(m.get(new Date(Date.now() - i * 86400000).toISOString().slice(0, 10)) || 0);
+  const max = Math.max(1, ...pts), W = 120, H = 26;
+  const x = i => i * (W / (pts.length - 1)), y = v => H - 2 - (H - 6) * (v / max);
+  const line = pts.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(' ');
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+    <path class="area" d="${line} L${W} ${H} L0 ${H} Z"/><path d="${line}"/></svg>`;
+}
+
+function statsTable() {
+  const weeks = 8, thisWeek = startOfWeek(new Date());
+  const rows = [];
+  for (let i = weeks - 1; i >= 0; i--) {
+    const from = new Date(thisWeek.getTime() - i * 7 * 86400000), to = new Date(from.getTime() + 7 * 86400000);
+    rows.push([from.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
+      db.tasks.filter(t => t.created >= from && t.created < to).length,
+      db.tasks.filter(t => t.done_at && t.done_at >= from && t.done_at < to).length]);
+  }
+  return `<div class="table-wrap"><table class="viz-table"><thead><tr><th>Неделя с</th><th>Создано</th><th>Закрыто</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+function chartsView() {
+  const doneAll = db.tasks.filter(t => t.status === 'done').length;
+  const done30 = db.tasks.filter(t => t.done_at && Date.now() - t.done_at < 30 * 86400000).length;
+  const lead = leadTimeDays();
+  const streak = streakDays();
+  const wonCount = db.deals.filter(d => d.stage === 'won').length;
+  const conv = db.deals.length ? Math.round(wonCount / db.deals.length * 100) : 0;
+  const weekTarget = 10;
+  const doneThisWeek = db.tasks.filter(t => t.done_at && t.done_at >= startOfWeek(new Date())).length;
+  const pc = Math.min(100, Math.round(doneThisWeek / weekTarget * 100));
+  return `<div class="bar"><h2>Аналитика</h2>
+      <div class="row"><button class="btn ghost sm" data-action="viz-table">${state.vizTable ? '▦ Графиками' : '☰ Таблицей'}</button>
+      <button class="btn ghost sm" data-action="export-tasks">CSV</button></div></div>
+    <div class="stats">
+      <div class="stat"><i></i><span>Закрыто за 30 дней</span><b>${done30}</b>${sparkline()}</div>
+      <div class="stat amber"><i></i><span>Серия дней подряд</span><b>${streak}</b><small>${streak ? 'каждый день закрываете задачи' : 'закройте задачу сегодня'}</small></div>
+      <div class="stat green"><i></i><span>Среднее время задачи</span><b>${lead === null ? '—' : lead < 1 ? 'меньше дня' : lead.toFixed(1) + ' дн.'}</b><small>от создания до готово</small></div>
+      <div class="stat"><i></i><span>Конверсия сделок</span><b>${conv}%</b><small>${wonCount} из ${db.deals.length} закрыто</small></div>
+    </div>
+    ${state.vizTable ? `<div class="panel"><div class="panel-head"><h3>Неделя за неделей</h3></div>${statsTable()}</div>` : `
+    <div class="panel">
+      <div class="panel-head"><h3>Активность: закрытые задачи</h3><span class="side">18 недель</span></div>
+      ${heatmap()}
+    </div>
+    <div class="chart-grid" style="margin-top:16px">
+      <div class="panel"><div class="panel-head"><h3>Неделя за неделей</h3><span class="side">создано и закрыто</span></div>${weeklyBars()}</div>
+      <div class="panel"><div class="panel-head"><h3>Задачи по статусам</h3><span class="side">всего ${db.tasks.length}</span></div>${statusBar()}
+        <div class="panel-head" style="margin:18px 0 10px"><h3>План на неделю</h3><span class="side">${doneThisWeek} из ${weekTarget}</span></div>
+        <div class="meter${pc >= 100 ? ' full' : ''}"><i style="width:${pc}%"></i></div>
+      </div>
+      <div class="panel"><div class="panel-head"><h3>Воронка сделок</h3><span class="side">сумма по этапам</span></div>${funnel()}</div>
+      <div class="panel"><div class="panel-head"><h3>Клиенты</h3><span class="side">по сумме сделок</span></div>${topClients()}</div>
+    </div>`}
+    <p class="hint">Всего закрыто задач за всё время: ${doneAll}. Наведите курсор на элемент графика — покажет точные числа.</p>`;
+}
+
 const TABS = [
   ['today', 'Сегодня', () => overdue().length + dueToday().length, true],
   ['tasks', 'Задачи', () => openTasks().length],
   ['deals', 'Сделки', () => db.deals.filter(d => d.stage !== 'won').length],
   ['contacts', 'Контакты', () => db.contacts.length],
+  ['charts', 'Аналитика', () => 0],
   ['data', 'Данные', () => 0]
 ];
 function render() {
@@ -739,7 +984,7 @@ function render() {
     const n = count();
     return `<button role="tab" data-tab="${k}" aria-selected="${state.tab === k}">${label}${n ? `<span class="n${warn && overdue().length ? ' warn' : ''}">${n}</span>` : ''}</button>`;
   }).join('');
-  $('#view').innerHTML = { today: todayView, tasks: tasksView, deals: dealsView, contacts: contactsView, data: dataView }[state.tab]();
+  $('#view').innerHTML = { today: todayView, tasks: tasksView, deals: dealsView, contacts: contactsView, charts: chartsView, data: dataView }[state.tab]();
   bindDrag();
 }
 
@@ -778,6 +1023,7 @@ document.addEventListener('click', e => {
     case 'new-deal': return dealDialog(null);
     case 'new-contact': return contactDialog(null);
     case 'view-toggle': state.board = !state.board; return render();
+    case 'viz-table': state.vizTable = !state.vizTable; return render();
     case 'backup':
       download(`antefluence-crm-${today()}.json`, JSON.stringify(db, null, 2));
       return toast('Бэкап скачан');
@@ -830,7 +1076,7 @@ document.addEventListener('change', e => {
 document.addEventListener('input', e => {
   if (e.target.id === 'q') {
     state.q = e.target.value.trim();
-    if (state.q && (state.tab === 'today' || state.tab === 'data')) state.tab = 'tasks';
+    if (state.q && (state.tab === 'today' || state.tab === 'data' || state.tab === 'charts')) state.tab = 'tasks';
     render();
     const box = $('#q'); box.focus(); box.setSelectionRange(box.value.length, box.value.length);
   }
