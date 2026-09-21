@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="robots" content="noindex,nofollow" />
+<meta name="color-scheme" content="light" />
+<title>Antefluence CRM</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2314151c'/%3E%3Cpath d='M16 8v16M8 16h16' stroke='%23b89cff' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E" />
+<style>
+:root{
+  --bg:#f5f5f8; --card:#fff; --ink:#14151c; --ink-2:#3a3d4d; --muted:#6b6e7c; --faint:#9294a2;
+  --line:#e6e7ee; --line-2:#f0f0f5;
+  --accent:#7b4dff; --accent-2:#6a3cf0; --accent-soft:#f1eeff;
+  --green:#12795a; --green-bg:#e3f7ef; --amber:#8a5a00; --amber-bg:#fff3dd;
+  --red:#c23a5e; --red-bg:#fdeaef; --blue:#2b5ed6; --blue-bg:#e9efff;
+  --r:14px; --r-lg:18px;
+  --sh:0 1px 2px rgba(20,18,40,.04),0 8px 24px -12px rgba(20,18,40,.10);
+  --sh-2:0 18px 44px -20px rgba(20,18,40,.28);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4{margin:0;font-weight:640;letter-spacing:-.018em}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent);text-decoration:none}
+.hidden,[hidden]{display:none!important}
+::selection{background:#e3dbff}
+
+/* ---------- top bar ---------- */
+header{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;
+  padding:11px clamp(14px,2.4vw,26px);background:rgba(245,245,248,.88);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.logo{display:flex;align-items:center;gap:9px;font-weight:650;white-space:nowrap}
+.logo i{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:linear-gradient(145deg,#1b1c25,#3b2d69);color:#c0a8ff;font-style:normal;font-size:16px;font-weight:600}
+.logo small{display:block;margin-top:-2px;font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.search-wrap{position:relative;flex:1;max-width:380px}
+.search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--faint)}
+.search{width:100%;height:38px;padding:0 12px 0 34px;border:1px solid var(--line);border-radius:11px;background:#fff}
+.spacer{flex:1}
+.wrap{max-width:1240px;margin:0 auto;padding:clamp(18px,2.2vw,26px) clamp(14px,2.4vw,26px) 80px}
+
+/* ---------- tabs ---------- */
+nav.tabs{display:flex;gap:4px;margin-bottom:20px;padding:4px;border-radius:13px;background:#eceaf2;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{flex:none;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 13px;border:0;border-radius:9px;background:none;
+  font-size:14px;color:var(--muted);cursor:pointer;transition:background-color .18s,color .18s}
+nav.tabs button:hover{color:var(--ink)}
+nav.tabs button[aria-selected="true"]{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(20,18,40,.10)}
+nav.tabs .n{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:#e2e0ea;font-size:11px;font-weight:600;color:var(--muted)}
+nav.tabs button[aria-selected="true"] .n{background:var(--accent-soft);color:var(--accent)}
+nav.tabs .n.warn{background:var(--red-bg);color:var(--red)}
+
+/* ---------- controls ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:38px;padding:0 15px;border:1px solid transparent;border-radius:10px;
+  background:var(--ink);color:#fff;font-size:14px;font-weight:550;white-space:nowrap;cursor:pointer;transition:background-color .18s,border-color .18s,color .18s,transform .12s var(--ease)}
+.btn:hover{background:var(--accent)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:#fff;border-color:var(--line);color:var(--ink-2)}
+.btn.ghost:hover{border-color:#c3b6f8;color:var(--accent);background:#fff}
+.btn.soft{background:var(--accent-soft);color:var(--accent)}
+.btn.soft:hover{background:#e7e1ff;color:var(--accent-2)}
+.btn.danger{background:#fff;border-color:#f2ccd7;color:var(--red)}
+.btn.danger:hover{background:var(--red);color:#fff}
+.btn.sm{height:32px;padding:0 11px;font-size:13px;border-radius:9px}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.bar h2{font-size:19px}
+.field{width:100%;height:38px;padding:0 11px;border:1px solid var(--line);border-radius:10px;background:#fff;transition:border-color .15s,box-shadow .15s}
+select.field{padding-right:28px;appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6e7c' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center}
+textarea.field{height:auto;min-height:78px;padding:10px 11px;resize:vertical;line-height:1.5}
+.field:hover{border-color:#d5d6e0}
+.field:focus{outline:none;border-color:#a98cff;box-shadow:0 0 0 3px rgba(123,77,255,.13)}
+.filters .field{width:auto;min-width:150px;height:36px;font-size:13.5px}
+label.lab{display:grid;gap:6px;font-size:12px;font-weight:560;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+
+/* ---------- surfaces ---------- */
+.panel{padding:18px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--card);box-shadow:var(--sh);min-width:0}
+.panel+.panel{margin-top:16px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.panel-head h3{font-size:15px}
+.panel-head .side{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--faint)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:16px;align-items:start}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.stat{position:relative;padding:15px 17px;border:1px solid var(--line);border-radius:var(--r);background:var(--card);box-shadow:var(--sh);overflow:hidden}
+.stat span{display:block;font-size:12.5px;color:var(--muted)}
+.stat b{display:block;margin-top:4px;font-size:26px;line-height:1.1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stat i{position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);opacity:.55}
+.stat.red i{background:var(--red)} .stat.red b{color:var(--red)}
+.stat.amber i{background:#e0a100}
+.stat.green i{background:var(--green)}
+.stat small{display:block;margin-top:3px;font-size:12px;color:var(--faint)}
+
+/* ---------- task list ---------- */
+.list{display:flex;flex-direction:column}
+.item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;transition:background-color .15s}
+.item:hover{background:#faf9fe}
+.item+.item{border-top:1px solid var(--line-2)}
+.item .main{min-width:0}
+.item .t{display:block;font-size:14.5px;font-weight:550;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:4px;font-size:12.5px;color:var(--faint)}
+.item .meta .dot{width:3px;height:3px;border-radius:50%;background:#cfd0da}
+.item .right{display:flex;align-items:center;gap:8px}
+.item.done .t{text-decoration:line-through;color:var(--faint);font-weight:500}
+.item.done .meta{opacity:.6}
+.chk{flex:none;width:18px;height:18px;border-radius:6px;accent-color:var(--accent);cursor:pointer}
+.open-btn{opacity:0;transition:opacity .15s}
+.item:hover .open-btn,.item:focus-within .open-btn{opacity:1}
+@media (hover:none){.open-btn{opacity:1}}
+
+/* ---------- tags & dates ---------- */
+.tag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:#f0f0f5;font-size:12px;font-weight:550;line-height:1.35;white-space:nowrap;color:var(--ink-2)}
+.tag.a{background:var(--accent-soft);color:var(--accent)}
+.tag.g{background:var(--green-bg);color:var(--green)}
+.tag.y{background:var(--amber-bg);color:var(--amber)}
+.tag.r{background:var(--red-bg);color:var(--red)}
+.tag.b{background:var(--blue-bg);color:var(--blue)}
+.tag.line{background:none;border:1px solid var(--line);color:var(--muted)}
+.due{white-space:nowrap;font-variant-numeric:tabular-nums}
+.due.over{color:var(--red);font-weight:600}
+.due.today{color:#8a5a00;font-weight:600}
+.who{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#e9e7f4;font-size:11px;font-weight:650;color:#514a75}
+
+/* ---------- table (contacts) ---------- */
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-lg);background:#fff;box-shadow:var(--sh);min-width:0}
+table{width:100%;border-collapse:separate;border-spacing:0}
+th{padding:11px 14px;text-align:left;font-size:10.5px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);background:#faf9fd;white-space:nowrap;border-bottom:1px solid var(--line)}
+td{padding:12px 14px;border-top:1px solid var(--line-2);font-size:14px;vertical-align:middle}
+tbody tr:first-child td{border-top:0}
+tbody tr:hover td{background:#fbfaff}
+td .sub{display:block;margin-top:2px;font-size:12.5px;color:var(--faint)}
+.avatar{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#efedf8;font-size:12px;font-weight:650;color:#544c7a;margin-right:9px;vertical-align:middle}
+
+/* ---------- empty ---------- */
+.empty{display:grid;justify-items:center;gap:6px;margin:0;padding:28px 20px;text-align:center;font-size:13.5px;color:var(--faint);
+  background:#fcfcfe;border:1px dashed #dcdde6;border-radius:var(--r)}
+.empty b{display:block;color:var(--ink-2);font-size:14.5px;font-weight:600}
+
+/* ---------- boards ---------- */
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:start}
+.pipe{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:start}
+.col{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:var(--r-lg);background:#fbfbfe;min-height:150px;transition:background-color .15s,border-color .15s}
+.col.drop{border-color:#b7a4fb;background:#f6f3ff}
+.col-head{display:flex;align-items:center;gap:7px;padding:0 2px 2px;font-size:12px;font-weight:650;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.col-head i{width:7px;height:7px;border-radius:50%;background:#c9cad6}
+.col-head .c{margin-left:auto;font-size:11.5px;font-weight:600;color:var(--faint);letter-spacing:0;text-transform:none}
+.col[data-col="doing"] .col-head i,.col[data-stage="talks"] .col-head i{background:var(--accent)}
+.col[data-col="waiting"] .col-head i,.col[data-stage="offer"] .col-head i{background:#e0a100}
+.col[data-col="done"] .col-head i,.col[data-stage="won"] .col-head i{background:var(--green)}
+.col[data-stage="active"] .col-head i{background:var(--blue)}
+.ticket{padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:0 1px 2px rgba(20,18,40,.05);cursor:grab;transition:box-shadow .15s,transform .12s var(--ease),border-color .15s}
+.ticket:hover{border-color:#cfc6f6;box-shadow:0 6px 18px -10px rgba(40,20,90,.35)}
+.ticket:active{cursor:grabbing;transform:scale(.99)}
+.ticket b{display:block;font-size:13.5px;font-weight:580;line-height:1.35;margin-bottom:6px}
+.ticket .meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12px;color:var(--faint)}
+.col-empty{padding:14px 2px;font-size:12.5px;color:#b3b4c0;text-align:center}
+
+/* ---------- dialog ---------- */
+dialog{width:min(600px,94vw);padding:0;border:0;border-radius:20px;box-shadow:0 40px 90px rgba(18,17,28,.34);background:#fff}
+dialog::backdrop{background:rgba(18,17,28,.45)}
+.modal{padding:22px}
+.modal h3{margin-bottom:16px;font-size:18px}
+.modal .grid{display:grid;gap:12px}
+.modal footer{display:flex;justify-content:space-between;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line-2)}
+.hint{margin:8px 0 0;font-size:12.5px;line-height:1.45;color:var(--faint)}
+.hint.accent{color:var(--accent)}
+.toast{position:fixed;left:50%;bottom:22px;z-index:60;transform:translate(-50%,10px);padding:11px 17px;border-radius:12px;background:#17181f;color:#fff;
+  font-size:14px;max-width:92vw;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s var(--ease);box-shadow:var(--sh-2)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- responsive ---------- */
+@media (max-width:1080px){
+  .grid2{grid-template-columns:1fr}
+  .board{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pipe{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:720px){
+  header{flex-wrap:wrap}
+  .search-wrap{order:3;max-width:none;flex-basis:100%}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .item{grid-template-columns:auto minmax(0,1fr);padding:10px 8px}
+  .item .right{grid-column:2;margin-top:2px}
+  .item .t{white-space:normal}
+  .board,.pipe,.two,.three{grid-template-columns:1fr}
+  .modal{padding:18px}
+}
+@media print{header,nav.tabs,.bar,.btn,.open-btn{display:none!important}body{background:#fff}.panel{break-inside:avoid;box-shadow:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><i>+</i><span>Antefluence<small>CRM</small></span></div>
+  <div class="search-wrap">
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6"/><path d="m11 11 3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    <input class="search" id="q" type="search" placeholder="Поиск: задачи, сделки, контакты" aria-label="Поиск" />
+  </div>
+  <div class="spacer"></div>
+  <button class="btn" id="add-task">+&nbsp;Задача</button>
+  <button class="btn ghost sm" data-action="backup">Бэкап</button>
+</header>
+
+<main class="wrap">
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+  <div id="view"></div>
+</main>
+
+<dialog id="dlg"><div class="modal" id="dlg-body"></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ---------------- storage ---------------- */
+const KEY = 'antefluence-crm-v1';
+const BLANK = { v: 1, tasks: [], deals: [], contacts: [], notes: '', seq: 1 };
+let db;
+try { db = JSON.parse(localStorage.getItem(KEY)) || null; } catch { db = null; }
+if (!db || db.v !== 1) db = structuredClone(BLANK);
+for (const k in BLANK) if (db[k] === undefined) db[k] = structuredClone(BLANK[k]);
+let saveWarned = false;
+const save = () => {
+  try { localStorage.setItem(KEY, JSON.stringify(db)); }
+  catch { if (!saveWarned) { saveWarned = true; toast('Браузер не даёт сохранить данные. Скачайте бэкап.'); } }
+};
+const id = () => 'i' + (db.seq++).toString(36) + Math.random().toString(36).slice(2, 6);
+
+/* ---------------- helpers ---------------- */
+const $ = (s, r = document) => r.querySelector(s);
+const h = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const today = () => new Date().toISOString().slice(0, 10);
+const addDays = n => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
+const fmtDate = d => d ? new Date(d + 'T00:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) : '';
+const money = v => new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(v) || 0);
+const daysTo = d => d ? Math.round((new Date(d + 'T00:00:00') - new Date(today() + 'T00:00:00')) / 86400000) : null;
+const initials = s => String(s || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+function toast(msg) {
+  const el = $('#toast'); el.textContent = msg; el.classList.add('on');
+  clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 2800);
+}
+function download(name, text, type = 'application/json') {
+  const url = URL.createObjectURL(new Blob(['﻿' + text], { type: type + ';charset=utf-8' }));
+  const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 800);
+}
+const csv = rows => rows.map(r => r.map(v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`).join(',')).join('\n');
+
+const STATUS = { backlog: 'Бэклог', doing: 'В работе', waiting: 'Ждём ответа', done: 'Готово' };
+const STATUS_TAG = { backlog: 'line', doing: 'a', waiting: 'y', done: 'g' };
+const PRIO = { high: 'Срочно', normal: 'Обычная', low: 'Потом' };
+const STAGES = { lead: 'Лид', talks: 'Переговоры', offer: 'Предложение', active: 'В работе', won: 'Закрыта' };
+const KINDS = { brand: 'Бренд', creator: 'Креатор', partner: 'Партнёр', other: 'Другое' };
+
+const contactName = cid => (db.contacts.find(c => c.id === cid) || {}).name || '';
+const dealName = did => (db.deals.find(d => d.id === did) || {}).name || '';
+const openTasks = () => db.tasks.filter(t => t.status !== 'done');
+const overdue = () => openTasks().filter(t => t.due && daysTo(t.due) < 0);
+const dueToday = () => openTasks().filter(t => t.due && daysTo(t.due) === 0);
+const dueWeek = () => openTasks().filter(t => t.due && daysTo(t.due) > 0 && daysTo(t.due) <= 7);
+const byDue = (a, b) => (a.due || '9999').localeCompare(b.due || '9999') || (a.prio === 'high' ? -1 : b.prio === 'high' ? 1 : 0);
+
+const state = { tab: 'today', q: '', board: false, filter: { status: '', contact: '', who: '' } };
+const matches = (obj, q) => !q || JSON.stringify(obj).toLowerCase().includes(q.toLowerCase());
+// search also looks at linked names, not just the record's own fields
+const taskHay = t => [t.title, t.note, t.who, STATUS[t.status], PRIO[t.prio], contactName(t.contact), dealName(t.deal)].join(' ').toLowerCase();
+const dealHay = d => [d.name, d.note, d.next, STAGES[d.stage], contactName(d.contact)].join(' ').toLowerCase();
+const hit = (hay, q) => !q || hay.includes(q.toLowerCase());
+
+/* --------- typing a new name here creates the record in its own tab --------- */
+const findContact = name => { const n = String(name || '').trim().toLowerCase(); return n ? db.contacts.find(c => c.name.trim().toLowerCase() === n) : null; };
+const findDeal = name => { const n = String(name || '').trim().toLowerCase(); return n ? db.deals.find(d => d.name.trim().toLowerCase() === n) : null; };
+function resolveContact(name, kind) {
+  const clean = String(name || '').trim();
+  if (!clean) return '';
+  const found = findContact(clean);
+  if (found) return found.id;
+  db.contacts.unshift({ id: id(), name: clean, kind: kind || 'brand', tg: '', email: '', note: '', created: Date.now() });
+  toast('Контакт «' + clean + '» добавлен во вкладку «Контакты»');
+  return db.contacts[0].id;
+}
+function resolveDeal(name, contactId) {
+  const clean = String(name || '').trim();
+  if (!clean) return '';
+  const found = findDeal(clean);
+  if (found) { if (!found.contact && contactId) found.contact = contactId; return found.id; }
+  db.deals.unshift({ id: id(), name: clean, contact: contactId || '', stage: 'lead', amount: '', next: '', next_at: '', note: '', created: Date.now() });
+  toast('Сделка «' + clean + '» добавлена во вкладку «Сделки»');
+  return db.deals[0].id;
+}
+const contactList = () => `<datalist id="contact-list">${db.contacts.map(c => `<option value="${h(c.name)}">${h(KINDS[c.kind] || '')}</option>`).join('')}</datalist>`;
+const dealList = () => `<datalist id="deal-list">${db.deals.map(d => `<option value="${h(d.name)}">`).join('')}</datalist>`;
+const newEntityRow = () => `<div class="two">
+      <label class="lab" data-kind-wrap hidden>Тип нового контакта<select class="field" name="contact_kind">${Object.entries(KINDS).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></label>
+      <p class="hint accent" data-new-hint hidden style="align-self:end;margin:0 0 10px"></p>
+    </div>`;
+function bindNewEntity(form) {
+  const ci = form.elements.contact_name, di = form.elements.deal_name;
+  const kindWrap = form.querySelector('[data-kind-wrap]'), hint = form.querySelector('[data-new-hint]');
+  const sync = () => {
+    const newContact = ci && ci.value.trim() && !findContact(ci.value);
+    const newDeal = di && di.value.trim() && !findDeal(di.value);
+    if (kindWrap) kindWrap.hidden = !newContact;
+    if (hint) {
+      const parts = [];
+      if (newContact) parts.push('новый контакт «' + ci.value.trim() + '»');
+      if (newDeal) parts.push('новая сделка «' + di.value.trim() + '»');
+      hint.textContent = parts.length ? 'Будет создано: ' + parts.join(' и ') : '';
+      hint.hidden = !parts.length;
+    }
+  };
+  [ci, di].forEach(el => el && el.addEventListener('input', sync));
+  sync();
+}
+
+/* ---------------- dialogs ---------------- */
+function openDialog() {
+  const dlg = $('#dlg');
+  dlg.showModal();
+  dlg.querySelectorAll('[data-close]').forEach(b => { b.onclick = () => dlg.close(); });
+  const first = dlg.querySelector('input:not([type=hidden])');
+  if (first) setTimeout(() => first.focus(), 30);
+}
+function taskDialog(task) {
+  const t = task || { id: '', title: '', status: 'backlog', prio: 'normal', due: '', who: '', contact: '', deal: '', note: '' };
+  $('#dlg-body').innerHTML = `
+    <h3>${task ? 'Задача' : 'Новая задача'}</h3>
+    <form id="task-form" class="grid">
+      <label class="lab">Что сделать<input class="field" name="title" value="${h(t.title)}" required maxlength="160" placeholder="Согласовать даты интеграции" autocomplete="off" /></label>
+      <div class="three">
+        <label class="lab">Статус<select class="field" name="status">${Object.entries(STATUS).map(([k, v]) => `<option value="${k}"${t.status === k ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
+        <label class="lab">Приоритет<select class="field" name="prio">${Object.entries(PRIO).map(([k, v]) => `<option value="${k}"${t.prio === k ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
+        <label class="lab">Срок<input class="field" name="due" type="date" value="${h(t.due)}" /></label>
+      </div>
+      <div class="three">
+        <label class="lab">Кто делает<input class="field" name="who" value="${h(t.who)}" maxlength="40" placeholder="Я / Ник" list="who-list" autocomplete="off" /></label>
+        <label class="lab">Клиент или креатор<input class="field" name="contact_name" value="${h(contactName(t.contact))}" maxlength="80" list="contact-list" placeholder="Впишите нового" autocomplete="off" /></label>
+        <label class="lab">Сделка<input class="field" name="deal_name" value="${h(dealName(t.deal))}" maxlength="120" list="deal-list" placeholder="Впишите новую" autocomplete="off" /></label>
+      </div>
+      ${newEntityRow()}
+      <label class="lab">Заметки<textarea class="field" name="note" maxlength="2000" placeholder="Детали, договорённости, ссылки">${h(t.note)}</textarea></label>
+      <datalist id="who-list">${[...new Set(db.tasks.map(x => x.who).filter(Boolean))].map(w => `<option value="${h(w)}">`).join('')}</datalist>
+      ${contactList()}${dealList()}
+      <footer>
+        <div>${task ? `<button class="btn danger sm" type="button" id="del">Удалить</button>` : ''}</div>
+        <div class="row"><button class="btn ghost" type="button" data-close>Отмена</button><button class="btn" type="submit">Сохранить</button></div>
+      </footer>
+    </form>`;
+  openDialog();
+  const del = $('#del');
+  if (del) del.onclick = () => { if (confirm('Удалить задачу?')) { db.tasks = db.tasks.filter(x => x.id !== t.id); save(); $('#dlg').close(); render(); } };
+  bindNewEntity($('#task-form'));
+  $('#task-form').onsubmit = e => {
+    e.preventDefault();
+    const v = Object.fromEntries(new FormData(e.target));
+    if (!v.title.trim()) return;
+    v.contact = resolveContact(v.contact_name, v.contact_kind);
+    v.deal = resolveDeal(v.deal_name, v.contact);
+    delete v.contact_name; delete v.deal_name; delete v.contact_kind;
+    if (task) Object.assign(t, v, { done_at: v.status === 'done' ? (t.done_at || Date.now()) : null });
+    else db.tasks.unshift({ ...t, ...v, id: id(), created: Date.now(), done_at: v.status === 'done' ? Date.now() : null });
+    save(); $('#dlg').close(); render();
+  };
+}
+function dealDialog(deal) {
+  const d = deal || { id: '', name: '', contact: '', stage: 'lead', amount: '', next: '', next_at: '', note: '' };
+  $('#dlg-body').innerHTML = `
+    <h3>${deal ? 'Сделка' : 'Новая сделка'}</h3>
+    <form id="deal-form" class="grid">
+      <label class="lab">Название<input class="field" name="name" value="${h(d.name)}" required maxlength="120" placeholder="Бренд · кампания на DE" autocomplete="off" /></label>
+      <div class="three">
+        <label class="lab">Контакт<input class="field" name="contact_name" value="${h(contactName(d.contact))}" maxlength="80" list="contact-list" placeholder="Впишите нового" autocomplete="off" /></label>
+        <label class="lab">Этап<select class="field" name="stage">${Object.entries(STAGES).map(([k, v]) => `<option value="${k}"${d.stage === k ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
+        <label class="lab">Сумма, $<input class="field" name="amount" type="number" min="0" step="100" value="${h(d.amount)}" /></label>
+      </div>
+      <div class="two">
+        <label class="lab">Следующий шаг<input class="field" name="next" value="${h(d.next)}" maxlength="120" placeholder="Отправить условия" autocomplete="off" /></label>
+        <label class="lab">Когда<input class="field" name="next_at" type="date" value="${h(d.next_at)}" /></label>
+      </div>
+      ${newEntityRow()}
+      <label class="lab">Заметки<textarea class="field" name="note" maxlength="2000">${h(d.note)}</textarea></label>
+      ${contactList()}
+      <footer>
+        <div>${deal ? `<button class="btn danger sm" type="button" id="del">Удалить</button>` : ''}</div>
+        <div class="row"><button class="btn ghost" type="button" data-close>Отмена</button><button class="btn" type="submit">Сохранить</button></div>
+      </footer>
+    </form>`;
+  openDialog();
+  const del = $('#del');
+  if (del) del.onclick = () => { if (confirm('Удалить сделку?')) { db.deals = db.deals.filter(x => x.id !== d.id); save(); $('#dlg').close(); render(); } };
+  bindNewEntity($('#deal-form'));
+  $('#deal-form').onsubmit = e => {
+    e.preventDefault();
+    const v = Object.fromEntries(new FormData(e.target));
+    v.contact = resolveContact(v.contact_name, v.contact_kind);
+    delete v.contact_name; delete v.contact_kind;
+    if (deal) Object.assign(d, v); else db.deals.unshift({ ...d, ...v, id: id(), created: Date.now() });
+    save(); $('#dlg').close(); render();
+  };
+}
+function contactDialog(contact) {
+  const c = contact || { id: '', name: '', kind: 'brand', tg: '', email: '', note: '' };
+  $('#dlg-body').innerHTML = `
+    <h3>${contact ? 'Контакт' : 'Новый контакт'}</h3>
+    <form id="contact-form" class="grid">
+      <div class="two">
+        <label class="lab">Имя или бренд<input class="field" name="name" value="${h(c.name)}" required maxlength="80" autocomplete="off" /></label>
+        <label class="lab">Тип<select class="field" name="kind">${Object.entries(KINDS).map(([k, v]) => `<option value="${k}"${c.kind === k ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
+      </div>
+      <div class="two">
+        <label class="lab">Telegram<input class="field" name="tg" value="${h(c.tg)}" maxlength="60" placeholder="@nickname" autocomplete="off" /></label>
+        <label class="lab">Email<input class="field" name="email" value="${h(c.email)}" maxlength="80" autocomplete="off" /></label>
+      </div>
+      <label class="lab">Заметки<textarea class="field" name="note" maxlength="2000" placeholder="Условия, ставки, договорённости">${h(c.note)}</textarea></label>
+      <footer>
+        <div>${contact ? `<button class="btn danger sm" type="button" id="del">Удалить</button>` : ''}</div>
+        <div class="row"><button class="btn ghost" type="button" data-close>Отмена</button><button class="btn" type="submit">Сохранить</button></div>
+      </footer>
+    </form>`;
+  openDialog();
+  const del = $('#del');
+  if (del) del.onclick = () => {
+    if (!confirm('Удалить контакт? Задачи и сделки останутся, но без привязки.')) return;
+    db.contacts = db.contacts.filter(x => x.id !== c.id);
+    db.tasks.forEach(t => { if (t.contact === c.id) t.contact = ''; });
+    db.deals.forEach(d => { if (d.contact === c.id) d.contact = ''; });
+    save(); $('#dlg').close(); render();
+  };
+  $('#contact-form').onsubmit = e => {
+    e.preventDefault();
+    const v = Object.fromEntries(new FormData(e.target));
+    if (contact) Object.assign(c, v); else db.contacts.unshift({ ...c, ...v, id: id(), created: Date.now() });
+    save(); $('#dlg').close(); render();
+  };
+}
+
+/* ---------------- pieces ---------------- */
+function dueChip(d) {
+  const n = daysTo(d);
+  if (n === null) return '';
+  if (n < 0) return `<span class="due over">просрочено на ${-n} дн.</span>`;
+  if (n === 0) return '<span class="due today">сегодня</span>';
+  if (n === 1) return '<span class="due">завтра</span>';
+  if (n <= 7) return `<span class="due">через ${n} дн.</span>`;
+  return `<span class="due">${fmtDate(d)}</span>`;
+}
+function taskItem(t) {
+  const meta = [t.due ? dueChip(t.due) : '', t.contact ? h(contactName(t.contact)) : '', t.deal ? h(dealName(t.deal)) : '', t.note ? h(t.note.slice(0, 60)) : '']
+    .filter(Boolean).join('<span class="dot"></span>');
+  return `<div class="item${t.status === 'done' ? ' done' : ''}" data-task="${t.id}">
+    <input class="chk" type="checkbox" data-toggle="${t.id}"${t.status === 'done' ? ' checked' : ''} aria-label="Готово" />
+    <div class="main"><span class="t">${h(t.title)}</span><div class="meta">${meta || 'без срока'}</div></div>
+    <div class="right">
+      ${t.prio === 'high' && t.status !== 'done' ? '<span class="tag r">Срочно</span>' : ''}
+      ${t.who ? `<span class="who" title="${h(t.who)}">${h(initials(t.who))}</span>` : ''}
+      <span class="tag ${STATUS_TAG[t.status]}">${STATUS[t.status]}</span>
+      <button class="btn ghost sm open-btn" data-edit="${t.id}">Открыть</button>
+    </div>
+  </div>`;
+}
+const taskListHtml = (list, emptyTitle, emptyHint) => list.length
+  ? `<div class="list">${list.map(taskItem).join('')}</div>`
+  : `<p class="empty"><b>${h(emptyTitle)}</b>${emptyHint ? `<span>${h(emptyHint)}</span>` : ''}</p>`;
+
+/* ---------------- views ---------------- */
+function todayView() {
+  const over = overdue().sort(byDue), now = dueToday().sort(byDue), week = dueWeek().sort(byDue);
+  const noDate = openTasks().filter(t => !t.due).sort((a, b) => b.created - a.created);
+  const doing = openTasks().filter(t => t.status === 'doing');
+  const steps = db.deals.filter(d => d.stage !== 'won' && d.next).sort((a, b) => (a.next_at || '9999').localeCompare(b.next_at || '9999'));
+  const pipeline = db.deals.filter(d => d.stage !== 'won').reduce((s, d) => s + (Number(d.amount) || 0), 0);
+  const won = db.deals.filter(d => d.stage === 'won').reduce((s, d) => s + (Number(d.amount) || 0), 0);
+  const doneWeek = db.tasks.filter(t => t.done_at && Date.now() - t.done_at < 7 * 86400000).length;
+  return `
+    <div class="stats">
+      <div class="stat${over.length ? ' red' : ''}"><i></i><span>Просрочено</span><b>${over.length}</b><small>${over.length ? 'разобрать в первую очередь' : 'всё под контролем'}</small></div>
+      <div class="stat amber"><i></i><span>Сегодня</span><b>${now.length}</b><small>${doing.length} в работе</small></div>
+      <div class="stat"><i></i><span>Сделки в работе</span><b>${money(pipeline)}</b><small>${db.deals.filter(d => d.stage !== 'won').length} шт.</small></div>
+      <div class="stat green"><i></i><span>Закрыто сделок</span><b>${money(won)}</b><small>задач за неделю: ${doneWeek}</small></div>
+    </div>
+    <div class="grid2">
+      <div>
+        <div class="panel">
+          <div class="panel-head"><h3>Сейчас важно</h3><button class="btn soft sm" data-action="new-task">+ Задача</button></div>
+          ${taskListHtml([...over, ...now], 'Ничего не горит', 'Просроченных и сегодняшних задач нет.')}
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Ближайшая неделя</h3><span class="side">${week.length}</span></div>
+          ${taskListHtml(week, 'На неделе пусто', 'Поставьте задачам сроки — они появятся здесь.')}
+        </div>
+        ${noDate.length ? `<div class="panel">
+          <div class="panel-head"><h3>Без срока</h3><span class="side">${noDate.length}</span></div>
+          ${taskListHtml(noDate.slice(0, 8), '')}
+        </div>` : ''}
+      </div>
+      <div>
+        <div class="panel">
+          <div class="panel-head"><h3>Следующие шаги по сделкам</h3><button class="btn ghost sm" data-action="new-deal">+ Сделка</button></div>
+          ${steps.length ? `<div class="list">${steps.slice(0, 8).map(d => `<div class="item">
+            <div class="main" style="grid-column:1/3"><span class="t">${h(d.next)}</span>
+              <div class="meta">${d.next_at ? dueChip(d.next_at) + '<span class="dot"></span>' : ''}${h(d.name)}${d.amount ? '<span class="dot"></span>' + money(d.amount) : ''}</div></div>
+            <div class="right"><button class="btn ghost sm open-btn" data-deal-edit="${d.id}">Открыть</button></div>
+          </div>`).join('')}</div>` : `<p class="empty"><b>Шагов не запланировано</b><span>Добавьте следующий шаг в карточке сделки.</span></p>`}
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Заметки</h3><span class="side">сохраняется само</span></div>
+          <textarea class="field" id="notes" style="min-height:150px" placeholder="Мысли, договорённости, что не забыть…">${h(db.notes)}</textarea>
+        </div>
+      </div>
+    </div>`;
+}
+
+function tasksView() {
+  let list = db.tasks.filter(t => hit(taskHay(t), state.q));
+  const f = state.filter;
+  if (f.status) list = list.filter(t => t.status === f.status);
+  if (f.contact) list = list.filter(t => t.contact === f.contact);
+  if (f.who) list = list.filter(t => (t.who || '') === f.who);
+  const whos = [...new Set(db.tasks.map(t => t.who).filter(Boolean))];
+  const bar = `<div class="bar">
+    <div class="row filters">
+      <select class="field" data-filter="status"><option value="">Все статусы</option>${Object.entries(STATUS).map(([k, v]) => `<option value="${k}"${f.status === k ? ' selected' : ''}>${v}</option>`).join('')}</select>
+      <select class="field" data-filter="contact"><option value="">Все клиенты</option>${db.contacts.map(c => `<option value="${c.id}"${f.contact === c.id ? ' selected' : ''}>${h(c.name)}</option>`).join('')}</select>
+      <select class="field" data-filter="who"><option value="">Все исполнители</option>${whos.map(w => `<option value="${h(w)}"${f.who === w ? ' selected' : ''}>${h(w)}</option>`).join('')}</select>
+    </div>
+    <div class="row">
+      <button class="btn ghost sm" data-action="view-toggle">${state.board ? '☰ Списком' : '▦ Доской'}</button>
+      <button class="btn ghost sm" data-action="export-tasks">CSV</button>
+      <button class="btn sm" data-action="new-task">+ Задача</button>
+    </div></div>`;
+  if (state.board) {
+    const cols = Object.entries(STATUS).map(([k, v]) => {
+      const items = list.filter(t => t.status === k).sort(byDue);
+      return `<div class="col" data-col="${k}"><div class="col-head"><i></i>${v}<span class="c">${items.length}</span></div>
+        ${items.length ? items.map(t => `<div class="ticket" draggable="true" data-task="${t.id}" data-edit="${t.id}">
+          <b>${h(t.title)}</b><div class="meta">${t.due ? dueChip(t.due) : ''}${t.contact ? `<span>${h(contactName(t.contact))}</span>` : ''}${t.prio === 'high' ? '<span class="tag r">Срочно</span>' : ''}${t.who ? `<span class="who">${h(initials(t.who))}</span>` : ''}</div>
+        </div>`).join('') : '<div class="col-empty">пусто</div>'}</div>`;
+    }).join('');
+    return bar + `<div class="board">${cols}</div><p class="hint">Карточки перетаскиваются между колонками.</p>`;
+  }
+  const sorted = [...list].sort((a, b) => (a.status === 'done') - (b.status === 'done') || byDue(a, b));
+  return bar + `<div class="panel">${taskListHtml(sorted, 'Задач нет', 'Нажмите «+ Задача» или клавишу N.')}</div>`;
+}
+
+function dealsView() {
+  const list = db.deals.filter(d => hit(dealHay(d), state.q));
+  const cols = Object.entries(STAGES).map(([k, v]) => {
+    const items = list.filter(d => d.stage === k);
+    const sum = items.reduce((s, d) => s + (Number(d.amount) || 0), 0);
+    return `<div class="col" data-stage="${k}"><div class="col-head"><i></i>${v}<span class="c">${sum ? money(sum) : items.length}</span></div>
+      ${items.length ? items.map(d => `<div class="ticket" draggable="true" data-deal="${d.id}" data-deal-edit="${d.id}">
+        <b>${h(d.name)}</b><div class="meta">${d.amount ? `<span class="tag line">${money(d.amount)}</span>` : ''}${d.contact ? `<span>${h(contactName(d.contact))}</span>` : ''}${d.next ? `<span>→ ${h(d.next)}</span>` : ''}${d.next_at ? dueChip(d.next_at) : ''}</div>
+      </div>`).join('') : '<div class="col-empty">пусто</div>'}</div>`;
+  }).join('');
+  return `<div class="bar"><h2>Сделки</h2>
+    <div class="row"><button class="btn ghost sm" data-action="export-deals">CSV</button><button class="btn sm" data-action="new-deal">+ Сделка</button></div></div>
+    <div class="pipe">${cols}</div><p class="hint">Карточки перетаскиваются между этапами.</p>`;
+}
+
+function contactsView() {
+  const list = db.contacts.filter(c => matches(c, state.q));
+  return `<div class="bar"><h2>Контакты</h2>
+    <div class="row"><button class="btn ghost sm" data-action="export-contacts">CSV</button><button class="btn sm" data-action="new-contact">+ Контакт</button></div></div>
+    ${list.length ? `<div class="table-wrap"><table><thead><tr><th>Имя</th><th>Тип</th><th>Связь</th><th>Задачи</th><th>Сделки</th><th></th></tr></thead>
+      <tbody>${list.map(c => {
+        const tasks = openTasks().filter(t => t.contact === c.id).length;
+        const deals = db.deals.filter(d => d.contact === c.id);
+        const sum = deals.reduce((s, d) => s + (Number(d.amount) || 0), 0);
+        return `<tr><td><span class="avatar">${h(initials(c.name))}</span><b>${h(c.name)}</b>${c.note ? `<span class="sub">${h(c.note.slice(0, 64))}</span>` : ''}</td>
+          <td><span class="tag ${c.kind === 'brand' ? 'b' : c.kind === 'creator' ? 'a' : 'line'}">${KINDS[c.kind] || c.kind}</span></td>
+          <td>${c.tg ? `<a href="https://t.me/${h(c.tg.replace('@', ''))}" target="_blank" rel="noopener">${h(c.tg)}</a>` : ''}${c.tg && c.email ? '<br>' : ''}${c.email ? `<a href="mailto:${h(c.email)}">${h(c.email)}</a>` : ''}${!c.tg && !c.email ? '—' : ''}</td>
+          <td>${tasks ? `<span class="tag a">${tasks} открыто</span>` : '—'}</td>
+          <td>${deals.length ? `${deals.length} шт.${sum ? `<span class="sub">${money(sum)}</span>` : ''}` : '—'}</td>
+          <td><button class="btn ghost sm" data-contact-edit="${c.id}">Открыть</button></td></tr>`;
+      }).join('')}</tbody></table></div>`
+      : `<p class="empty"><b>Контактов нет</b><span>Их можно добавлять прямо из формы задачи.</span></p>`}`;
+}
+
+function dataView() {
+  const done = db.tasks.filter(t => t.status === 'done').length;
+  return `<div class="bar"><h2>Данные</h2></div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-head"><h3>Бэкап и выгрузки</h3></div>
+      <p class="hint" style="margin-top:0">Всё хранится в этом браузере, на этом компьютере — на сервер ничего не уходит. Чтобы перенести данные на другое устройство, скачайте бэкап и загрузите его там.</p>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" data-action="backup">Скачать бэкап</button>
+        <label class="btn ghost">Загрузить бэкап<input type="file" id="restore" accept=".json,application/json" hidden /></label>
+        <button class="btn ghost" data-action="export-tasks">Задачи в CSV</button>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn ghost sm" data-action="clear-done"${done ? '' : ' disabled'}>Удалить выполненные (${done})</button>
+        <button class="btn danger sm" data-action="wipe">Стереть всё</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h3>Что накопилось</h3></div>
+      <div class="list">
+        <div class="item"><div class="main" style="grid-column:1/3"><span class="t">Задачи</span><div class="meta">открытых ${openTasks().length}<span class="dot"></span>просрочено ${overdue().length}</div></div><div class="right"><b>${db.tasks.length}</b></div></div>
+        <div class="item"><div class="main" style="grid-column:1/3"><span class="t">Сделки</span><div class="meta">в работе ${db.deals.filter(d => d.stage !== 'won').length}</div></div><div class="right"><b>${db.deals.length}</b></div></div>
+        <div class="item"><div class="main" style="grid-column:1/3"><span class="t">Контакты</span><div class="meta">брендов ${db.contacts.filter(c => c.kind === 'brand').length}<span class="dot"></span>креаторов ${db.contacts.filter(c => c.kind === 'creator').length}</div></div><div class="right"><b>${db.contacts.length}</b></div></div>
+      </div>
+      <p class="hint">Клавиши: <b>N</b> — новая задача, <b>/</b> — поиск, <b>Esc</b> — закрыть окно.</p>
+    </div>
+  </div>`;
+}
+
+const TABS = [
+  ['today', 'Сегодня', () => overdue().length + dueToday().length, true],
+  ['tasks', 'Задачи', () => openTasks().length],
+  ['deals', 'Сделки', () => db.deals.filter(d => d.stage !== 'won').length],
+  ['contacts', 'Контакты', () => db.contacts.length],
+  ['data', 'Данные', () => 0]
+];
+function render() {
+  $('#tabs').innerHTML = TABS.map(([k, label, count, warn]) => {
+    const n = count();
+    return `<button role="tab" data-tab="${k}" aria-selected="${state.tab === k}">${label}${n ? `<span class="n${warn && overdue().length ? ' warn' : ''}">${n}</span>` : ''}</button>`;
+  }).join('');
+  $('#view').innerHTML = { today: todayView, tasks: tasksView, deals: dealsView, contacts: contactsView, data: dataView }[state.tab]();
+  bindDrag();
+}
+
+/* ---------------- drag and drop ---------------- */
+function bindDrag() {
+  let dragged = null;
+  document.querySelectorAll('.ticket').forEach(el => el.addEventListener('dragstart', e => { dragged = el; e.dataTransfer.effectAllowed = 'move'; }));
+  document.querySelectorAll('.col').forEach(col => {
+    col.addEventListener('dragover', e => { e.preventDefault(); col.classList.add('drop'); });
+    col.addEventListener('dragleave', () => col.classList.remove('drop'));
+    col.addEventListener('drop', e => {
+      e.preventDefault(); col.classList.remove('drop');
+      if (!dragged) return;
+      const taskId = dragged.dataset.task, dealId = dragged.dataset.deal;
+      if (taskId && col.dataset.col) {
+        const t = db.tasks.find(x => x.id === taskId);
+        t.status = col.dataset.col;
+        t.done_at = t.status === 'done' ? (t.done_at || Date.now()) : null;
+      }
+      if (dealId && col.dataset.stage) db.deals.find(x => x.id === dealId).stage = col.dataset.stage;
+      dragged = null; save(); render();
+    });
+  });
+}
+
+/* ---------------- events ---------------- */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-tab],[data-edit],[data-deal-edit],[data-contact-edit],[data-action],button');
+  if (!el) return;
+  if (el.dataset.tab) { state.tab = el.dataset.tab; return render(); }
+  if (el.dataset.edit) return taskDialog(db.tasks.find(t => t.id === el.dataset.edit));
+  if (el.dataset.dealEdit) return dealDialog(db.deals.find(d => d.id === el.dataset.dealEdit));
+  if (el.dataset.contactEdit) return contactDialog(db.contacts.find(c => c.id === el.dataset.contactEdit));
+  switch (el.dataset.action || el.id) {
+    case 'add-task': case 'new-task': return taskDialog(null);
+    case 'new-deal': return dealDialog(null);
+    case 'new-contact': return contactDialog(null);
+    case 'view-toggle': state.board = !state.board; return render();
+    case 'backup':
+      download(`antefluence-crm-${today()}.json`, JSON.stringify(db, null, 2));
+      return toast('Бэкап скачан');
+    case 'export-tasks':
+      return download(`tasks-${today()}.csv`, csv([['Задача', 'Статус', 'Приоритет', 'Срок', 'Кто', 'Клиент', 'Сделка', 'Заметки'],
+        ...db.tasks.map(t => [t.title, STATUS[t.status], PRIO[t.prio], t.due, t.who, contactName(t.contact), dealName(t.deal), t.note])]), 'text/csv');
+    case 'export-deals':
+      return download(`deals-${today()}.csv`, csv([['Сделка', 'Этап', 'Сумма', 'Контакт', 'Следующий шаг', 'Когда', 'Заметки'],
+        ...db.deals.map(d => [d.name, STAGES[d.stage], d.amount, contactName(d.contact), d.next, d.next_at, d.note])]), 'text/csv');
+    case 'export-contacts':
+      return download(`contacts-${today()}.csv`, csv([['Имя', 'Тип', 'Telegram', 'Email', 'Заметки'],
+        ...db.contacts.map(c => [c.name, KINDS[c.kind], c.tg, c.email, c.note])]), 'text/csv');
+    case 'clear-done':
+      if (!confirm('Удалить все выполненные задачи?')) return;
+      db.tasks = db.tasks.filter(t => t.status !== 'done'); save(); return render();
+    case 'wipe':
+      if (!confirm('Стереть все задачи, сделки и контакты? Сделайте бэкап заранее.')) return;
+      if (!confirm('Точно стереть? Отменить будет нельзя.')) return;
+      db = structuredClone(BLANK); save(); return render();
+  }
+});
+document.addEventListener('change', e => {
+  const el = e.target;
+  if (el.dataset.toggle) {
+    const t = db.tasks.find(x => x.id === el.dataset.toggle);
+    t.status = el.checked ? 'done' : 'doing';
+    t.done_at = el.checked ? Date.now() : null;
+    save(); return render();
+  }
+  if (el.dataset.filter) { state.filter[el.dataset.filter] = el.value; return render(); }
+  if (el.id === 'restore' && el.files[0]) {
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const data = JSON.parse(String(r.result));
+        if (!data || !Array.isArray(data.tasks)) throw new Error('bad');
+        if (!confirm('Заменить текущие данные содержимым файла?')) return;
+        db = { ...structuredClone(BLANK), ...data };
+        save(); render(); toast('Бэкап загружен');
+      } catch { toast('Это не файл бэкапа CRM'); }
+    };
+    r.readAsText(el.files[0]);
+  }
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'q') {
+    state.q = e.target.value.trim();
+    if (state.q && (state.tab === 'today' || state.tab === 'data')) state.tab = 'tasks';
+    render();
+    const box = $('#q'); box.focus(); box.setSelectionRange(box.value.length, box.value.length);
+  }
+  if (e.target.id === 'notes') { db.notes = e.target.value; clearTimeout(window._nt); window._nt = setTimeout(save, 400); }
+});
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input,textarea,select') || $('#dlg').open) return;
+  if (e.key === 'n' || e.key === 'т') { e.preventDefault(); taskDialog(null); }
+  if (e.key === '/') { e.preventDefault(); $('#q').focus(); }
+});
+addEventListener('beforeunload', save);
+
+/* first run: a few example rows so the screens are not empty */
+if (!db.tasks.length && !db.deals.length && !db.contacts.length) {
+  const brand = { id: id(), name: 'Luciabby', kind: 'brand', tg: '', email: '', note: 'Партнёрка через RevenueLab', created: Date.now() };
+  const creator = { id: id(), name: 'szecskaaa', kind: 'creator', tg: '', email: '', note: 'Kick, серия стримов', created: Date.now() };
+  db.contacts.push(brand, creator);
+  db.deals.push({ id: id(), name: 'Luciabby · серия стримов', contact: brand.id, stage: 'talks', amount: 3000, next: 'Запросить постбэк у менеджера', next_at: addDays(1), note: '', created: Date.now() });
+  db.tasks.push(
+    { id: id(), title: 'Уточнить параметр sub ID и макросы постбэка', status: 'doing', prio: 'high', due: today(), who: 'Я', contact: brand.id, deal: db.deals[0].id, note: '', created: Date.now(), done_at: null },
+    { id: id(), title: 'Согласовать даты стримов с креатором', status: 'backlog', prio: 'normal', due: addDays(3), who: 'Я', contact: creator.id, deal: '', note: '', created: Date.now(), done_at: null },
+    { id: id(), title: 'Внести отчёт креатора: просмотры и клики', status: 'backlog', prio: 'low', due: addDays(7), who: 'Я', contact: creator.id, deal: '', note: 'Вкладка «Данные креаторов» в аналитике', created: Date.now(), done_at: null }
+  );
+  save();
+}
+render();
+</script>
+</body>
+</html>
