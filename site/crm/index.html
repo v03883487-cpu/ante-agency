@@ -365,6 +365,8 @@ db.deals.forEach(d => {
   if (!d.kind) d.kind = 'brand';
   if (!Array.isArray(d.commissions)) d.commissions = [];
 });
+// задачи без клиента и сделки считаем внутренними
+db.tasks.forEach(t => { if (!t.area) t.area = (t.contact || t.deal) ? 'client' : 'own'; });
 let saveWarned = false;
 const save = () => {
   try { localStorage.setItem(KEY, JSON.stringify(db)); }
@@ -429,6 +431,10 @@ function resolveBrandDeal(name, contactId) {
 }
 const brandDealList = () => `<datalist id="brand-deal-list">${dealsOfKind('brand').map(d => `<option value="${h(d.name)}">`).join('')}</datalist>`;
 const KINDS = { brand: 'Бренд', creator: 'Креатор', partner: 'Партнёр', other: 'Другое' };
+// задачи агентства, не привязанные к бренду или креатору
+const TOPICS = { ops: 'Процессы', money: 'Финансы', site: 'Сайт и продукт', people: 'Команда и найм', content: 'Контент и соцсети', other: 'Другое' };
+const areaOf = t => t.area === 'own' ? 'own' : 'client';
+const isOwn = t => areaOf(t) === 'own';
 
 const contactName = cid => (db.contacts.find(c => c.id === cid) || {}).name || '';
 const dealName = did => (db.deals.find(d => d.id === did) || {}).name || '';
@@ -438,10 +444,10 @@ const dueToday = () => openTasks().filter(t => t.due && daysTo(t.due) === 0);
 const dueWeek = () => openTasks().filter(t => t.due && daysTo(t.due) > 0 && daysTo(t.due) <= 7);
 const byDue = (a, b) => (a.due || '9999').localeCompare(b.due || '9999') || (a.prio === 'high' ? -1 : b.prio === 'high' ? 1 : 0);
 
-const state = { tab: 'today', q: '', board: false, vizTable: false, dealKind: 'brand', filter: { status: '', contact: '', who: '' } };
+const state = { tab: 'today', q: '', board: false, vizTable: false, dealKind: 'brand', area: 'all', filter: { status: '', contact: '', who: '' } };
 const matches = (obj, q) => !q || JSON.stringify(obj).toLowerCase().includes(q.toLowerCase());
 // search also looks at linked names, not just the record's own fields
-const taskHay = t => [t.title, t.note, t.who, STATUS[t.status], PRIO[t.prio], contactName(t.contact), dealName(t.deal)].join(' ').toLowerCase();
+const taskHay = t => [t.title, t.note, t.who, STATUS[t.status], PRIO[t.prio], contactName(t.contact), dealName(t.deal), isOwn(t) ? 'внутренняя ' + (TOPICS[t.topic] || '') : ''].join(' ').toLowerCase();
 const dealHay = d => [d.name, d.note, d.next, STAGES[d.stage], contactName(d.contact)].join(' ').toLowerCase();
 const hit = (hay, q) => !q || hay.includes(q.toLowerCase());
 
@@ -653,8 +659,10 @@ function openDialog() {
   const first = dlg.querySelector('input:not([type=hidden])');
   if (first) setTimeout(() => first.focus(), 30);
 }
-function taskDialog(task) {
-  const t = task || { id: '', title: '', status: 'backlog', prio: 'normal', due: '', who: '', contact: '', deal: '', note: '' };
+function taskDialog(task, presetArea) {
+  const t = task || { id: '', title: '', status: 'backlog', prio: 'normal', due: '', who: '', contact: '', deal: '', note: '',
+    area: presetArea || (state.area === 'own' ? 'own' : 'client'), topic: 'ops' };
+  const own = isOwn(t);
   $('#dlg-body').innerHTML = `
     <h3>${task ? 'Задача' : 'Новая задача'}</h3>
     <form id="task-form" class="grid">
@@ -664,11 +672,22 @@ function taskDialog(task) {
         <label class="lab">Приоритет<select class="field" name="prio">${Object.entries(PRIO).map(([k, v]) => `<option value="${k}"${t.prio === k ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
         <label class="lab">Срок<input class="field" name="due" type="date" value="${h(t.due)}" /></label>
       </div>
-      <div class="three">
+      <div class="two">
         <label class="lab">Кто делает<input class="field" name="who" value="${h(t.who)}" maxlength="40" placeholder="Я / Ник" list="who-list" autocomplete="off" /></label>
+        <div><span class="lab" style="display:block;margin-bottom:6px">Тип задачи</span>
+          <div class="seg" role="group" aria-label="Тип задачи">
+            <button type="button" data-area="client" aria-pressed="${!own}">По клиенту</button>
+            <button type="button" data-area="own" aria-pressed="${own}">Внутренняя</button>
+          </div>
+          <input type="hidden" name="area" value="${own ? 'own' : 'client'}" />
+        </div>
+      </div>
+      <div class="two" data-area-client${own ? ' hidden' : ''}>
         <label class="lab">Клиент или креатор<input class="field" name="contact_name" value="${h(contactName(t.contact))}" maxlength="80" list="contact-list" placeholder="Впишите нового" autocomplete="off" /></label>
         <label class="lab">Сделка<input class="field" name="deal_name" value="${h(dealName(t.deal))}" maxlength="120" list="deal-list" placeholder="Впишите новую" autocomplete="off" /></label>
       </div>
+      <label class="lab" data-area-own${own ? '' : ' hidden'}>Направление<select class="field" name="topic">${Object.entries(TOPICS).map(([k, v]) => `<option value="${k}"${(t.topic || 'ops') === k ? ' selected' : ''}>${v}</option>`).join('')}</select>
+        <span class="hint" style="margin:0">Дела агентства, не привязанные к бренду или креатору.</span></label>
       ${newEntityRow()}
       <label class="lab">Заметки<textarea class="field" name="note" maxlength="2000" placeholder="Детали, договорённости, ссылки">${h(t.note)}</textarea></label>
       <div id="task-extras">${taskExtras(t)}</div>
@@ -685,14 +704,26 @@ function taskDialog(task) {
   dlgTask = t;
   dlgDeal = null;
   editingLog = -1;
+  const form = $('#task-form');
+  form.querySelectorAll('[data-area]').forEach(btn => btn.addEventListener('click', () => {
+    const val = btn.dataset.area;
+    form.elements.area.value = val;
+    form.querySelectorAll('[data-area]').forEach(x => x.setAttribute('aria-pressed', String(x === btn)));
+    form.querySelector('[data-area-client]').hidden = val === 'own';
+    form.querySelector('[data-area-own]').hidden = val !== 'own';
+  }));
   dlgPersist = !!task;             // an existing task keeps checklist and log even without pressing Save
   bindNewEntity($('#task-form'));
   $('#task-form').onsubmit = e => {
     e.preventDefault();
     const v = Object.fromEntries(new FormData(e.target));
     if (!v.title.trim()) return;
-    v.contact = resolveContact(v.contact_name, v.contact_kind);
-    v.deal = resolveDeal(v.deal_name, v.contact);
+    if (v.area === 'own') { v.contact = ''; v.deal = ''; }
+    else {
+      v.contact = resolveContact(v.contact_name, v.contact_kind);
+      v.deal = resolveDeal(v.deal_name, v.contact);
+      v.topic = '';
+    }
     delete v.contact_name; delete v.deal_name; delete v.contact_kind;
     if (task) Object.assign(t, v, { steps: stepsOf(t), log: logOf(t), done_at: v.status === 'done' ? (t.done_at || Date.now()) : null });
     else db.tasks.unshift({ ...t, ...v, steps: stepsOf(t), log: logOf(t), id: id(), created: Date.now(), done_at: v.status === 'done' ? Date.now() : null });
@@ -915,7 +946,9 @@ function dueChip(d) {
   return `<span class="due">${fmtDate(d)}</span>`;
 }
 function taskItem(t) {
-  const meta = [t.due ? dueChip(t.due) : '', t.contact ? h(contactName(t.contact)) : '', t.deal ? h(dealName(t.deal)) : '', t.note ? h(t.note.slice(0, 60)) : '']
+  const meta = [t.due ? dueChip(t.due) : '',
+    isOwn(t) ? `<span class="tag line">${h(TOPICS[t.topic] || 'Внутренняя')}</span>` : '',
+    t.contact ? h(contactName(t.contact)) : '', t.deal ? h(dealName(t.deal)) : '', t.note ? h(t.note.slice(0, 60)) : '']
     .filter(Boolean).join('<span class="dot"></span>');
   return `<div class="item${t.status === 'done' ? ' done' : ''}" data-task="${t.id}">
     <input class="chk" type="checkbox" data-toggle="${t.id}"${t.status === 'done' ? ' checked' : ''} aria-label="Готово" />
@@ -935,7 +968,8 @@ const taskListHtml = (list, emptyTitle, emptyHint) => list.length
 /* ---------------- views ---------------- */
 function todayView() {
   const over = overdue().sort(byDue), now = dueToday().sort(byDue), week = dueWeek().sort(byDue);
-  const noDate = openTasks().filter(t => !t.due).sort((a, b) => b.created - a.created);
+  const noDate = openTasks().filter(t => !t.due && !isOwn(t)).sort((a, b) => b.created - a.created);
+  const own = openTasks().filter(isOwn).sort(byDue);
   const doing = openTasks().filter(t => t.status === 'doing');
   const steps = db.deals.filter(d => isOpenDeal(d) && d.next).sort((a, b) => (a.next_at || '9999').localeCompare(b.next_at || '9999'));
   const pipeline = dealsOfKind('brand').filter(isOpenDeal).reduce((s, d) => s + brandBudget(d), 0);
@@ -962,6 +996,11 @@ function todayView() {
           <div class="panel-head"><h3>Без срока</h3><span class="side">${noDate.length}</span></div>
           ${taskListHtml(noDate.slice(0, 8), '')}
         </div>` : ''}
+        <div class="panel">
+          <div class="panel-head"><h3>Внутренние дела</h3><button class="btn ghost sm" data-action="new-own">+ Внутренняя</button></div>
+          ${taskListHtml(own.slice(0, 8), 'Внутренних дел нет', 'Сюда попадают задачи агентства: финансы, сайт, найм, контент.')}
+          ${own.length > 8 ? `<p class="hint">и ещё ${own.length - 8} — во вкладке «Задачи»</p>` : ''}
+        </div>
       </div>
       <div>
         <div class="panel">
@@ -982,6 +1021,8 @@ function todayView() {
 
 function tasksView() {
   let list = db.tasks.filter(t => hit(taskHay(t), state.q));
+  if (state.area === 'own') list = list.filter(isOwn);
+  if (state.area === 'client') list = list.filter(t => !isOwn(t));
   const f = state.filter;
   if (f.status) list = list.filter(t => t.status === f.status);
   if (f.contact) list = list.filter(t => t.contact === f.contact);
@@ -989,6 +1030,10 @@ function tasksView() {
   const whos = [...new Set(db.tasks.map(t => t.who).filter(Boolean))];
   const bar = `<div class="bar">
     <div class="row filters">
+      <div class="seg" role="group" aria-label="Тип задач">
+        ${[['all', 'Все'], ['client', 'По клиентам'], ['own', 'Внутренние']].map(([k, label]) =>
+          `<button type="button" data-areafilter="${k}" aria-pressed="${state.area === k}">${label}${k === 'own' ? ` <span class="n">${openTasks().filter(isOwn).length}</span>` : ''}</button>`).join('')}
+      </div>
       <select class="field" data-filter="status"><option value="">Все статусы</option>${Object.entries(STATUS).map(([k, v]) => `<option value="${k}"${f.status === k ? ' selected' : ''}>${v}</option>`).join('')}</select>
       <select class="field" data-filter="contact"><option value="">Все клиенты</option>${db.contacts.map(c => `<option value="${c.id}"${f.contact === c.id ? ' selected' : ''}>${h(c.name)}</option>`).join('')}</select>
       <select class="field" data-filter="who"><option value="">Все исполнители</option>${whos.map(w => `<option value="${h(w)}"${f.who === w ? ' selected' : ''}>${h(w)}</option>`).join('')}</select>
@@ -1339,7 +1384,7 @@ function chartsView() {
     </div>
     <div class="chart-grid" style="margin-top:16px">
       <div class="panel"><div class="panel-head"><h3>Неделя за неделей</h3><span class="side">создано и закрыто</span></div>${weeklyBars()}</div>
-      <div class="panel"><div class="panel-head"><h3>Задачи по статусам</h3><span class="side">всего ${db.tasks.length}</span></div>${statusBar()}
+      <div class="panel"><div class="panel-head"><h3>Задачи по статусам</h3><span class="side">по клиентам ${db.tasks.filter(t => !isOwn(t)).length} · внутренних ${db.tasks.filter(isOwn).length}</span></div>${statusBar()}
         <div class="panel-head" style="margin:18px 0 10px"><h3>План на неделю</h3><span class="side">${doneThisWeek} из ${weekTarget}</span></div>
         <div class="meter${pc >= 100 ? ' full' : ''}"><i style="width:${pc}%"></i></div>
       </div>
@@ -1395,11 +1440,13 @@ document.addEventListener('click', e => {
   if (!el) return;
   if (el.dataset.tab) { state.tab = el.dataset.tab; return render(); }
   if (el.dataset.dealkind) { state.dealKind = el.dataset.dealkind; return render(); }
+  if (el.dataset.areafilter) { state.area = el.dataset.areafilter; return render(); }
   if (el.dataset.edit) return taskDialog(db.tasks.find(t => t.id === el.dataset.edit));
   if (el.dataset.dealEdit) return dealDialog(db.deals.find(d => d.id === el.dataset.dealEdit));
   if (el.dataset.contactEdit) return contactDialog(db.contacts.find(c => c.id === el.dataset.contactEdit));
   switch (el.dataset.action || el.id) {
     case 'add-task': case 'new-task': return taskDialog(null);
+    case 'new-own': return taskDialog(null, 'own');
     case 'new-deal': return dealDialog(null, state.dealKind);
     case 'new-contact': return contactDialog(null);
     case 'view-toggle': state.board = !state.board; return render();
@@ -1408,10 +1455,10 @@ document.addEventListener('click', e => {
       download(`antefluence-crm-${today()}.json`, JSON.stringify(db, null, 2));
       return toast('Бэкап скачан');
     case 'export-tasks':
-      return download(`tasks-${today()}.csv`, csv([['Задача', 'Статус', 'Приоритет', 'Срок', 'Кто', 'Клиент', 'Сделка', 'Прогресс', 'Чек-лист', 'Последняя запись', 'Заметки'],
+      return download(`tasks-${today()}.csv`, csv([['Задача', 'Тип', 'Направление', 'Статус', 'Приоритет', 'Срок', 'Кто', 'Клиент', 'Сделка', 'Прогресс', 'Чек-лист', 'Последняя запись', 'Заметки'],
         ...db.tasks.map(t => {
           const pr = progress(t), last = logOf(t)[0];
-          return [t.title, STATUS[t.status], PRIO[t.prio], t.due, t.who, contactName(t.contact), dealName(t.deal),
+          return [t.title, isOwn(t) ? 'Внутренняя' : 'По клиенту', isOwn(t) ? (TOPICS[t.topic] || '') : '', STATUS[t.status], PRIO[t.prio], t.due, t.who, contactName(t.contact), dealName(t.deal),
             pr.total ? `${pr.done}/${pr.total}` : '', stepsOf(t).map(x => (x.done ? '[x] ' : '[ ] ') + x.text).join(' | '),
             last ? logDate(last.ts) + ': ' + last.text : '', t.note];
         })]), 'text/csv');
@@ -1490,7 +1537,9 @@ if (!db.tasks.length && !db.deals.length && !db.contacts.length) {
       steps: [{ text: 'Написать менеджеру партнёрки', done: true }, { text: 'Получить список макросов', done: false }, { text: 'Вставить постбэк в кабинет', done: false }],
       log: [{ ts: Date.now() - 3600000, text: 'Написал менеджеру, ждём ответ до конца дня.' }] },
     { id: id(), title: 'Согласовать даты стримов с креатором', status: 'backlog', prio: 'normal', due: addDays(3), who: 'Я', contact: creator.id, deal: '', note: '', created: Date.now(), done_at: null },
-    { id: id(), title: 'Внести отчёт креатора: просмотры и клики', status: 'backlog', prio: 'low', due: addDays(7), who: 'Я', contact: creator.id, deal: '', note: 'Вкладка «Данные креаторов» в аналитике', created: Date.now(), done_at: null }
+    { id: id(), title: 'Внести отчёт креатора: просмотры и клики', status: 'backlog', prio: 'low', due: addDays(7), who: 'Я', contact: creator.id, deal: '', note: 'Вкладка «Данные креаторов» в аналитике', created: Date.now(), done_at: null },
+    { id: id(), title: 'Выставить счета за прошлый месяц', status: 'backlog', prio: 'normal', due: addDays(2), who: 'Я', contact: '', deal: '', area: 'own', topic: 'money', note: '', created: Date.now(), done_at: null },
+    { id: id(), title: 'Обновить кейсы на сайте', status: 'backlog', prio: 'low', due: '', who: 'Я', contact: '', deal: '', area: 'own', topic: 'site', note: '', created: Date.now(), done_at: null }
   );
   save();
 }
