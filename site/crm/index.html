@@ -300,6 +300,15 @@ td .sub{display:block;margin-top:2px;font-size:12.5px;color:var(--faint)}
 .ticket .sub-sum{display:block;margin-top:5px;font-size:11.5px;color:var(--faint)}
 @media (max-width:720px){.sum-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.crew li{grid-template-columns:1fr auto auto}}
 
+/* ---------- scam list ---------- */
+.warnbox{display:flex;align-items:flex-start;gap:10px;margin:0 0 4px;padding:11px 13px;border:1px solid #f3ccd8;border-radius:12px;background:var(--red-bg);color:#8d2340;font-size:13px;line-height:1.5}
+.warnbox b{display:block;font-size:13.5px}
+.warnbox .ic{flex:none;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#f7c3d1;color:#8d2340;font-weight:700;font-size:13px}
+.scam-row b{display:inline-flex;align-items:center;gap:7px}
+.scam-amount{font-variant-numeric:tabular-nums;color:var(--red);font-weight:600}
+.scam-ev{display:inline-block;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
+.flag{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--red-bg);color:var(--red);font-size:11px;font-weight:700;vertical-align:middle}
+
 /* ---------- dialog ---------- */
 dialog{width:min(600px,94vw);padding:0;border:0;border-radius:20px;box-shadow:0 40px 90px rgba(18,17,28,.34);background:#fff}
 dialog::backdrop{background:rgba(18,17,28,.45)}
@@ -355,7 +364,7 @@ dialog::backdrop{background:rgba(18,17,28,.45)}
 <script>
 /* ---------------- storage ---------------- */
 const KEY = 'antefluence-crm-v1';
-const BLANK = { v: 1, tasks: [], deals: [], contacts: [], notes: '', seq: 1 };
+const BLANK = { v: 1, tasks: [], deals: [], contacts: [], scam: [], notes: '', seq: 1 };
 let db;
 try { db = JSON.parse(localStorage.getItem(KEY)) || null; } catch { db = null; }
 if (!db || db.v !== 1) db = structuredClone(BLANK);
@@ -432,6 +441,21 @@ function resolveBrandDeal(name, contactId) {
 const brandDealList = () => `<datalist id="brand-deal-list">${dealsOfKind('brand').map(d => `<option value="${h(d.name)}">`).join('')}</datalist>`;
 const KINDS = { brand: 'Бренд', creator: 'Креатор', partner: 'Партнёр', other: 'Другое' };
 // задачи агентства, не привязанные к бренду или креатору
+const SCAM_KINDS = { brand: 'Бренд', creator: 'Креатор', network: 'Сеть или партнёрка', person: 'Человек', other: 'Другое' };
+const SCAM_STATUS = { confirmed: 'Подтверждено', suspect: 'Под вопросом', resolved: 'Вопрос закрыт' };
+const SCAM_TAG = { confirmed: 'r', suspect: 'y', resolved: 'g' };
+const scamList = () => Array.isArray(db.scam) ? db.scam : (db.scam = []);
+// совпадение по имени или нику — чтобы предупреждение всплывало там, где вводят контакт
+function scamMatch(name) {
+  const n = String(name || '').trim().toLowerCase().replace(/^@/, '');
+  if (!n) return null;
+  return scamList().find(x => x.status !== 'resolved' && [x.name, x.handle].filter(Boolean)
+    .some(v => String(v).trim().toLowerCase().replace(/^@/, '') === n)) || null;
+}
+const scamWarning = name => {
+  const hit = scamMatch(name);
+  return hit ? `<div class="warnbox"><span class="ic">!</span><span><b>${h(hit.name)} — в скамлисте</b>${h(hit.reason || '')}${hit.amount ? ` · ущерб ${money(hit.amount)}` : ''}</span></div>` : '';
+};
 const TOPICS = { ops: 'Процессы', money: 'Финансы', site: 'Сайт и продукт', people: 'Команда и найм', content: 'Контент и соцсети', other: 'Другое' };
 const areaOf = t => t.area === 'own' ? 'own' : 'client';
 const isOwn = t => areaOf(t) === 'own';
@@ -474,14 +498,16 @@ function resolveDeal(name, contactId) {
 }
 const contactList = () => `<datalist id="contact-list">${db.contacts.map(c => `<option value="${h(c.name)}">${h(KINDS[c.kind] || '')}</option>`).join('')}</datalist>`;
 const dealList = () => `<datalist id="deal-list">${db.deals.map(d => `<option value="${h(d.name)}">`).join('')}</datalist>`;
-const newEntityRow = (defKind = 'brand') => `<div class="two">
+const newEntityRow = (defKind = 'brand') => `<div data-scam-warn></div><div class="two">
       <label class="lab" data-kind-wrap hidden>Тип нового контакта<select class="field" name="contact_kind">${Object.entries(KINDS).map(([k, v]) => `<option value="${k}"${k === defKind ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
       <p class="hint accent" data-new-hint hidden style="align-self:end;margin:0 0 10px"></p>
     </div>`;
 function bindNewEntity(form) {
   const ci = form.elements.contact_name, di = form.elements.deal_name;
   const kindWrap = form.querySelector('[data-kind-wrap]'), hint = form.querySelector('[data-new-hint]');
+  const warnBox = form.querySelector('[data-scam-warn]');
   const sync = () => {
+    if (warnBox) warnBox.innerHTML = ci ? scamWarning(ci.value) : '';
     const newContact = ci && ci.value.trim() && !findContact(ci.value);
     const newDeal = di && di.value.trim() && !findDeal(di.value);
     if (kindWrap) kindWrap.hidden = !newContact;
@@ -897,6 +923,47 @@ $('#dlg-body').addEventListener('keydown', e => {
   if (dlgDeal && e.key === 'Enter' && ['comm-amount', 'comm-note', 'comm-date'].includes(e.target.id)) { e.preventDefault(); addCommission(); }
 });
 
+function scamDialog(entry) {
+  const e = entry || { id: '', name: '', handle: '', kind: 'creator', reason: '', amount: '', date: today(), evidence: '', source: '', status: 'confirmed', note: '' };
+  dlgTask = null; dlgDeal = null;
+  $('#dlg-body').innerHTML = `
+    <h3>${entry ? 'Запись в скамлисте' : 'Новая запись в скамлисте'}</h3>
+    <form id="scam-form" class="grid">
+      <div class="two">
+        <label class="lab">Кто<input class="field" name="name" value="${h(e.name)}" required maxlength="80" placeholder="Имя, бренд или ник" autocomplete="off" /></label>
+        <label class="lab">Ник или ссылка<input class="field" name="handle" value="${h(e.handle)}" maxlength="120" placeholder="@nickname" autocomplete="off" /></label>
+      </div>
+      <div class="three">
+        <label class="lab">Тип<select class="field" name="kind">${Object.entries(SCAM_KINDS).map(([k, v]) => `<option value="${k}"${e.kind === k ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
+        <label class="lab">Статус<select class="field" name="status">${Object.entries(SCAM_STATUS).map(([k, v]) => `<option value="${k}"${e.status === k ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
+        <label class="lab">Ущерб, $<input class="field" name="amount" type="number" min="0" step="50" value="${h(e.amount)}" /></label>
+      </div>
+      <label class="lab">Что произошло<input class="field" name="reason" value="${h(e.reason)}" maxlength="140" placeholder="Не оплатил интеграцию, пропал после аванса" autocomplete="off" /></label>
+      <div class="two">
+        <label class="lab">Дата случая<input class="field" name="date" type="date" value="${h(e.date)}" /></label>
+        <label class="lab">Откуда информация<input class="field" name="source" value="${h(e.source)}" maxlength="80" placeholder="Сами столкнулись / со слов коллеги" autocomplete="off" /></label>
+      </div>
+      <label class="lab">Доказательства<input class="field" name="evidence" value="${h(e.evidence)}" maxlength="300" placeholder="Ссылки на переписку, скриншоты, договор" autocomplete="off" /></label>
+      <label class="lab">Заметки<textarea class="field" name="note" maxlength="2000">${h(e.note)}</textarea></label>
+      <p class="hint">Список внутренний: он ни на чём не публикуется. Пишите факты и складывайте доказательства — со слов ставьте статус «Под вопросом».</p>
+      <footer>
+        <div>${entry ? `<button class="btn danger sm" type="button" id="del">Удалить</button>` : ''}</div>
+        <div class="row"><button class="btn ghost" type="button" data-close>Отмена</button><button class="btn" type="submit">Сохранить</button></div>
+      </footer>
+    </form>`;
+  openDialog();
+  const del = $('#del');
+  if (del) del.onclick = () => { if (confirm('Удалить запись из скамлиста?')) { db.scam = scamList().filter(x => x.id !== e.id); save(); $('#dlg').close(); render(); } };
+  $('#scam-form').onsubmit = ev => {
+    ev.preventDefault();
+    const v = Object.fromEntries(new FormData(ev.target));
+    if (!v.name.trim()) return;
+    if (entry) Object.assign(e, v);
+    else scamList().unshift({ ...e, ...v, id: id(), created: Date.now() });
+    save(); $('#dlg').close(); render();
+  };
+}
+
 function contactDialog(contact) {
   dlgTask = null;
   dlgDeal = null;
@@ -912,6 +979,7 @@ function contactDialog(contact) {
         <label class="lab">Telegram<input class="field" name="tg" value="${h(c.tg)}" maxlength="60" placeholder="@nickname" autocomplete="off" /></label>
         <label class="lab">Email<input class="field" name="email" value="${h(c.email)}" maxlength="80" autocomplete="off" /></label>
       </div>
+      ${scamWarning(c.name) || scamWarning(c.tg)}
       <label class="lab">Заметки<textarea class="field" name="note" maxlength="2000" placeholder="Условия, ставки, договорённости">${h(c.note)}</textarea></label>
       <footer>
         <div>${contact ? `<button class="btn danger sm" type="button" id="del">Удалить</button>` : ''}</div>
@@ -1120,7 +1188,8 @@ function contactsView() {
         const tasks = openTasks().filter(t => t.contact === c.id).length;
         const deals = db.deals.filter(d => d.contact === c.id);
         const sum = deals.reduce((s, d) => s + (Number(d.amount) || 0), 0);
-        return `<tr><td><span class="avatar">${h(initials(c.name))}</span><b>${h(c.name)}</b>${c.note ? `<span class="sub">${h(c.note.slice(0, 64))}</span>` : ''}</td>
+        const flagged = scamMatch(c.name) || scamMatch(c.tg);
+        return `<tr><td><span class="avatar">${h(initials(c.name))}</span><b>${h(c.name)}</b>${flagged ? '<span class="flag" title="В скамлисте">!</span>' : ''}${c.note ? `<span class="sub">${h(c.note.slice(0, 64))}</span>` : ''}${flagged ? `<span class="sub" style="color:var(--red)">скамлист: ${h(flagged.reason || 'см. запись')}</span>` : ''}</td>
           <td><span class="tag ${c.kind === 'brand' ? 'b' : c.kind === 'creator' ? 'a' : 'line'}">${KINDS[c.kind] || c.kind}</span></td>
           <td>${c.tg ? `<a href="https://t.me/${h(c.tg.replace('@', ''))}" target="_blank" rel="noopener">${h(c.tg)}</a>` : ''}${c.tg && c.email ? '<br>' : ''}${c.email ? `<a href="mailto:${h(c.email)}">${h(c.email)}</a>` : ''}${!c.tg && !c.email ? '—' : ''}</td>
           <td>${tasks ? `<span class="tag a">${tasks} открыто</span>` : '—'}</td>
@@ -1128,6 +1197,33 @@ function contactsView() {
           <td><button class="btn ghost sm" data-contact-edit="${c.id}">Открыть</button></td></tr>`;
       }).join('')}</tbody></table></div>`
       : `<p class="empty"><b>Контактов нет</b><span>Их можно добавлять прямо из формы задачи.</span></p>`}`;
+}
+
+function scamView() {
+  const list = scamList().filter(x => hit([x.name, x.handle, x.reason, x.note, x.source, SCAM_KINDS[x.kind], SCAM_STATUS[x.status]].join(' ').toLowerCase(), state.q));
+  const open = scamList().filter(x => x.status !== 'resolved');
+  const loss = scamList().reduce((a, x) => a + (Number(x.amount) || 0), 0);
+  const dt2 = d => d ? new Date(d + 'T00:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: '2-digit' }) : '—';
+  return `<div class="bar"><h2>Скамлист</h2>
+      <div class="row"><button class="btn ghost sm" data-action="export-scam">CSV</button><button class="btn sm" data-action="new-scam">+ Запись</button></div></div>
+    <div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+      <div class="stat red"><i></i><span>В чёрном списке</span><b>${open.length}</b><small>всего записей ${scamList().length}</small></div>
+      <div class="stat amber"><i></i><span>Под вопросом</span><b>${scamList().filter(x => x.status === 'suspect').length}</b><small>нужны доказательства</small></div>
+      <div class="stat"><i></i><span>Заявленный ущерб</span><b>${money(loss)}</b><small>по всем записям</small></div>
+    </div>
+    ${list.length ? `<div class="table-wrap"><table><thead><tr>
+      <th>Кто</th><th>Тип</th><th>Что произошло</th><th>Ущерб</th><th>Когда</th><th>Статус</th><th></th>
+    </tr></thead><tbody>${list.map(x => `<tr class="scam-row">
+      <td><b>${h(x.name)}${x.status !== 'resolved' ? '<span class="flag">!</span>' : ''}</b>${x.handle ? `<span class="sub">${h(x.handle)}</span>` : ''}</td>
+      <td><span class="tag line">${h(SCAM_KINDS[x.kind] || x.kind)}</span></td>
+      <td>${h(x.reason || '—')}${x.evidence ? `<span class="sub scam-ev">${h(x.evidence)}</span>` : ''}${x.source ? `<span class="sub">источник: ${h(x.source)}</span>` : ''}</td>
+      <td class="scam-amount">${x.amount ? money(x.amount) : '—'}</td>
+      <td>${h(dt2(x.date))}</td>
+      <td><span class="tag ${SCAM_TAG[x.status] || ''}">${h(SCAM_STATUS[x.status] || x.status)}</span></td>
+      <td><button class="btn ghost sm" data-scam-edit="${h(x.id)}">Открыть</button></td>
+    </tr>`).join('')}</tbody></table></div>`
+      : `<p class="empty"><b>Скамлист пуст</b><span>Записывайте тех, кто не заплатил или пропал — CRM предупредит, когда имя всплывёт в задаче или сделке.</span></p>`}
+    <p class="hint">Список только для внутреннего пользования. Держите статус честным: «Подтверждено» — когда есть доказательства, «Под вопросом» — когда со слов.</p>`;
 }
 
 function dataView() {
@@ -1152,6 +1248,7 @@ function dataView() {
       <div class="list">
         <div class="item"><div class="main" style="grid-column:1/3"><span class="t">Задачи</span><div class="meta">открытых ${openTasks().length}<span class="dot"></span>просрочено ${overdue().length}</div></div><div class="right"><b>${db.tasks.length}</b></div></div>
         <div class="item"><div class="main" style="grid-column:1/3"><span class="t">Сделки</span><div class="meta">с брендами ${dealsOfKind('brand').length}<span class="dot"></span>с креаторами ${dealsOfKind('creator').length}</div></div><div class="right"><b>${db.deals.length}</b></div></div>
+        <div class="item"><div class="main" style="grid-column:1/3"><span class="t">Скамлист</span><div class="meta">активных ${scamList().filter(x => x.status !== 'resolved').length}</div></div><div class="right"><b>${scamList().length}</b></div></div>
         <div class="item"><div class="main" style="grid-column:1/3"><span class="t">Контакты</span><div class="meta">брендов ${db.contacts.filter(c => c.kind === 'brand').length}<span class="dot"></span>креаторов ${db.contacts.filter(c => c.kind === 'creator').length}</div></div><div class="right"><b>${db.contacts.length}</b></div></div>
       </div>
       <p class="hint">Клавиши: <b>N</b> — новая задача, <b>/</b> — поиск, <b>Esc</b> — закрыть окно.</p>
@@ -1400,6 +1497,7 @@ const TABS = [
   ['tasks', 'Задачи', () => openTasks().length],
   ['deals', 'Сделки', () => db.deals.filter(isOpenDeal).length],
   ['contacts', 'Контакты', () => db.contacts.length],
+  ['scam', 'Скамлист', () => scamList().filter(x => x.status !== 'resolved').length],
   ['charts', 'Аналитика', () => 0],
   ['data', 'Данные', () => 0]
 ];
@@ -1408,7 +1506,7 @@ function render() {
     const n = count();
     return `<button role="tab" data-tab="${k}" aria-selected="${state.tab === k}">${label}${n ? `<span class="n${warn && overdue().length ? ' warn' : ''}">${n}</span>` : ''}</button>`;
   }).join('');
-  $('#view').innerHTML = { today: todayView, tasks: tasksView, deals: dealsView, contacts: contactsView, charts: chartsView, data: dataView }[state.tab]();
+  $('#view').innerHTML = { today: todayView, tasks: tasksView, deals: dealsView, contacts: contactsView, scam: scamView, charts: chartsView, data: dataView }[state.tab]();
   bindDrag();
 }
 
@@ -1444,9 +1542,14 @@ document.addEventListener('click', e => {
   if (el.dataset.edit) return taskDialog(db.tasks.find(t => t.id === el.dataset.edit));
   if (el.dataset.dealEdit) return dealDialog(db.deals.find(d => d.id === el.dataset.dealEdit));
   if (el.dataset.contactEdit) return contactDialog(db.contacts.find(c => c.id === el.dataset.contactEdit));
+  if (el.dataset.scamEdit) return scamDialog(scamList().find(x => x.id === el.dataset.scamEdit));
   switch (el.dataset.action || el.id) {
     case 'add-task': case 'new-task': return taskDialog(null);
     case 'new-own': return taskDialog(null, 'own');
+    case 'new-scam': return scamDialog(null);
+    case 'export-scam':
+      return download(`scamlist-${today()}.csv`, csv([['Кто', 'Ник или ссылка', 'Тип', 'Что произошло', 'Ущерб', 'Дата', 'Статус', 'Источник', 'Доказательства', 'Заметки'],
+        ...scamList().map(x => [x.name, x.handle, SCAM_KINDS[x.kind], x.reason, x.amount, x.date, SCAM_STATUS[x.status], x.source, x.evidence, x.note])]), 'text/csv');
     case 'new-deal': return dealDialog(null, state.dealKind);
     case 'new-contact': return contactDialog(null);
     case 'view-toggle': state.board = !state.board; return render();
