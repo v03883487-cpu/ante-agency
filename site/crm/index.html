@@ -99,7 +99,7 @@ label.lab{display:grid;gap:6px;font-size:12px;font-weight:560;color:var(--muted)
 
 /* ---------- task list ---------- */
 .list{display:flex;flex-direction:column}
-.item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;transition:background-color .15s}
+.item{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;transition:background-color .15s}
 .item:hover{background:#faf9fe}
 .item+.item{border-top:1px solid var(--line-2)}
 .item .main{min-width:0}
@@ -168,6 +168,23 @@ label.lab{display:grid;gap:6px;font-size:12px;font-weight:560;color:var(--muted)
 .log-compose .send .tip{font-size:11.5px;color:var(--faint)}
 .log-empty{margin:0 0 14px;padding:16px;border:1px dashed #dcdde6;border-radius:10px;text-align:center;font-size:13px;color:var(--faint)}
 dialog{max-height:92vh;overflow:auto}
+
+/* ---------- manual order ---------- */
+.item{position:relative}
+.item.draggable{cursor:grab}
+.item.dragging{opacity:.45;cursor:grabbing}
+.item.drop-above::before,.item.drop-below::after{content:"";position:absolute;left:8px;right:8px;height:2px;border-radius:2px;background:var(--accent)}
+.item.drop-above::before{top:-1px}
+.item.drop-below::after{bottom:-1px}
+.grip{flex:none;width:18px;margin-right:-4px;color:#c8c9d4;font-size:13px;line-height:1;text-align:center;cursor:grab;opacity:0;transition:opacity .15s,color .15s;user-select:none}
+.item:hover .grip{opacity:1}
+.grip:hover{color:var(--accent)}
+.move{display:flex;flex-direction:column;gap:1px;opacity:0;transition:opacity .15s}
+.item:hover .move,.item:focus-within .move{opacity:1}
+.move button{width:22px;height:15px;padding:0;border:1px solid var(--line);border-radius:5px;background:#fff;color:#9294a2;font-size:9px;line-height:1;cursor:pointer}
+.move button:hover{border-color:#c3b6f8;color:var(--accent)}
+.move button[disabled]{opacity:.35;cursor:default}
+@media (hover:none){.grip,.move{opacity:1}}
 
 /* ---------- tags & dates ---------- */
 .tag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:#f0f0f5;font-size:12px;font-weight:550;line-height:1.35;white-space:nowrap;color:var(--ink-2)}
@@ -332,8 +349,8 @@ dialog::backdrop{background:rgba(18,17,28,.45)}
   header{flex-wrap:wrap}
   .search-wrap{order:3;max-width:none;flex-basis:100%}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .item{grid-template-columns:auto minmax(0,1fr);padding:10px 8px}
-  .item .right{grid-column:2;margin-top:2px}
+  .item{grid-template-columns:auto auto minmax(0,1fr);padding:10px 8px}
+  .item .right{grid-column:3;margin-top:2px}
   .item .t{white-space:normal}
   .board,.pipe,.two,.three{grid-template-columns:1fr}
   .modal{padding:18px}
@@ -375,7 +392,11 @@ db.deals.forEach(d => {
   if (!Array.isArray(d.commissions)) d.commissions = [];
 });
 // задачи без клиента и сделки считаем внутренними
-db.tasks.forEach(t => { if (!t.area) t.area = (t.contact || t.deal) ? 'client' : 'own'; });
+db.tasks.forEach(t => {
+  if (!t.area) t.area = (t.contact || t.deal) ? 'client' : 'own';
+  // defaultOrd объявлен ниже, поэтому здесь та же формула напрямую
+  if (typeof t.ord !== 'number') t.ord = t.due ? Date.parse(t.due + 'T00:00:00') : (t.created || Date.now()) + 31536000000;
+});
 let saveWarned = false;
 const save = () => {
   try { localStorage.setItem(KEY, JSON.stringify(db)); }
@@ -467,6 +488,12 @@ const overdue = () => openTasks().filter(t => t.due && daysTo(t.due) < 0);
 const dueToday = () => openTasks().filter(t => t.due && daysTo(t.due) === 0);
 const dueWeek = () => openTasks().filter(t => t.due && daysTo(t.due) > 0 && daysTo(t.due) <= 7);
 const byDue = (a, b) => (a.due || '9999').localeCompare(b.due || '9999') || (a.prio === 'high' ? -1 : b.prio === 'high' ? 1 : 0);
+// Ручной порядок. По умолчанию ord выводится из срока, поэтому список выглядит
+// как раньше, а перетаскивание просто переписывает число между соседями.
+const YEAR = 31536000000;
+const defaultOrd = t => t.due ? Date.parse(t.due + 'T00:00:00') : (t.created || Date.now()) + YEAR;
+const ordOf = t => (typeof t.ord === 'number' ? t.ord : defaultOrd(t));
+const byOrder = (a, b) => ordOf(a) - ordOf(b) || byDue(a, b);
 
 const state = { tab: 'today', q: '', board: false, vizTable: false, dealKind: 'brand', area: 'all', filter: { status: '', contact: '', who: '' } };
 const matches = (obj, q) => !q || JSON.stringify(obj).toLowerCase().includes(q.toLowerCase());
@@ -752,7 +779,11 @@ function taskDialog(task, presetArea) {
     }
     delete v.contact_name; delete v.deal_name; delete v.contact_kind;
     if (task) Object.assign(t, v, { steps: stepsOf(t), log: logOf(t), done_at: v.status === 'done' ? (t.done_at || Date.now()) : null });
-    else db.tasks.unshift({ ...t, ...v, steps: stepsOf(t), log: logOf(t), id: id(), created: Date.now(), done_at: v.status === 'done' ? Date.now() : null });
+    else {
+      const fresh = { ...t, ...v, steps: stepsOf(t), log: logOf(t), id: id(), created: Date.now(), done_at: v.status === 'done' ? Date.now() : null };
+      fresh.ord = defaultOrd(fresh);
+      db.tasks.unshift(fresh);
+    }
     save(); $('#dlg').close(); render();
   };
 }
@@ -1018,10 +1049,12 @@ function taskItem(t) {
     isOwn(t) ? `<span class="tag line">${h(TOPICS[t.topic] || 'Внутренняя')}</span>` : '',
     t.contact ? h(contactName(t.contact)) : '', t.deal ? h(dealName(t.deal)) : '', t.note ? h(t.note.slice(0, 60)) : '']
     .filter(Boolean).join('<span class="dot"></span>');
-  return `<div class="item${t.status === 'done' ? ' done' : ''}" data-task="${t.id}">
+  return `<div class="item draggable${t.status === 'done' ? ' done' : ''}" data-task="${t.id}" draggable="true">
+    <span class="grip" title="Перетащите, чтобы поменять порядок" aria-hidden="true">⠿</span>
     <input class="chk" type="checkbox" data-toggle="${t.id}"${t.status === 'done' ? ' checked' : ''} aria-label="Готово" />
     <div class="main"><span class="t">${h(t.title)}</span><div class="meta">${meta || 'без срока'}${progressBar(t)}${logOf(t).length ? `<span class="dot"></span><span title="записей в журнале">✎ ${logOf(t).length}</span>` : ''}</div></div>
     <div class="right">
+      <span class="move"><button type="button" data-move="up" data-id="${t.id}" title="Выше" aria-label="Переместить выше">▲</button><button type="button" data-move="down" data-id="${t.id}" title="Ниже" aria-label="Переместить ниже">▼</button></span>
       ${t.prio === 'high' && t.status !== 'done' ? '<span class="tag r">Срочно</span>' : ''}
       ${t.who ? `<span class="who" title="${h(t.who)}">${h(initials(t.who))}</span>` : ''}
       <span class="tag ${STATUS_TAG[t.status]}">${STATUS[t.status]}</span>
@@ -1035,9 +1068,9 @@ const taskListHtml = (list, emptyTitle, emptyHint) => list.length
 
 /* ---------------- views ---------------- */
 function todayView() {
-  const over = overdue().sort(byDue), now = dueToday().sort(byDue), week = dueWeek().sort(byDue);
-  const noDate = openTasks().filter(t => !t.due && !isOwn(t)).sort((a, b) => b.created - a.created);
-  const own = openTasks().filter(isOwn).sort(byDue);
+  const over = overdue().sort(byOrder), now = dueToday().sort(byOrder), week = dueWeek().sort(byOrder);
+  const noDate = openTasks().filter(t => !t.due && !isOwn(t)).sort(byOrder);
+  const own = openTasks().filter(isOwn).sort(byOrder);
   const doing = openTasks().filter(t => t.status === 'doing');
   const steps = db.deals.filter(d => isOpenDeal(d) && d.next).sort((a, b) => (a.next_at || '9999').localeCompare(b.next_at || '9999'));
   const pipeline = dealsOfKind('brand').filter(isOpenDeal).reduce((s, d) => s + brandBudget(d), 0);
@@ -1053,7 +1086,7 @@ function todayView() {
     <div class="grid2">
       <div>
         <div class="panel">
-          <div class="panel-head"><h3>Сейчас важно</h3><button class="btn soft sm" data-action="new-task">+ Задача</button></div>
+          <div class="panel-head"><h3>Сейчас важно</h3><span class="side">строки перетаскиваются</span><button class="btn soft sm" data-action="new-task">+ Задача</button></div>
           ${taskListHtml([...over, ...now], 'Ничего не горит', 'Просроченных и сегодняшних задач нет.')}
         </div>
         <div class="panel">
@@ -1074,7 +1107,7 @@ function todayView() {
         <div class="panel">
           <div class="panel-head"><h3>Следующие шаги по сделкам</h3><button class="btn ghost sm" data-action="new-deal">+ Сделка</button></div>
           ${steps.length ? `<div class="list">${steps.slice(0, 8).map(d => `<div class="item">
-            <div class="main" style="grid-column:1/3"><span class="t">${h(d.next)}</span>
+            <div class="main" style="grid-column:1/4"><span class="t">${h(d.next)}</span>
               <div class="meta">${d.next_at ? dueChip(d.next_at) + '<span class="dot"></span>' : ''}${h(d.name)}${d.amount ? '<span class="dot"></span>' + money(d.amount) : ''}</div></div>
             <div class="right"><button class="btn ghost sm open-btn" data-deal-edit="${d.id}">Открыть</button></div>
           </div>`).join('')}</div>` : `<p class="empty"><b>Шагов не запланировано</b><span>Добавьте следующий шаг в карточке сделки.</span></p>`}
@@ -1113,7 +1146,7 @@ function tasksView() {
     </div></div>`;
   if (state.board) {
     const cols = Object.entries(STATUS).map(([k, v]) => {
-      const items = list.filter(t => t.status === k).sort(byDue);
+      const items = list.filter(t => t.status === k).sort(byOrder);
       return `<div class="col" data-col="${k}"><div class="col-head"><i></i>${v}<span class="c">${items.length}</span></div>
         ${items.length ? items.map(t => `<div class="ticket" draggable="true" data-task="${t.id}" data-edit="${t.id}">
           <b>${h(t.title)}</b><div class="meta">${t.due ? dueChip(t.due) : ''}${t.contact ? `<span>${h(contactName(t.contact))}</span>` : ''}${t.prio === 'high' ? '<span class="tag r">Срочно</span>' : ''}${t.who ? `<span class="who">${h(initials(t.who))}</span>` : ''}${progressBar(t)}</div>
@@ -1121,7 +1154,7 @@ function tasksView() {
     }).join('');
     return bar + `<div class="board">${cols}</div><p class="hint">Карточки перетаскиваются между колонками.</p>`;
   }
-  const sorted = [...list].sort((a, b) => (a.status === 'done') - (b.status === 'done') || byDue(a, b));
+  const sorted = [...list].sort((a, b) => (a.status === 'done') - (b.status === 'done') || byOrder(a, b));
   return bar + `<div class="panel">${taskListHtml(sorted, 'Задач нет', 'Нажмите «+ Задача» или клавишу N.')}</div>`;
 }
 
@@ -1246,10 +1279,10 @@ function dataView() {
     <div class="panel">
       <div class="panel-head"><h3>Что накопилось</h3></div>
       <div class="list">
-        <div class="item"><div class="main" style="grid-column:1/3"><span class="t">Задачи</span><div class="meta">открытых ${openTasks().length}<span class="dot"></span>просрочено ${overdue().length}</div></div><div class="right"><b>${db.tasks.length}</b></div></div>
-        <div class="item"><div class="main" style="grid-column:1/3"><span class="t">Сделки</span><div class="meta">с брендами ${dealsOfKind('brand').length}<span class="dot"></span>с креаторами ${dealsOfKind('creator').length}</div></div><div class="right"><b>${db.deals.length}</b></div></div>
-        <div class="item"><div class="main" style="grid-column:1/3"><span class="t">Скамлист</span><div class="meta">активных ${scamList().filter(x => x.status !== 'resolved').length}</div></div><div class="right"><b>${scamList().length}</b></div></div>
-        <div class="item"><div class="main" style="grid-column:1/3"><span class="t">Контакты</span><div class="meta">брендов ${db.contacts.filter(c => c.kind === 'brand').length}<span class="dot"></span>креаторов ${db.contacts.filter(c => c.kind === 'creator').length}</div></div><div class="right"><b>${db.contacts.length}</b></div></div>
+        <div class="item"><div class="main" style="grid-column:1/4"><span class="t">Задачи</span><div class="meta">открытых ${openTasks().length}<span class="dot"></span>просрочено ${overdue().length}</div></div><div class="right"><b>${db.tasks.length}</b></div></div>
+        <div class="item"><div class="main" style="grid-column:1/4"><span class="t">Сделки</span><div class="meta">с брендами ${dealsOfKind('brand').length}<span class="dot"></span>с креаторами ${dealsOfKind('creator').length}</div></div><div class="right"><b>${db.deals.length}</b></div></div>
+        <div class="item"><div class="main" style="grid-column:1/4"><span class="t">Скамлист</span><div class="meta">активных ${scamList().filter(x => x.status !== 'resolved').length}</div></div><div class="right"><b>${scamList().length}</b></div></div>
+        <div class="item"><div class="main" style="grid-column:1/4"><span class="t">Контакты</span><div class="meta">брендов ${db.contacts.filter(c => c.kind === 'brand').length}<span class="dot"></span>креаторов ${db.contacts.filter(c => c.kind === 'creator').length}</div></div><div class="right"><b>${db.contacts.length}</b></div></div>
       </div>
       <p class="hint">Клавиши: <b>N</b> — новая задача, <b>/</b> — поиск, <b>Esc</b> — закрыть окно.</p>
     </div>
@@ -1510,6 +1543,80 @@ function render() {
   bindDrag();
 }
 
+/* ---------------- manual order of task rows ---------------- */
+// Ставит задачу между соседями: новое число — среднее между их ord.
+function placeTask(id, beforeId, afterId) {
+  const t = db.tasks.find(x => x.id === id);
+  if (!t) return;
+  const before = beforeId ? db.tasks.find(x => x.id === beforeId) : null;   // строка выше
+  const after = afterId ? db.tasks.find(x => x.id === afterId) : null;      // строка ниже
+  const hi = before ? ordOf(before) : (after ? ordOf(after) - 2000 : ordOf(t));
+  const lo = after ? ordOf(after) : (before ? ordOf(before) + 2000 : ordOf(t));
+  t.ord = (hi + lo) / 2;
+  save(); render();
+}
+// Перестановка стрелками — в пределах того же списка на экране.
+function moveTask(id, dir) {
+  const row = document.querySelector(`.item[data-task="${id}"]`);
+  if (!row) return;
+  const rows = [...row.parentElement.querySelectorAll('.item[data-task]')];
+  const i = rows.indexOf(row);
+  const j = dir === 'up' ? i - 1 : i + 1;
+  if (j < 0 || j >= rows.length) return;
+  const ids = rows.map(r => r.dataset.task);
+  placeTask(id, dir === 'up' ? ids[j - 1] : ids[j], dir === 'up' ? ids[j] : ids[j + 1]);
+}
+let rowDrag = null, lastOver = null;   // lastOver — куда встанет строка, если отпустить прямо сейчас
+const clearMarks = () => document.querySelectorAll('.item.drop-above,.item.drop-below').forEach(el => el.classList.remove('drop-above', 'drop-below'));
+document.addEventListener('dragstart', e => {
+  const row = e.target.closest && e.target.closest('.item[data-task]');
+  if (!row) return;
+  rowDrag = row.dataset.task;
+  row.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', rowDrag); } catch { /* ignore */ }
+});
+document.addEventListener('dragover', e => {
+  if (!rowDrag) return;
+  e.preventDefault();   // пока тащим строку, отпускание принимаем в любой точке — иначе браузер отменит drop
+  const row = e.target.closest && e.target.closest('.item[data-task]');
+  if (!row || row.dataset.task === rowDrag) return;
+  const box = row.getBoundingClientRect();
+  const above = e.clientY < box.top + box.height / 2;
+  clearMarks();
+  row.classList.add(above ? 'drop-above' : 'drop-below');
+  lastOver = { id: row.dataset.task, above };
+});
+document.addEventListener('drop', e => {
+  if (!rowDrag) return;
+  e.preventDefault();
+  // точка отпускания может попасть между строками — тогда берём последнюю подсвеченную позицию
+  const hovered = e.target.closest && e.target.closest('.item[data-task]');
+  let target = null, above = false;
+  if (hovered && hovered.dataset.task !== rowDrag) {
+    const box = hovered.getBoundingClientRect();
+    target = hovered.dataset.task;
+    above = e.clientY < box.top + box.height / 2;
+  } else if (lastOver && lastOver.id !== rowDrag) {
+    target = lastOver.id;
+    above = lastOver.above;
+  }
+  clearMarks();
+  const id = rowDrag;
+  rowDrag = null; lastOver = null;
+  if (!target) return;
+  const row = document.querySelector(`.item[data-task="${target}"]`);
+  if (!row) return;
+  const rows = [...row.parentElement.querySelectorAll('.item[data-task]')].map(r => r.dataset.task).filter(x => x !== id);
+  const idx = rows.indexOf(target);
+  placeTask(id, above ? rows[idx - 1] : rows[idx], above ? rows[idx] : rows[idx + 1]);
+});
+document.addEventListener('dragend', () => {
+  rowDrag = null; lastOver = null;
+  clearMarks();
+  document.querySelectorAll('.item.dragging').forEach(el => el.classList.remove('dragging'));
+});
+
 /* ---------------- drag and drop ---------------- */
 function bindDrag() {
   let dragged = null;
@@ -1536,6 +1643,7 @@ function bindDrag() {
 document.addEventListener('click', e => {
   const el = e.target.closest('[data-tab],[data-edit],[data-deal-edit],[data-contact-edit],[data-action],button');
   if (!el) return;
+  if (el.dataset.move) { moveTask(el.dataset.id, el.dataset.move); return; }
   if (el.dataset.tab) { state.tab = el.dataset.tab; return render(); }
   if (el.dataset.dealkind) { state.dealKind = el.dataset.dealkind; return render(); }
   if (el.dataset.areafilter) { state.area = el.dataset.areafilter; return render(); }
