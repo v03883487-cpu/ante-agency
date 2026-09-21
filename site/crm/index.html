@@ -114,6 +114,40 @@ label.lab{display:grid;gap:6px;font-size:12px;font-weight:560;color:var(--muted)
 .item:hover .open-btn,.item:focus-within .open-btn{opacity:1}
 @media (hover:none){.open-btn{opacity:1}}
 
+/* ---------- progress ---------- */
+.prog{display:flex;align-items:center;gap:7px;margin-top:6px}
+.prog .bar{flex:1;max-width:110px;height:5px;border-radius:99px;background:#eceaf4;overflow:hidden}
+.prog .bar i{display:block;height:100%;border-radius:99px;background:var(--accent);transition:width .25s var(--ease)}
+.prog .bar.full i{background:var(--green)}
+.prog .pc{font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums}
+.block{margin-top:4px;padding:14px;border:1px solid var(--line);border-radius:var(--r);background:#fbfbfe}
+.block h4{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:12px;font-weight:650;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.block h4 em{font-style:normal;font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--faint)}
+.bigbar{height:6px;border-radius:99px;background:#eceaf4;overflow:hidden;margin-bottom:12px}
+.bigbar i{display:block;height:100%;background:linear-gradient(90deg,#9d83ff,#7b4dff);transition:width .25s var(--ease)}
+.bigbar.full i{background:var(--green)}
+.steps{display:flex;flex-direction:column;gap:2px;margin:0 0 10px;padding:0;list-style:none}
+.steps li{display:flex;align-items:center;gap:9px;padding:6px 6px;border-radius:9px;font-size:14px;transition:background-color .15s}
+.steps li:hover{background:#f4f2fb}
+.steps li.done span{text-decoration:line-through;color:var(--faint)}
+.steps li span{flex:1;min-width:0;word-break:break-word}
+.steps .x{flex:none;width:24px;height:24px;padding:0;border:0;border-radius:7px;background:none;color:#c4c5d0;font-size:15px;line-height:1;cursor:pointer;opacity:0;transition:opacity .15s,color .15s}
+.steps li:hover .x,.steps li:focus-within .x{opacity:1}
+.steps .x:hover{color:var(--red);background:var(--red-bg)}
+.add-row{display:flex;gap:8px}
+.add-row .field{flex:1}
+.log{display:flex;flex-direction:column;gap:10px;margin:0 0 12px;padding:0;list-style:none;max-height:210px;overflow:auto}
+.log li{display:grid;grid-template-columns:1fr auto;gap:6px;padding-left:14px;position:relative;font-size:13.5px;line-height:1.5}
+.log li::before{content:"";position:absolute;left:2px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--accent);opacity:.65}
+.log li::after{content:"";position:absolute;left:5px;top:18px;bottom:-12px;width:1px;background:var(--line)}
+.log li:last-child::after{display:none}
+.log time{display:block;font-size:11.5px;color:var(--faint)}
+.log p{margin:2px 0 0;white-space:pre-wrap;word-break:break-word}
+.log .x{align-self:start;width:22px;height:22px;padding:0;border:0;border-radius:6px;background:none;color:#c4c5d0;cursor:pointer;opacity:0;transition:opacity .15s,color .15s}
+.log li:hover .x{opacity:1}
+.log .x:hover{color:var(--red);background:var(--red-bg)}
+dialog{max-height:92vh;overflow:auto}
+
 /* ---------- tags & dates ---------- */
 .tag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:#f0f0f5;font-size:12px;font-weight:550;line-height:1.35;white-space:nowrap;color:var(--ink-2)}
 .tag.a{background:var(--accent-soft);color:var(--accent)}
@@ -315,6 +349,53 @@ function bindNewEntity(form) {
   sync();
 }
 
+/* ---------------- progress & work log ---------------- */
+const stepsOf = t => Array.isArray(t.steps) ? t.steps : (t.steps = []);
+const logOf = t => Array.isArray(t.log) ? t.log : (t.log = []);
+const progress = t => {
+  const st = Array.isArray(t.steps) ? t.steps : [];
+  return { done: st.filter(x => x.done).length, total: st.length };
+};
+function progressBar(t) {
+  const { done, total } = progress(t);
+  if (!total) return '';
+  const pc = Math.round(done / total * 100);
+  return `<span class="prog"><span class="bar${pc === 100 ? ' full' : ''}"><i style="width:${pc}%"></i></span><span class="pc">${done}/${total}</span></span>`;
+}
+const logDate = ts => new Date(ts).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+
+// checklist + work log inside the task dialog; both write straight into the task object
+function taskExtras(t) {
+  const st = stepsOf(t), lg = logOf(t);
+  const { done, total } = progress(t);
+  const pc = total ? Math.round(done / total * 100) : 0;
+  return `
+    <div class="block">
+      <h4>Чек-лист<em>${total ? `${done} из ${total} · ${pc}%` : 'ещё нет пунктов'}</em></h4>
+      ${total ? `<div class="bigbar${pc === 100 ? ' full' : ''}"><i style="width:${pc}%"></i></div>` : ''}
+      <ul class="steps">${st.map((x, i) => `<li class="${x.done ? 'done' : ''}">
+        <input class="chk" type="checkbox" data-step="${i}"${x.done ? ' checked' : ''} aria-label="Готово" />
+        <span>${h(x.text)}</span>
+        <button class="x" type="button" data-step-del="${i}" title="Удалить пункт">×</button></li>`).join('')}</ul>
+      <div class="add-row"><input class="field" id="step-input" maxlength="140" placeholder="Новый пункт — Enter" autocomplete="off" />
+        <button class="btn ghost" type="button" id="step-add">Добавить</button></div>
+    </div>
+    <div class="block">
+      <h4>Ход работы<em>${lg.length ? lg.length + ' зап.' : 'пока пусто'}</em></h4>
+      ${lg.length ? `<ul class="log">${lg.map((e, i) => `<li><div><time>${h(logDate(e.ts))}</time><p>${h(e.text)}</p></div>
+        <button class="x" type="button" data-log-del="${i}" title="Удалить запись">×</button></li>`).join('')}</ul>` : ''}
+      <div class="add-row"><textarea class="field" id="log-input" maxlength="1000" style="min-height:58px" placeholder="Что сделано, что выяснилось, что дальше"></textarea>
+        <button class="btn ghost" type="button" id="log-add" style="align-self:flex-end">Записать</button></div>
+    </div>`;
+}
+function refreshExtras(t, persist) {
+  const box = $('#task-extras');
+  if (box) box.innerHTML = taskExtras(t);
+  if (persist) save();
+  const pen = $('#task-form');
+  if (pen) pen.dataset.dirty = '1';
+}
+
 /* ---------------- dialogs ---------------- */
 function openDialog() {
   const dlg = $('#dlg');
@@ -341,6 +422,7 @@ function taskDialog(task) {
       </div>
       ${newEntityRow()}
       <label class="lab">Заметки<textarea class="field" name="note" maxlength="2000" placeholder="Детали, договорённости, ссылки">${h(t.note)}</textarea></label>
+      <div id="task-extras">${taskExtras(t)}</div>
       <datalist id="who-list">${[...new Set(db.tasks.map(x => x.who).filter(Boolean))].map(w => `<option value="${h(w)}">`).join('')}</datalist>
       ${contactList()}${dealList()}
       <footer>
@@ -351,7 +433,45 @@ function taskDialog(task) {
   openDialog();
   const del = $('#del');
   if (del) del.onclick = () => { if (confirm('Удалить задачу?')) { db.tasks = db.tasks.filter(x => x.id !== t.id); save(); $('#dlg').close(); render(); } };
+  $('#dlg').addEventListener('close', () => render(), { once: true });
   bindNewEntity($('#task-form'));
+  const persist = !!task;          // an existing task keeps checklist and log even without pressing Save
+  const addStep = () => {
+    const box = $('#step-input');
+    const text = box.value.trim();
+    if (!text) return;
+    stepsOf(t).push({ text, done: false });
+    refreshExtras(t, persist);
+    const next = $('#step-input');
+    if (next) next.focus();
+  };
+  const addLog = () => {
+    const box = $('#log-input');
+    const text = box.value.trim();
+    if (!text) return;
+    logOf(t).unshift({ ts: Date.now(), text });
+    refreshExtras(t, persist);
+    const next = $('#log-input');
+    if (next) next.focus();
+  };
+  $('#dlg-body').addEventListener('click', e => {
+    const el = e.target.closest('[data-step-del],[data-log-del],#step-add,#log-add');
+    if (!el) return;
+    if (el.id === 'step-add') return addStep();
+    if (el.id === 'log-add') return addLog();
+    if (el.dataset.stepDel !== undefined) { stepsOf(t).splice(Number(el.dataset.stepDel), 1); return refreshExtras(t, persist); }
+    if (el.dataset.logDel !== undefined) { logOf(t).splice(Number(el.dataset.logDel), 1); return refreshExtras(t, persist); }
+  });
+  $('#dlg-body').addEventListener('change', e => {
+    if (e.target.dataset.step === undefined) return;
+    const i = Number(e.target.dataset.step);
+    stepsOf(t)[i].done = e.target.checked;
+    refreshExtras(t, persist);
+  });
+  $('#dlg-body').addEventListener('keydown', e => {
+    if (e.target.id === 'step-input' && e.key === 'Enter') { e.preventDefault(); addStep(); }
+    if (e.target.id === 'log-input' && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); addLog(); }
+  });
   $('#task-form').onsubmit = e => {
     e.preventDefault();
     const v = Object.fromEntries(new FormData(e.target));
@@ -359,8 +479,8 @@ function taskDialog(task) {
     v.contact = resolveContact(v.contact_name, v.contact_kind);
     v.deal = resolveDeal(v.deal_name, v.contact);
     delete v.contact_name; delete v.deal_name; delete v.contact_kind;
-    if (task) Object.assign(t, v, { done_at: v.status === 'done' ? (t.done_at || Date.now()) : null });
-    else db.tasks.unshift({ ...t, ...v, id: id(), created: Date.now(), done_at: v.status === 'done' ? Date.now() : null });
+    if (task) Object.assign(t, v, { steps: stepsOf(t), log: logOf(t), done_at: v.status === 'done' ? (t.done_at || Date.now()) : null });
+    else db.tasks.unshift({ ...t, ...v, steps: stepsOf(t), log: logOf(t), id: id(), created: Date.now(), done_at: v.status === 'done' ? Date.now() : null });
     save(); $('#dlg').close(); render();
   };
 }
@@ -451,7 +571,7 @@ function taskItem(t) {
     .filter(Boolean).join('<span class="dot"></span>');
   return `<div class="item${t.status === 'done' ? ' done' : ''}" data-task="${t.id}">
     <input class="chk" type="checkbox" data-toggle="${t.id}"${t.status === 'done' ? ' checked' : ''} aria-label="Готово" />
-    <div class="main"><span class="t">${h(t.title)}</span><div class="meta">${meta || 'без срока'}</div></div>
+    <div class="main"><span class="t">${h(t.title)}</span><div class="meta">${meta || 'без срока'}${progressBar(t)}${logOf(t).length ? `<span class="dot"></span><span title="записей в журнале">✎ ${logOf(t).length}</span>` : ''}</div></div>
     <div class="right">
       ${t.prio === 'high' && t.status !== 'done' ? '<span class="tag r">Срочно</span>' : ''}
       ${t.who ? `<span class="who" title="${h(t.who)}">${h(initials(t.who))}</span>` : ''}
@@ -535,7 +655,7 @@ function tasksView() {
       const items = list.filter(t => t.status === k).sort(byDue);
       return `<div class="col" data-col="${k}"><div class="col-head"><i></i>${v}<span class="c">${items.length}</span></div>
         ${items.length ? items.map(t => `<div class="ticket" draggable="true" data-task="${t.id}" data-edit="${t.id}">
-          <b>${h(t.title)}</b><div class="meta">${t.due ? dueChip(t.due) : ''}${t.contact ? `<span>${h(contactName(t.contact))}</span>` : ''}${t.prio === 'high' ? '<span class="tag r">Срочно</span>' : ''}${t.who ? `<span class="who">${h(initials(t.who))}</span>` : ''}</div>
+          <b>${h(t.title)}</b><div class="meta">${t.due ? dueChip(t.due) : ''}${t.contact ? `<span>${h(contactName(t.contact))}</span>` : ''}${t.prio === 'high' ? '<span class="tag r">Срочно</span>' : ''}${t.who ? `<span class="who">${h(initials(t.who))}</span>` : ''}${progressBar(t)}</div>
         </div>`).join('') : '<div class="col-empty">пусто</div>'}</div>`;
     }).join('');
     return bar + `<div class="board">${cols}</div><p class="hint">Карточки перетаскиваются между колонками.</p>`;
@@ -662,8 +782,13 @@ document.addEventListener('click', e => {
       download(`antefluence-crm-${today()}.json`, JSON.stringify(db, null, 2));
       return toast('Бэкап скачан');
     case 'export-tasks':
-      return download(`tasks-${today()}.csv`, csv([['Задача', 'Статус', 'Приоритет', 'Срок', 'Кто', 'Клиент', 'Сделка', 'Заметки'],
-        ...db.tasks.map(t => [t.title, STATUS[t.status], PRIO[t.prio], t.due, t.who, contactName(t.contact), dealName(t.deal), t.note])]), 'text/csv');
+      return download(`tasks-${today()}.csv`, csv([['Задача', 'Статус', 'Приоритет', 'Срок', 'Кто', 'Клиент', 'Сделка', 'Прогресс', 'Чек-лист', 'Последняя запись', 'Заметки'],
+        ...db.tasks.map(t => {
+          const pr = progress(t), last = logOf(t)[0];
+          return [t.title, STATUS[t.status], PRIO[t.prio], t.due, t.who, contactName(t.contact), dealName(t.deal),
+            pr.total ? `${pr.done}/${pr.total}` : '', stepsOf(t).map(x => (x.done ? '[x] ' : '[ ] ') + x.text).join(' | '),
+            last ? logDate(last.ts) + ': ' + last.text : '', t.note];
+        })]), 'text/csv');
     case 'export-deals':
       return download(`deals-${today()}.csv`, csv([['Сделка', 'Этап', 'Сумма', 'Контакт', 'Следующий шаг', 'Когда', 'Заметки'],
         ...db.deals.map(d => [d.name, STAGES[d.stage], d.amount, contactName(d.contact), d.next, d.next_at, d.note])]), 'text/csv');
@@ -725,7 +850,9 @@ if (!db.tasks.length && !db.deals.length && !db.contacts.length) {
   db.contacts.push(brand, creator);
   db.deals.push({ id: id(), name: 'Luciabby · серия стримов', contact: brand.id, stage: 'talks', amount: 3000, next: 'Запросить постбэк у менеджера', next_at: addDays(1), note: '', created: Date.now() });
   db.tasks.push(
-    { id: id(), title: 'Уточнить параметр sub ID и макросы постбэка', status: 'doing', prio: 'high', due: today(), who: 'Я', contact: brand.id, deal: db.deals[0].id, note: '', created: Date.now(), done_at: null },
+    { id: id(), title: 'Уточнить параметр sub ID и макросы постбэка', status: 'doing', prio: 'high', due: today(), who: 'Я', contact: brand.id, deal: db.deals[0].id, note: '', created: Date.now(), done_at: null,
+      steps: [{ text: 'Написать менеджеру партнёрки', done: true }, { text: 'Получить список макросов', done: false }, { text: 'Вставить постбэк в кабинет', done: false }],
+      log: [{ ts: Date.now() - 3600000, text: 'Написал менеджеру, ждём ответ до конца дня.' }] },
     { id: id(), title: 'Согласовать даты стримов с креатором', status: 'backlog', prio: 'normal', due: addDays(3), who: 'Я', contact: creator.id, deal: '', note: '', created: Date.now(), done_at: null },
     { id: id(), title: 'Внести отчёт креатора: просмотры и клики', status: 'backlog', prio: 'low', due: addDays(7), who: 'Я', contact: creator.id, deal: '', note: 'Вкладка «Данные креаторов» в аналитике', created: Date.now(), done_at: null }
   );
